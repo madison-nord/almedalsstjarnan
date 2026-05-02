@@ -16,7 +16,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,json,md,cjs}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,json,md,cjs}\"",
     "test:unit": "vitest run --config vitest.config.ts --passWithNoTests",
-    "test:property": "vitest run --config vitest.config.ts --testPathPattern=property --passWithNoTests",
+    "test:property": "vitest run --config vitest.config.ts --passWithNoTests tests/property/",
     "test:e2e": "playwright test",
     "test": "vitest run --config vitest.config.ts --passWithNoTests",
     "package": "pnpm run build && cd dist && tar -cf ../almedalsstjarnan.zip ."

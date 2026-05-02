@@ -139,26 +139,26 @@ This plan implements the Almedalsstjärnan Chrome extension from scratch using T
     - Implement `BrowserApiAdapter` class implementing `IBrowserApiAdapter`, wrapping all seven methods (storageLocalGet, storageLocalSet, sendMessage, getMessage, download, createTab, onStorageChanged) with Promise-based interface and descriptive error rejection. `onStorageChanged` wraps `chrome.storage.onChanged.addListener` and returns an unsubscribe function. Implement `createBrowserApiAdapter()` factory function. This is the SOLE module referencing `chrome.*` globals.
     - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5_
 
-- [ ] 6. Manifest configuration
-  - [ ] 6.1 Write unit tests for manifest merge
+- [x] 6. Manifest configuration
+  - [x] 6.1 Write unit tests for manifest merge
     - Create `tests/unit/extension/merge-manifest.test.ts` testing: simple key override, nested object deep merge, array replacement (not concatenation), keys from both objects present, override precedence for conflicting keys
     - _Requirements: 2.9, 17.3_
 
-  - [ ] 6.2 Write property test for manifest merge (Property 14)
+  - [x] 6.2 Write property test for manifest merge (Property 14)
     - Create `tests/property/manifest-merge.property.test.ts` using fast-check to verify: all keys from both objects present in result, override values take precedence, nested objects recursively merged. Min 100 iterations.
     - **Property 14: Manifest merge precedence**
     - **Validates: Requirements 2.9, 17.3**
     - _Requirements: 2.9, 17.3_
 
-  - [ ] 6.3 Implement src/extension/manifest/merge-manifest.ts
+  - [x] 6.3 Implement src/extension/manifest/merge-manifest.ts
     - Implement `mergeManifest(base, override)` with simple deep-merge: arrays replaced, nested objects recursively merged, override takes precedence
     - _Requirements: 2.9, 17.3_
 
-  - [ ] 6.4 Create src/extension/manifest/base.json
+  - [x] 6.4 Create src/extension/manifest/base.json
     - Write the base manifest exactly as specified in design: manifest_version 3, `__MSG_extensionName__`, `__MSG_extensionDescription__`, version 0.1.0, default_locale "sv", permissions ["storage", "downloads", "tabs"], host_permissions ["*://almedalsveckan.info/*"], background service_worker, content_scripts matching almedalsveckan.info, action with default_popup and icons, icons object
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.10, 16.1, 16.2, 16.3_
 
-  - [ ] 6.5 Create src/extension/manifest/chrome.json
+  - [x] 6.5 Create src/extension/manifest/chrome.json
     - Write Chrome override with `minimum_chrome_version: "110"`
     - _Requirements: 2.9, 17.8_
 
