@@ -12,7 +12,7 @@ describe('Property 11: ICS export filename pattern', () => {
         fc.date({
           min: new Date('2020-01-01T00:00:00Z'),
           max: new Date('2035-12-31T23:59:59Z'),
-        }),
+        }).filter((d) => !isNaN(d.getTime())),
         (date) => {
           const filename = generateExportFilename(date);
           expect(filename).toMatch(

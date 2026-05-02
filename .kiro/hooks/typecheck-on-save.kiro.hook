@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "Typecheck on Save",
+  "description": "Runs TypeScript type checking when a source file is saved. Reports any type errors found.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "src/**/*.ts",
+      "src/**/*.tsx"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Run `pnpm run typecheck` and report any type errors found."
+  }
+}

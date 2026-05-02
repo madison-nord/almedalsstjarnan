@@ -71,7 +71,7 @@ export async function processEventCard(
     // Normalize event data from the card
     const result = normalizeEvent(card);
     if (!result.ok) {
-      // eslint-disable-next-line no-console
+       
       console.warn(`[Almedalsstjärnan] Skipping card: ${result.reason}`);
       return;
     }
@@ -137,13 +137,13 @@ export async function processEventCard(
     if (!starButtonMap.has(eventId)) {
       starButtonMap.set(eventId, []);
     }
-    starButtonMap.get(eventId)!.push(starButton);
+    starButtonMap.get(eventId)?.push(starButton);
 
     // Mark card as initialized
     card.setAttribute('data-almedals-planner-initialized', '1');
   } catch (error: unknown) {
     // Never throw from content script
-    // eslint-disable-next-line no-console
+     
     console.warn(
       '[Almedalsstjärnan] Error processing event card:',
       error instanceof Error ? error.message : String(error),

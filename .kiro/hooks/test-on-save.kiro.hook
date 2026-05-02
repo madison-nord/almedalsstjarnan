@@ -1,0 +1,19 @@
+{
+  "enabled": true,
+  "name": "Run Tests on Save",
+  "description": "Identifies and runs test files related to the edited source or test file. Reports pass/fail results.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "src/**/*.ts",
+      "src/**/*.tsx",
+      "tests/**/*.test.ts",
+      "tests/**/*.test.tsx"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Identify the test file(s) related to the edited file and run them with `pnpm exec vitest run --reporter=verbose {test_file}`. Report pass/fail results."
+  }
+}

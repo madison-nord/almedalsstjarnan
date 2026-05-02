@@ -51,7 +51,6 @@ beforeEach(() => {
 
 async function getAdapter() {
   // Clear module cache so each test gets a fresh import with the current chrome mock
-  const modulePath = '#core/browser-api-adapter';
   // vitest re-imports are handled via dynamic import + cache busting
   const mod = await import('#core/browser-api-adapter');
   return mod.createBrowserApiAdapter();
@@ -299,7 +298,7 @@ describe('BrowserApiAdapter', () => {
 
       // Get the listener that was passed to addListener
       const registeredListener =
-        chromeMock.storage.onChanged.addListener.mock.calls[0]![0] as Function;
+        chromeMock.storage.onChanged.addListener.mock.calls[0]![0] as (...args: unknown[]) => void;
 
       unsubscribe();
 

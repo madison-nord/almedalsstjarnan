@@ -16,7 +16,6 @@ import type {
   MessagePayload,
   MessageResponseError,
   MessageResponseSuccess,
-  SortOrder,
 } from '#core/types';
 
 import { mockBrowserApi } from '#test/helpers/mock-browser-api';

@@ -7,11 +7,12 @@
  * Running injection twice produces the same number of Star_Buttons as once.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import type { vi} from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import fc from 'fast-check';
 
 import type { IBrowserApiAdapter, MessagePayload, MessageResponse } from '#core/types';
-import { initContentScript, findEventCards } from '#extension/content-script';
+import { initContentScript } from '#extension/content-script';
 import { mockBrowserApi, resetMocks } from '#test/helpers/mock-browser-api';
 import { createMockEventCard } from '#test/helpers/dom-helpers';
 

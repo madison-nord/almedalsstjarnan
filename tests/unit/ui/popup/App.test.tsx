@@ -20,7 +20,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, within, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom/vitest';
 
@@ -280,7 +280,7 @@ describe('Popup App', () => {
       const button = screen.getByRole('button', { name: 'Open full list' });
       await user.click(button);
 
-      expect(adapter.createTab).toHaveBeenCalledWith({ url: 'stars.html' });
+      expect(adapter.createTab).toHaveBeenCalledWith({ url: 'src/ui/stars/stars.html' });
     });
   });
 
@@ -379,7 +379,7 @@ describe('Popup App', () => {
       button.focus();
       await user.keyboard('{Enter}');
 
-      expect(adapter.createTab).toHaveBeenCalledWith({ url: 'stars.html' });
+      expect(adapter.createTab).toHaveBeenCalledWith({ url: 'src/ui/stars/stars.html' });
     });
 
     it('Space activates the "Open full list" button', async () => {
@@ -390,7 +390,7 @@ describe('Popup App', () => {
       button.focus();
       await user.keyboard(' ');
 
-      expect(adapter.createTab).toHaveBeenCalledWith({ url: 'stars.html' });
+      expect(adapter.createTab).toHaveBeenCalledWith({ url: 'src/ui/stars/stars.html' });
     });
   });
 

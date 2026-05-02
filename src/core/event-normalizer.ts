@@ -227,8 +227,6 @@ export function parseDateTime(timeText: string): string | null {
   // Try bare time format: "HH.MM"
   const bareTimeMatch = /^(\d{2})\.(\d{2})$/.exec(trimmed);
   if (bareTimeMatch) {
-    const hour = bareTimeMatch[1];
-    const minute = bareTimeMatch[2];
     // Without a day, we can't determine the full date
     return null;
   }
