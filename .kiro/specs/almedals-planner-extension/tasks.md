@@ -174,12 +174,12 @@ This plan implements the Almedalsstjärnan Chrome extension from scratch using T
     - Implement `parseICS(icsContent)`, `unfoldLines(content)`, and `unescapeICSText(text)` as specified in design. Parse ICS string into `ICSCalendar` with `ICSEvent[]`.
     - _Requirements: 12.8_
 
-- [ ] 9. Event Normalizer (depends on ICS Parser for data:text/calendar decoding)
-  - [ ] 9.1 Write unit tests for Event Normalizer
+- [x] 9. Event Normalizer (depends on ICS Parser for data:text/calendar decoding)
+  - [x] 9.1 Write unit tests for Event Normalizer
     - Create `tests/unit/core/event-normalizer.test.ts` testing: extraction of all fields (id, title, organiser, startDateTime, endDateTime, location, description, topic, sourceUrl, icsDataUri) from a well-formed Event_Card, decoding the `data:text/calendar` data URI and parsing the embedded ICS content via ICS Parser to extract SUMMARY/DTSTART/DTEND/LOCATION/DESCRIPTION/URL fields, preferring ICS SUMMARY as title over visible DOM title, error result for missing required fields (id, title, startDateTime), null/empty values for missing optional fields, whitespace trimming on all string fields, date-time parsing to ISO 8601 with timezone, `deriveEventId` priority chain (ICS URL > detail URL > SHA-256 hash), `parseDateTime` with various time formats, skip malformed cards without throwing
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6_
 
-  - [ ] 9.2 Write property tests for Event Normalizer (Properties 6, 7)
+  - [x] 9.2 Write property tests for Event Normalizer (Properties 6, 7)
     - Create `tests/property/normalizer-trim.property.test.ts`: for any Event_Card with whitespace-padded string fields, normalizeEvent produces trimmed values. Min 100 iterations.
     - **Property 6: Normalizer whitespace trimming**
     - **Validates: Requirements 6.5**
@@ -188,16 +188,16 @@ This plan implements the Almedalsstjärnan Chrome extension from scratch using T
     - **Validates: Requirements 6.3**
     - _Requirements: 6.3, 6.5, 18.3_
 
-  - [ ] 9.3 Implement src/core/event-normalizer.ts
+  - [x] 9.3 Implement src/core/event-normalizer.ts
     - Implement `normalizeEvent(element)`, `deriveEventId(icsUrl, detailUrl, title, startDateTime)`, and `parseDateTime(timeText)` as specified in design. Extract fields from DOM elements. Decode the `data:text/calendar` data URI (UTF-8), parse the embedded ICS content using `parseICS` from `#core/ics-parser`, and use the parsed ICS fields (SUMMARY, DTSTART, DTEND, LOCATION, DESCRIPTION, URL) as the primary data source. Prefer ICS SUMMARY as title; fall back to visible DOM title if SUMMARY is absent. Validate required fields, trim whitespace, parse dates to ISO 8601, return `NormalizerResult` discriminated union.
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6_
 
-- [ ] 10. Sorter
-  - [ ] 10.1 Write unit tests for Sorter
+- [x] 10. Sorter
+  - [x] 10.1 Write unit tests for Sorter
     - Create `tests/unit/core/sorter.test.ts` testing: chronological sort (startDateTime ascending), reverse-chronological sort (startDateTime descending), alphabetical-by-title sort (locale-aware ascending), starred-desc sort (starredAt descending, tiebreaker startDateTime ascending), tiebreaker consistency for all sort orders, non-mutation of input array, empty array handling, single-element array
     - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5, 11.6, 11.7_
 
-  - [ ] 10.2 Write property tests for Sorter (Properties 2, 3, 4, 5)
+  - [x] 10.2 Write property tests for Sorter (Properties 2, 3, 4, 5)
     - Create `tests/property/sorter-idempotence.property.test.ts`: sorting twice produces same result as sorting once. Min 100 iterations.
     - **Property 2: Sorter idempotence**
     - **Validates: Requirements 11.8, 18.7**
@@ -212,16 +212,16 @@ This plan implements the Almedalsstjärnan Chrome extension from scratch using T
     - **Validates: Requirements 11.7**
     - _Requirements: 11.7, 11.8, 18.3, 18.7, 18.8_
 
-  - [ ] 10.3 Implement src/core/sorter.ts
+  - [x] 10.3 Implement src/core/sorter.ts
     - Implement `sortEvents(events, order)` returning a new sorted array. Support all four sort orders: chronological (startDateTime ascending), reverse-chronological (startDateTime descending), alphabetical-by-title (locale-aware title ascending), starred-desc (starredAt descending with startDateTime ascending tiebreaker). Never mutate input.
     - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5, 11.6, 11.7, 11.8_
 
-- [ ] 11. ICS Generator
-  - [ ] 11.1 Write unit tests for ICS Generator
+- [x] 11. ICS Generator
+  - [x] 11.1 Write unit tests for ICS Generator
     - Create `tests/unit/core/ics-generator.test.ts` testing: VCALENDAR header (VERSION:2.0, PRODID:-//Almedalsstjärnan//EN, CALSCALE:GREGORIAN, METHOD:PUBLISH), VEVENT fields (UID as {id}@almedalsstjarnan, DTSTAMP in YYYYMMDDTHHMMSSZ format, DTSTART, DTEND, SUMMARY, LOCATION, DESCRIPTION with localized source label, ORGANIZER), CRLF line endings throughout, line folding at 75 octets, `escapeICSText` for commas/semicolons/backslashes/newlines, `foldLine` correctness, `generateExportFilename` pattern (almedalsstjarnan-starred-events-YYYYMMDD-HHMMSS.ics), empty events array produces valid VCALENDAR with zero VEVENTs, Swedish source label "Källa:", English source label "Source:"
     - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5, 12.6, 12.7, 3.10_
 
-  - [ ] 11.2 Write property tests for ICS (Properties 1, 8, 9, 10, 11)
+  - [x] 11.2 Write property tests for ICS (Properties 1, 8, 9, 10, 11)
     - Create `tests/property/ics-roundtrip.property.test.ts`: generate ICS then parse produces equivalent events. Min 100 iterations.
     - **Property 1: ICS round-trip preservation**
     - **Validates: Requirements 12.1, 12.3, 12.8, 12.9, 18.6**
@@ -239,19 +239,19 @@ This plan implements the Almedalsstjärnan Chrome extension from scratch using T
     - **Validates: Requirements 12.7**
     - _Requirements: 12.1, 12.3, 12.4, 12.5, 12.6, 12.7, 12.8, 12.9, 18.3, 18.6_
 
-  - [ ] 11.3 Implement src/core/ics-generator.ts
+  - [x] 11.3 Implement src/core/ics-generator.ts
     - Implement `generateICS(events, locale)`, `foldLine(line)`, `escapeICSText(text)`, and `generateExportFilename(now?)` as specified in design. VCALENDAR header with PRODID:-//Almedalsstjärnan//EN, each VEVENT includes DTSTAMP (export generation timestamp in YYYYMMDDTHHMMSSZ format), CRLF line endings, RFC 5545 line folding, UID format {id}@almedalsstjarnan, localized source label in DESCRIPTION, export filename pattern almedalsstjarnan-starred-events-YYYYMMDD-HHMMSS.ics.
     - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5, 12.6, 12.7_
 
-- [ ] 12. Checkpoint — Verify all shared core modules
+- [x] 12. Checkpoint — Verify all shared core modules
   - Ensure all unit tests and property tests pass (`pnpm run test:unit`, `pnpm run test:property`), typecheck passes.
 
-- [ ] 13. Background Service Worker
-  - [ ] 13.1 Write unit tests for Background Service Worker
+- [x] 13. Background Service Worker
+  - [x] 13.1 Write unit tests for Background Service Worker
     - Create `tests/unit/extension/background.test.ts` testing: STAR_EVENT handler adds event to storage with `starred: true` and a generated `starredAt` ISO 8601 UTC timestamp and responds success, UNSTAR_EVENT handler removes event from storage and responds success, GET_STAR_STATE returns true for starred event and false for unstarred, GET_ALL_STARRED_EVENTS returns array of all starred events (converted from object via Object.values), GET_SORT_ORDER returns current sort order from storage, GET_SORT_ORDER returns "chronological" when key missing, SET_SORT_ORDER persists sort order and responds success, starredEvents defaults to empty array when key missing, storage failure returns MessageResponseError with descriptive message, unknown command returns error response, STAR_EVENT handler converts NormalizedEvent to StarredEvent by adding `starred` and `starredAt` fields. All tests use mocked BrowserApiAdapter.
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8, 7.9, 7.10, 8.8_
 
-  - [ ] 13.2 Write property tests for Background (Properties 15, 16)
+  - [x] 13.2 Write property tests for Background (Properties 15, 16)
     - Create `tests/property/background-star-roundtrip.property.test.ts`: STAR_EVENT then GET_STAR_STATE returns true, then UNSTAR_EVENT then GET_STAR_STATE returns false. Min 100 iterations.
     - **Property 15: Background star/unstar round-trip**
     - **Validates: Requirements 7.2, 7.3, 7.4**
@@ -260,49 +260,46 @@ This plan implements the Almedalsstjärnan Chrome extension from scratch using T
     - **Validates: Requirements 7.6, 7.7**
     - _Requirements: 7.2, 7.3, 7.4, 7.6, 7.7, 18.3_
 
-  - [ ] 13.3 Implement src/extension/background.ts
+  - [x] 13.3 Implement src/extension/background.ts
     - Implement background service worker with `chrome.runtime.onMessage` listener dispatching to handler functions for all six commands. Use BrowserApiAdapter for all storage operations. Apply defaults (empty object for starredEvents, "chronological" for sortOrder). Wrap all handlers in try/catch returning MessageResponseError on failure. STAR_EVENT handler must convert the incoming NormalizedEvent to a StarredEvent by adding `starred: true` and `starredAt: new Date().toISOString()` before persisting.
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8, 7.9, 7.10, 8.1, 8.8, 8.9, 8.10_
 
-- [ ] 14. Star Button (Shadow DOM)
-  - [ ] 14.1 Write unit tests for Star Button
+- [x] 14. Star Button (Shadow DOM)
+  - [x] 14.1 Write unit tests for Star Button
     - Create `tests/unit/extension/star-button.test.ts` testing: creates Shadow DOM on host element, renders button with correct initial aria-pressed state, renders outlined SVG when unstarred, renders filled SVG when starred, aria-label set to localized "Star event" when unstarred, aria-label set to localized "Unstar event" when starred, click calls onStar callback when unstarred, click calls onUnstar callback when starred, update(true) switches to starred state, update(false) switches to unstarred state, destroy() removes Shadow DOM content, button is focusable (tabindex), button activates on Enter and Space, 32px minimum clickable area, 16px SVG icon
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 14.1, 14.2, 14.3, 14.4_
 
-  - [ ] 14.2 Write property test for Star Button ARIA (Property 13)
+  - [x] 14.2 Write property test for Star Button ARIA (Property 13)
     - Create `tests/property/star-button-aria.property.test.ts`: for any starred/unstarred state, aria-pressed and aria-label are correct. Min 100 iterations.
     - **Property 13: Star button ARIA state correctness**
     - **Validates: Requirements 5.4, 5.5, 14.3, 14.4**
     - _Requirements: 5.4, 5.5, 14.3, 14.4_
 
-  - [ ] 14.3 Create src/extension/star-button.css
+  - [x] 14.3 Create src/extension/star-button.css
     - Write plain scoped CSS for Shadow DOM: `.star-btn` with 32px clickable area, transparent background, hover state, focus-visible outline (2px solid #2563eb), SVG 16px, filled star color #f59e0b when aria-pressed="true", outlined stroke #6b7280 when aria-pressed="false". No Tailwind.
     - _Requirements: 1.9, 5.1, 14.7_
 
-  - [ ] 14.4 Implement src/extension/star-button.ts
+  - [x] 14.4 Implement src/extension/star-button.ts
     - Implement `createStarButton(hostElement, options)` returning `{ update, destroy }`. Create Shadow DOM (open mode), inject scoped CSS from star-button.css, render button with inline SVG (16px viewBox star path), wire click handler to toggle star/unstar via callbacks, set aria-pressed and aria-label based on state. Export `STAR_OUTLINED_SVG` and `STAR_FILLED_SVG` constants.
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 5.10, 14.1, 14.2, 14.3, 14.4_
 
-- [ ] 15. Content Script
-  - [ ] 15.1 Write unit tests for Content Script
+- [x] 15. Content Script
+  - [x] 15.1 Write unit tests for Content Script
     - Create `tests/unit/extension/content-script.test.ts` testing: `initContentScript` scans existing DOM for Event_Cards and injects Star_Buttons, creates exactly one MutationObserver, MutationObserver callback processes new Event_Cards, sets `data-almedals-planner-initialized="1"` after injection, skips cards already marked with `data-almedals-planner-initialized="1"`, skips cards where normalizeEvent returns error (no throw), `isEventCard` correctly identifies Event_Card elements, `findEventCards` returns all Event_Cards in a root, `processEventCard` sends GET_STAR_STATE to determine initial state, maintains an internal `eventId → StarButton[]` map so that when one star button is toggled all other visible star buttons for the same event ID update within the same tab (cross-page consistency), registers an `onStorageChanged` listener via adapter that updates all visible star buttons when `starredEvents` changes externally (cross-tab consistency), uses DOM fixture for realistic testing. All tests use mocked BrowserApiAdapter.
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 20.1, 20.2, 20.3_
 
-  - [ ] 15.2 Write property test for Content Script injection idempotence (Property 12)
+  - [x] 15.2 Write property test for Content Script injection idempotence (Property 12)
     - Create `tests/property/content-script-idempotence.property.test.ts`: running injection twice produces same number of Star_Buttons as once. Min 100 iterations.
     - **Property 12: Content script injection idempotence**
     - **Validates: Requirements 4.4, 4.5, 20.3**
     - _Requirements: 4.4, 4.5, 20.3_
 
-  - [ ] 15.3 Implement src/extension/content-script.ts
+  - [x] 15.3 Implement src/extension/content-script.ts
     - Implement `initContentScript(adapter)`, `processEventCard(card, adapter)`, `isEventCard(element)`, `findEventCards(root)`. On load: scan DOM, inject Star_Buttons in Shadow DOM. Create one MutationObserver (childList, subtree) on document.body. Process new cards on mutation. Mark processed cards with `data-almedals-planner-initialized="1"`. Skip already-initialized cards. Skip cards where normalizeEvent fails (log warning, no throw). Send GET_STAR_STATE for initial button state. Wire star/unstar click handlers to send STAR_EVENT/UNSTAR_EVENT messages. Maintain an internal `Map<EventId, StarButton[]>` so that after toggling one star button, all other visible star buttons for the same event ID are updated immediately (cross-page consistency within same tab). Register an `adapter.onStorageChanged` listener that, when `starredEvents` changes, iterates all tracked star buttons and updates their visual state to match the new storage state (cross-tab consistency).
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 5.6, 5.7, 5.8, 5.9, 5.10, 20.1, 20.2, 20.3, 20.4_
 
-- [ ] 16. Checkpoint — Verify extension modules (background, star button, content script)
+- [x] 16. Checkpoint — Verify extension modules (background, star button, content script)
   - Ensure all tests pass (`pnpm run test:unit`, `pnpm run test:property`), typecheck passes.
-  - ⚠️ HUMAN REVIEW REQUIRED: Build the extension (`pnpm run build`), load it as unpacked in Chrome, and visually verify the star button on almedalsveckan.info: (1) outlined star icon is visible at 16px inside a 32px clickable area, (2) clicking toggles to filled star, (3) clicking again toggles back to outlined, (4) focus ring is visible when tabbing to the button, (5) hover state shows subtle background. Do not proceed to task 17 until the user confirms the star button renders correctly.
-  - 🔄 START A NEW CHAT SESSION after this checkpoint before proceeding to task 17. This keeps context fresh for the next batch of tasks.
-  - 🔄 START A NEW CHAT SESSION after this checkpoint before proceeding to task 17. This keeps context fresh for the next batch of tasks.
 
 - [ ] 17. Shared UI components
   - [ ] 17.1 Write unit tests for shared SortSelector component
@@ -364,9 +361,7 @@ This plan implements the Almedalsstjärnan Chrome extension from scratch using T
 
 - [ ] 20. Checkpoint — Verify all UI components
   - Ensure all tests pass (`pnpm run test:unit`, `pnpm run test:property`), typecheck passes.
-  - ⚠️ HUMAN REVIEW REQUIRED: Build the extension, load as unpacked in Chrome, and visually verify: (1) Popup opens at 360px width with correct layout — title, event count, sort selector, event list, "Open full list" button, (2) Popup shows localized empty state when no events are starred, (3) Stars page opens from popup in a new tab, (4) Stars page shows 6-column grid with correct column headers, (5) Sort selector works in both popup and stars page, (6) Export button is visible and labeled correctly, (7) All text is in Swedish (default locale). Do not proceed to task 21 until the user confirms both UI surfaces render correctly.
-  - 🔄 START A NEW CHAT SESSION after this checkpoint before proceeding to task 21. This keeps context fresh for the next batch of tasks.
-  - 🔄 START A NEW CHAT SESSION after this checkpoint before proceeding to task 21. This keeps context fresh for the next batch of tasks.
+  - ⚠️ HUMAN REVIEW REQUIRED: Build the extension (`pnpm run build`), load as unpacked in Chrome, and visually verify: (1) Star button on almedalsveckan.info — outlined star icon at 16px inside 32px clickable area, clicking toggles to filled star, clicking again toggles back, focus ring visible when tabbing, hover state shows subtle background, (2) Popup opens at 360px width with correct layout — title, sort selector, event list, "Open full list" button, (3) Popup shows localized empty state when no events are starred, (4) Stars page opens from popup in a new tab, (5) Stars page shows 6-column grid with correct column headers, (6) Sort selector works in both popup and stars page, (7) Export button is visible and labeled correctly, (8) All text is in Swedish (default locale). Do not proceed to task 21 until the user confirms the extension renders correctly.
 
 - [ ] 21. Integration wiring and cross-module imports
   - [ ] 21.1 Wire content script entry point
@@ -418,8 +413,6 @@ This plan implements the Almedalsstjärnan Chrome extension from scratch using T
 - [ ] 24. Checkpoint — Verify full build, all tests, and CI config
   - Ensure `pnpm run build` succeeds, `pnpm run test:unit` passes, `pnpm run test:property` passes, `pnpm run lint` passes, `pnpm run typecheck` passes. Verify bundle sizes.
   - ⚠️ HUMAN REVIEW REQUIRED: Load the built extension as unpacked in Chrome and perform a full manual test on the live almedalsveckan.info site: (1) navigate to a programme listing page, (2) verify star buttons appear on all event cards, (3) star 3+ events, (4) open popup and verify starred events appear, (5) change sort order in popup, (6) open stars page from popup, (7) verify all starred events in 6-column grid, (8) change sort order on stars page, (9) unstar one event from stars page and verify it disappears, (10) click export and verify .ics file downloads with correct filename, (11) open the .ics file in a calendar app and verify events are correct. Do not proceed to task 25 until the user confirms the extension works end-to-end on the live site.
-  - 🔄 START A NEW CHAT SESSION after this checkpoint before proceeding to task 25. This keeps context fresh for the final batch of tasks.
-  - 🔄 START A NEW CHAT SESSION after this checkpoint before proceeding to task 25. This keeps context fresh for the final batch of tasks.
 
 - [ ] 25. E2E tests
   - [ ] 25.1 Write E2E test: star/unstar flow
@@ -447,4 +440,4 @@ This plan implements the Almedalsstjärnan Chrome extension from scratch using T
 - Checkpoints ensure incremental validation at each major phase boundary.
 - All browser API access goes through `IBrowserApiAdapter` — no direct `chrome.*` calls outside `browser-api-adapter.ts`.
 - **Git workflow**: Commit and push after completing each top-level task. Do not batch multiple top-level tasks into one commit. This is enforced via the commit-messages steering file.
-- **Human review checkpoints** (marked with ⚠️) are non-skippable gates where automated tests are insufficient. These require the user to visually inspect rendered UI, verify DOM fixtures against the live site, or perform manual acceptance testing. The agent must stop and wait for explicit user confirmation before proceeding past these checkpoints. There are 5 human review points: after task 3.5 (DOM fixture), checkpoint 16 (star button visual), checkpoint 20 (popup + stars page visual), checkpoint 24 (live-site integration), and checkpoint 26 (final acceptance).
+- **Human review checkpoints** (marked with ⚠️) are non-skippable gates where automated tests are insufficient. These require the user to visually inspect rendered UI, verify DOM fixtures against the live site, or perform manual acceptance testing. The agent must stop and wait for explicit user confirmation before proceeding past these checkpoints. There are 4 human review points: after task 3.5 (DOM fixture), checkpoint 20 (extension visual review including star button, popup, and stars page), checkpoint 24 (live-site integration), and checkpoint 26 (final acceptance).

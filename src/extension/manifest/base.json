@@ -7,18 +7,18 @@
   "permissions": ["storage", "downloads", "tabs"],
   "host_permissions": ["*://almedalsveckan.info/*"],
   "background": {
-    "service_worker": "background.js",
+    "service_worker": "src/extension/background.ts",
     "type": "module"
   },
   "content_scripts": [
     {
       "matches": ["*://almedalsveckan.info/*"],
-      "js": ["content-script.js"],
+      "js": ["src/extension/content-script.ts"],
       "run_at": "document_idle"
     }
   ],
   "action": {
-    "default_popup": "popup.html",
+    "default_popup": "src/ui/popup/popup.html",
     "default_icon": {
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png",
