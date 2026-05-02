@@ -130,12 +130,12 @@ This plan implements the Almedalsstjärnan Chrome extension from scratch using T
     - Implement `createMockEventCard(overrides?)` that builds a DOM element matching the almedalsveckan.info Event_Card structure, and `loadFixture()` that reads and parses `fixtures/almedalsveckan-program-2026.html`
     - _Requirements: 18.5, 18.10_
 
-- [ ] 5. Browser API Adapter
-  - [ ] 5.1 Write unit tests for Browser API Adapter
+- [x] 5. Browser API Adapter
+  - [x] 5.1 Write unit tests for Browser API Adapter
     - Create `tests/unit/core/browser-api-adapter.test.ts` testing: `storageLocalGet` delegates to `chrome.storage.local.get`, `storageLocalSet` delegates to `chrome.storage.local.set`, `sendMessage` delegates to `chrome.runtime.sendMessage`, `getMessage` delegates to `chrome.i18n.getMessage`, `download` delegates to `chrome.downloads.download`, `createTab` delegates to `chrome.tabs.create`, `onStorageChanged` registers a listener on `chrome.storage.onChanged.addListener` and returns an unsubscribe function that calls `chrome.storage.onChanged.removeListener`, error wrapping (rejects with descriptive error including method name), Promise-based interface for all async methods
     - _Requirements: 13.1, 13.2, 13.3, 13.5_
 
-  - [ ] 5.2 Implement src/core/browser-api-adapter.ts
+  - [x] 5.2 Implement src/core/browser-api-adapter.ts
     - Implement `BrowserApiAdapter` class implementing `IBrowserApiAdapter`, wrapping all seven methods (storageLocalGet, storageLocalSet, sendMessage, getMessage, download, createTab, onStorageChanged) with Promise-based interface and descriptive error rejection. `onStorageChanged` wraps `chrome.storage.onChanged.addListener` and returns an unsubscribe function. Implement `createBrowserApiAdapter()` factory function. This is the SOLE module referencing `chrome.*` globals.
     - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5_
 

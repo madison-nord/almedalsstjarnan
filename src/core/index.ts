@@ -30,3 +30,5 @@ export type {
 } from './types';
 
 export { SORT_ORDERS, DEFAULT_SORT_ORDER, MESSAGE_COMMANDS } from './types';
+
+export { BrowserApiAdapter, createBrowserApiAdapter } from './browser-api-adapter';
