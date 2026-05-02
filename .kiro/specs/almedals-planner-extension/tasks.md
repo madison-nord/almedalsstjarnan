@@ -301,57 +301,57 @@ This plan implements the Almedalsstjärnan Chrome extension from scratch using T
 - [x] 16. Checkpoint — Verify extension modules (background, star button, content script)
   - Ensure all tests pass (`pnpm run test:unit`, `pnpm run test:property`), typecheck passes.
 
-- [ ] 17. Shared UI components
-  - [ ] 17.1 Write unit tests for shared SortSelector component
+- [x] 17. Shared UI components
+  - [x] 17.1 Write unit tests for shared SortSelector component
     - Create `tests/unit/ui/shared/SortSelector.test.tsx` testing: renders native HTML select element, displays all four sort options with localized labels (via mocked getMessage), calls onChange callback when selection changes, reflects current sort order as selected value, uses aria-label from localized sortLabel key, keyboard navigable (Tab, Enter, Space)
     - _Requirements: 9.5, 10.4, 14.5, 14.6, 14.8_
 
-  - [ ] 17.2 Implement src/ui/shared/SortSelector.tsx
+  - [x] 17.2 Implement src/ui/shared/SortSelector.tsx
     - Implement shared `SortSelector` React component used by both Popup and Stars Page. Native HTML `<select>` element with four options (chronological, reverse-chronological, alphabetical-by-title, starred-desc). All labels via `chrome.i18n.getMessage` through adapter. Props: `currentOrder`, `onOrderChange`, `adapter`.
     - _Requirements: 9.5, 10.4, 14.8_
 
-- [ ] 18. Popup UI
-  - [ ] 18.1 Create src/ui/popup/popup.html
+- [x] 18. Popup UI
+  - [x] 18.1 Create src/ui/popup/popup.html
     - Create popup HTML entry point with root div, script tag pointing to popup.tsx, link to popup.css. Set `<html lang>` dynamically or use default.
     - _Requirements: 2.8, 9.1_
 
-  - [ ] 18.2 Create src/ui/popup/popup.tsx and popup.css
+  - [x] 18.2 Create src/ui/popup/popup.tsx and popup.css
     - Create React entry point rendering App into root div. Import Tailwind via popup.css (`@tailwind base; @tailwind components; @tailwind utilities;`).
     - _Requirements: 9.10, 9.11_
 
-  - [ ] 18.3 Write unit tests for Popup App
+  - [x] 18.3 Write unit tests for Popup App
     - Create `tests/unit/ui/popup/App.test.tsx` testing: sends GET_ALL_STARRED_EVENTS and GET_SORT_ORDER on mount, displays up to 20 starred events, displays each event with title/organiser/date-time/location, renders SortSelector with current sort order, changing sort order sends SET_SORT_ORDER and re-sorts list, displays "Open full list" button, clicking "Open full list" calls createTab with stars.html URL, displays localized empty state when no starred events, renders at 360px width, uses Tailwind classes for styling, keyboard navigable (Tab, Shift+Tab, Enter, Space), registers an `onStorageChanged` listener via adapter that re-fetches and re-renders the event list when `starredEvents` changes externally (live update from content script or other tabs)
     - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.7, 9.8, 9.9, 9.10, 9.11, 14.5_
 
-  - [ ] 18.4 Implement src/ui/popup/App.tsx
+  - [x] 18.4 Implement src/ui/popup/App.tsx
     - Implement main Popup App component: on mount send GET_ALL_STARRED_EVENTS and GET_SORT_ORDER via adapter, display up to 20 events sorted by current order using Sorter, render SortSelector, handle sort order change (send SET_SORT_ORDER, re-sort), render "Open full list" button (opens stars.html via createTab), render empty state when no events. Register an `adapter.onStorageChanged` listener that re-fetches starred events and re-renders the list when `starredEvents` changes externally. Clean up the listener on unmount. All strings via i18n.
     - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.7, 9.8, 9.9_
 
-  - [ ] 18.5 Implement Popup sub-components
+  - [x] 18.5 Implement Popup sub-components
     - Create `src/ui/popup/components/EventList.tsx`: renders list of events (max 20)
     - Create `src/ui/popup/components/EventItem.tsx`: renders single event with title, organiser, date-time, location
     - Create `src/ui/popup/components/EmptyState.tsx`: renders localized empty state message
     - Create `src/ui/popup/hooks/useStarredEvents.ts`: custom hook encapsulating fetch and sort logic
     - _Requirements: 9.3, 9.4, 9.9_
 
-- [ ] 19. Stars Page
-  - [ ] 19.1 Create src/ui/stars/stars.html
+- [x] 19. Stars Page
+  - [x] 19.1 Create src/ui/stars/stars.html
     - Create stars page HTML entry point with root div, script tag pointing to stars.tsx, link to stars.css.
     - _Requirements: 10.1_
 
-  - [ ] 19.2 Create src/ui/stars/stars.tsx and stars.css
+  - [x] 19.2 Create src/ui/stars/stars.tsx and stars.css
     - Create React entry point rendering App into root div. Import Tailwind via stars.css.
     - _Requirements: 10.11, 10.12_
 
-  - [ ] 19.3 Write unit tests for Stars Page App
+  - [x] 19.3 Write unit tests for Stars Page App
     - Create `tests/unit/ui/stars/App.test.tsx` testing: sends GET_ALL_STARRED_EVENTS and GET_SORT_ORDER on mount, displays all starred events in 6-column grid (title, organiser, date-time, location, topic, actions), renders SortSelector with current sort order, changing sort order sends SET_SORT_ORDER and re-sorts, displays export button with localized "Export to calendar" label, clicking export triggers ICS generation and download with correct filename pattern, displays unstar action per event row, clicking unstar sends UNSTAR_EVENT and removes event from list, displays localized empty state when no events, uses Tailwind classes, keyboard navigable, column headers use localized labels (columnTitle, columnOrganiser, columnDateTime, columnLocation, columnTopic, columnActions), registers an `onStorageChanged` listener via adapter that re-fetches and re-renders the event list when `starredEvents` changes externally (live update from content script or other tabs)
     - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6, 10.7, 10.8, 10.9, 10.10, 10.11, 10.12, 14.6_
 
-  - [ ] 19.4 Implement src/ui/stars/App.tsx
+  - [x] 19.4 Implement src/ui/stars/App.tsx
     - Implement main Stars Page App component: on mount send GET_ALL_STARRED_EVENTS and GET_SORT_ORDER, display all events in 6-column grid sorted by current order, render SortSelector, handle sort order change, render export button (generates ICS via generateICS, creates Blob URL, triggers download via adapter with filename from generateExportFilename), render unstar action per row (sends UNSTAR_EVENT, removes from list), render empty state. Register an `adapter.onStorageChanged` listener that re-fetches starred events and re-renders the list when `starredEvents` changes externally. Clean up the listener on unmount. All strings via i18n.
     - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6, 10.7, 10.8, 10.9, 10.10_
 
-  - [ ] 19.5 Implement Stars Page sub-components
+  - [x] 19.5 Implement Stars Page sub-components
     - Create `src/ui/stars/components/EventGrid.tsx`: renders 6-column grid with header row using localized column labels
     - Create `src/ui/stars/components/EventRow.tsx`: renders single event row with all six columns including unstar action
     - Create `src/ui/stars/components/ExportButton.tsx`: renders export button, handles ICS generation and download
@@ -359,54 +359,54 @@ This plan implements the Almedalsstjärnan Chrome extension from scratch using T
     - Create `src/ui/stars/hooks/useStarredEvents.ts`: custom hook for fetch, sort, unstar, and export logic
     - _Requirements: 10.3, 10.6, 10.7, 10.8, 10.9, 10.10_
 
-- [ ] 20. Checkpoint — Verify all UI components
+- [x] 20. Checkpoint — Verify all UI components
   - Ensure all tests pass (`pnpm run test:unit`, `pnpm run test:property`), typecheck passes.
   - ⚠️ HUMAN REVIEW REQUIRED: Build the extension (`pnpm run build`), load as unpacked in Chrome, and visually verify: (1) Star button on almedalsveckan.info — outlined star icon at 16px inside 32px clickable area, clicking toggles to filled star, clicking again toggles back, focus ring visible when tabbing, hover state shows subtle background, (2) Popup opens at 360px width with correct layout — title, sort selector, event list, "Open full list" button, (3) Popup shows localized empty state when no events are starred, (4) Stars page opens from popup in a new tab, (5) Stars page shows 6-column grid with correct column headers, (6) Sort selector works in both popup and stars page, (7) Export button is visible and labeled correctly, (8) All text is in Swedish (default locale). Do not proceed to task 21 until the user confirms the extension renders correctly.
 
-- [ ] 21. Integration wiring and cross-module imports
-  - [ ] 21.1 Wire content script entry point
+- [x] 21. Integration wiring and cross-module imports
+  - [x] 21.1 Wire content script entry point
     - Ensure `src/extension/content-script.ts` imports and calls `initContentScript` with a real `BrowserApiAdapter` instance on load. Verify the content script bundle is self-contained and uses `#core/*` and `#extension/*` path aliases for all cross-module imports.
     - _Requirements: 4.1, 8.9, 17.4_
 
-  - [ ] 21.2 Wire background service worker entry point
+  - [x] 21.2 Wire background service worker entry point
     - Ensure `src/extension/background.ts` registers the `chrome.runtime.onMessage` listener on load with a real `BrowserApiAdapter` instance. Verify it uses `#core/*` path aliases.
     - _Requirements: 7.1, 8.9, 8.10, 17.4_
 
-  - [ ] 21.3 Wire Popup UI to background via message passing
+  - [x] 21.3 Wire Popup UI to background via message passing
     - Ensure Popup App sends messages via `BrowserApiAdapter.sendMessage` for GET_ALL_STARRED_EVENTS, GET_SORT_ORDER, SET_SORT_ORDER. Verify the popup entry point creates a real adapter instance and passes it through component tree.
     - _Requirements: 8.9, 8.10, 9.2, 9.6_
 
-  - [ ] 21.4 Wire Stars Page to background and ICS generator
+  - [x] 21.4 Wire Stars Page to background and ICS generator
     - Ensure Stars Page App sends messages via adapter for GET_ALL_STARRED_EVENTS, GET_SORT_ORDER, SET_SORT_ORDER, UNSTAR_EVENT. Ensure export flow calls `generateICS` from `#core/ics-generator`, creates Blob URL, and calls `adapter.download` with filename from `generateExportFilename`. Verify all cross-module imports use `#core/*` aliases.
     - _Requirements: 8.9, 8.10, 10.2, 10.5, 10.7, 12.7_
 
-  - [ ] 21.5 Update src/core/index.ts barrel exports
+  - [x] 21.5 Update src/core/index.ts barrel exports
     - Ensure index.ts re-exports all public functions and types from: types, browser-api-adapter, event-normalizer, ics-generator, ics-parser, sorter
     - _Requirements: 19.4_
 
-- [ ] 22. Kiro hooks
-  - [ ] 22.1 Create Kiro hook: lint on file save
+- [x] 22. Kiro hooks
+  - [x] 22.1 Create Kiro hook: lint on file save
     - Create `.kiro/hooks/lint-on-save.kiro.md` hook configuration: event `fileEdited`, file patterns `src/**/*.ts, src/**/*.tsx`, action `askAgent`, prompt "Run `pnpm run lint` and report any errors. If there are fixable errors, run `pnpm run lint:fix` and report what was fixed."
     - _Requirements: 19.3_
 
-  - [ ] 22.2 Create Kiro hook: typecheck on file save
+  - [x] 22.2 Create Kiro hook: typecheck on file save
     - Create `.kiro/hooks/typecheck-on-save.kiro.md` hook configuration: event `fileEdited`, file patterns `src/**/*.ts, src/**/*.tsx`, action `askAgent`, prompt "Run `pnpm run typecheck` and report any type errors found."
     - _Requirements: 19.3_
 
-  - [ ] 22.3 Create Kiro hook: run related tests on file save
+  - [x] 22.3 Create Kiro hook: run related tests on file save
     - Create `.kiro/hooks/test-on-save.kiro.md` hook configuration: event `fileEdited`, file patterns `src/**/*.ts, src/**/*.tsx, tests/**/*.test.ts, tests/**/*.test.tsx`, action `askAgent`, prompt "Identify the test file(s) related to the edited file and run them with `pnpm exec vitest run --reporter=verbose {test_file}`. Report pass/fail results."
     - _Requirements: 19.3_
 
-- [ ] 23. CI pipeline and build/package scripts
-  - [ ] 23.1 Create .github/workflows/ci.yml
+- [x] 23. CI pipeline and build/package scripts
+  - [x] 23.1 Create .github/workflows/ci.yml
     - Write GitHub Actions CI workflow: trigger on push to main and pull requests, ubuntu-latest runner, Node.js 20, pnpm 9 with action-setup, install with --frozen-lockfile, run lint, typecheck, test:unit, test:property, build, verify bundle sizes (content-script.js < 50KB, total dist < 500KB). Fail on any error.
     - _Requirements: 1.12, 17.6, 17.7, 15.5, 15.6_
 
-  - [ ] 23.2 Verify build produces correct dist/ output
+  - [x] 23.2 Verify build produces correct dist/ output
     - Run `pnpm run build` and verify dist/ contains: manifest.json (merged), _locales/sv/messages.json, _locales/en/messages.json, background.js, content-script.js, popup.html, popup.js, popup.css, stars.html, stars.js, stars.css, icons/icon-*.png. Verify content-script.js < 50KB, total dist < 500KB.
     - _Requirements: 17.1, 17.3, 17.4, 17.5, 15.5, 15.6_
 
-  - [ ] 23.3 Verify package command produces .zip
+  - [x] 23.3 Verify package command produces .zip
     - Run `pnpm run package` and verify it produces `almedalsstjarnan.zip` suitable for Chrome Web Store upload
     - _Requirements: 17.2_
 
