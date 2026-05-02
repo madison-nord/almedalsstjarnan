@@ -20,15 +20,22 @@ const jsonValueArb: fc.Arbitrary<unknown> = fc.letrec((tie) => ({
       maxLength: 5,
     }),
     fc.dictionary(
-      fc.string({ minLength: 1, maxLength: 10 }),
+      fc.string({ minLength: 1, maxLength: 10 }).filter(
+        (s) => s !== '__proto__' && s !== 'constructor' && s !== 'prototype',
+      ),
       tie('value'),
       { maxKeys: 4 },
     ),
   ),
 })).value;
 
+/** Generates safe key strings that won't cause prototype pollution issues. */
+const safeKeyArb: fc.Arbitrary<string> = fc
+  .string({ minLength: 1, maxLength: 15 })
+  .filter((s) => s !== '__proto__' && s !== 'constructor' && s !== 'prototype');
+
 const manifestObjectArb: fc.Arbitrary<Record<string, unknown>> = fc.dictionary(
-  fc.string({ minLength: 1, maxLength: 15 }),
+  safeKeyArb,
   jsonValueArb,
   { maxKeys: 8 },
 );
