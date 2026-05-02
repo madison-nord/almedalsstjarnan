@@ -1,0 +1,62 @@
+{
+  "name": "almedalsstjarnan",
+  "version": "0.1.0",
+  "description": "Chrome extension to star events on almedalsveckan.info and export as ICS calendar",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md,cjs}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,json,md,cjs}\"",
+    "test:unit": "vitest run --config vitest.config.ts --passWithNoTests",
+    "test:property": "vitest run --config vitest.config.ts --testPathPattern=property --passWithNoTests",
+    "test:e2e": "playwright test",
+    "test": "vitest run --config vitest.config.ts --passWithNoTests",
+    "package": "pnpm run build && cd dist && tar -cf ../almedalsstjarnan.zip ."
+  },
+  "keywords": [
+    "chrome-extension",
+    "almedalsveckan",
+    "ics",
+    "calendar"
+  ],
+  "author": "",
+  "license": "MIT",
+  "packageManager": "pnpm@10.33.2",
+  "dependencies": {
+    "react": "19.2.5",
+    "react-dom": "19.2.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.59.1",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.2",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@typescript-eslint/eslint-plugin": "8.59.1",
+    "@typescript-eslint/parser": "8.59.1",
+    "@vitejs/plugin-react": "6.0.1",
+    "autoprefixer": "10.5.0",
+    "chrome-types": "0.1.425",
+    "eslint": "9.28.0",
+    "eslint-plugin-react": "7.37.5",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "fast-check": "4.7.0",
+    "jsdom": "29.1.1",
+    "playwright": "1.59.1",
+    "postcss": "8.5.13",
+    "prettier": "3.8.3",
+    "tailwindcss": "3.4.17",
+    "typescript": "6.0.3",
+    "vite": "8.0.10",
+    "vite-plugin-web-extension": "4.5.1",
+    "vitest": "4.1.5"
+  }
+}

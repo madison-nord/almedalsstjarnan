@@ -6,101 +6,101 @@ This plan implements the Almedalsstjärnan Chrome extension from scratch using T
 
 ## Tasks
 
-- [ ] 1. Project scaffolding and configuration
-  - [ ] 1.1 Initialize pnpm project with package.json
+- [x] 1. Project scaffolding and configuration
+  - [x] 1.1 Initialize pnpm project with package.json
     - Run `pnpm init` and configure package.json with name `almedalsstjarnan`, version `0.1.0`, `"type": "module"`, engines `{ "node": ">=20" }`, and all scripts: `dev`, `build`, `preview`, `typecheck`, `lint`, `lint:fix`, `format`, `format:check`, `test:unit`, `test:property`, `test:e2e`, `test`, `package`
     - _Requirements: 1.1, 1.2, 1.13, 1.14, 17.1, 17.2_
 
-  - [ ] 1.2 Create .nvmrc
+  - [x] 1.2 Create .nvmrc
     - Create `.nvmrc` with content `20`
     - _Requirements: 1.2_
 
-  - [ ] 1.3 Update .gitignore for extension project
+  - [x] 1.3 Update .gitignore for extension project
     - Add `dist/`, `coverage/`, `.vite/`, `*.tsbuildinfo`, `pnpm-store/`, `*.zip` to the existing .gitignore
     - _Requirements: 1.10_
 
-  - [ ] 1.4 Install core dependencies
+  - [x] 1.4 Install core dependencies
     - Install production deps: `react`, `react-dom`
     - Install dev deps: `typescript`, `vite`, `@vitejs/plugin-react`, `vite-plugin-web-extension`, `tailwindcss`, `postcss`, `autoprefixer`, `eslint`, `prettier`, `@typescript-eslint/eslint-plugin`, `@typescript-eslint/parser`, `eslint-plugin-react`, `eslint-plugin-react-hooks`, `vitest`, `fast-check`, `@testing-library/react`, `@testing-library/jest-dom`, `jsdom`, `playwright`, `@playwright/test`, `chrome-types`, `@types/react`, `@types/react-dom`
     - All versions pinned (exact) in package.json
     - _Requirements: 1.1, 1.3, 1.6, 1.7, 1.8_
 
-  - [ ] 1.5 Create tsconfig.json and tsconfig.node.json
+  - [x] 1.5 Create tsconfig.json and tsconfig.node.json
     - Configure strict mode, `noUncheckedIndexedAccess: true`, `noImplicitOverride: true`, `jsx: "react-jsx"`, `moduleResolution: "bundler"`, path aliases `#core/*`, `#ui/*`, `#features/*`, `#extension/*`, `#test/*` as specified in design
     - Create tsconfig.node.json for Vite config files
     - _Requirements: 1.4, 1.5_
 
-  - [ ] 1.6 Create vite.config.ts
+  - [x] 1.6 Create vite.config.ts
     - Configure `vite-plugin-web-extension` with manifest merge function, `@vitejs/plugin-react`, path alias resolution for all five `#` aliases, output to `dist/`, sourcemaps in dev only
     - _Requirements: 1.3, 1.5, 17.3, 17.4, 17.5_
 
-  - [ ] 1.7 Create vitest.config.ts
+  - [x] 1.7 Create vitest.config.ts
     - Configure jsdom environment, globals enabled, path aliases matching vite.config.ts, include patterns for `tests/unit/**/*.test.{ts,tsx}` and `tests/property/**/*.property.test.ts`, coverage provider v8 for `src/core/**/*.ts`, setupFiles pointing to `tests/helpers/mock-browser-api.ts`
     - _Requirements: 1.7, 18.2, 18.3_
 
-  - [ ] 1.8 Create tailwind.config.ts and postcss.config.cjs
+  - [x] 1.8 Create tailwind.config.ts and postcss.config.cjs
     - Tailwind content scoped to `src/ui/popup/**`, `src/ui/stars/**`, `src/ui/shared/**` only — never content script
     - PostCSS config with tailwindcss and autoprefixer plugins
     - _Requirements: 1.8, 1.9_
 
-  - [ ] 1.9 Create .eslintrc.cjs and .prettierrc.json
+  - [x] 1.9 Create .eslintrc.cjs and .prettierrc.json
     - ESLint with TypeScript parser, React plugin, React Hooks plugin, strict rules
     - Prettier with consistent formatting rules (singleQuote, trailingComma, semi)
     - _Requirements: 1.6_
 
-  - [ ] 1.10 Create playwright.config.ts
+  - [x] 1.10 Create playwright.config.ts
     - Configure Playwright for Chrome extension testing, test directory `tests/e2e/`, timeout settings
     - _Requirements: 1.7, 18.4_
 
-  - [ ] 1.11 Create extension icon placeholders
+  - [x] 1.11 Create extension icon placeholders
     - Create `icons/icon-16.png`, `icons/icon-32.png`, `icons/icon-48.png`, `icons/icon-128.png` as placeholder star icons at correct dimensions
     - _Requirements: 2.8_
 
-  - [ ] 1.12 Create directory structure
+  - [x] 1.12 Create directory structure
     - Create all directories: `src/core/`, `src/extension/manifest/`, `src/ui/popup/components/`, `src/ui/popup/hooks/`, `src/ui/stars/components/`, `src/ui/stars/hooks/`, `src/ui/shared/`, `src/features/`, `tests/unit/core/`, `tests/unit/extension/`, `tests/unit/ui/popup/`, `tests/unit/ui/stars/`, `tests/unit/ui/shared/`, `tests/property/`, `tests/e2e/`, `tests/helpers/`, `fixtures/`, `_locales/sv/`, `_locales/en/`, `.github/workflows/`
     - _Requirements: 19.4_
 
-  - [ ] 1.13 Create README.md
+  - [x] 1.13 Create README.md
     - Write comprehensive README with: project purpose (Almedalsstjärnan extension), prerequisites (Node.js 20+, pnpm), setup instructions (`pnpm install`), available scripts table, architecture overview (6 modules), module descriptions, contribution guidelines
     - _Requirements: 1.11, 19.1_
 
-  - [ ] 1.14 Create .kiro/steering/coding-conventions.md (always included)
+  - [x] 1.14 Create .kiro/steering/coding-conventions.md (always included)
     - Write coding conventions steering file covering: TypeScript strict mode with noUncheckedIndexedAccess and noImplicitOverride, `readonly` for all interface properties, no `any` (use `unknown` and narrow), `const` assertions for literal types, discriminated unions for result types (ok/error pattern). Import ordering: external libs → #core → #extension → #ui → #features → #test → relative. Never use relative imports that cross module boundaries. Naming: kebab-case files, PascalCase types/interfaces, camelCase functions, UPPER_SNAKE_CASE constants. React: functional components only, Props interfaces named {Component}Props, hooks in dedicated hooks/ directories, no inline styles. CSS: Tailwind for popup and stars page ONLY, plain scoped CSS inside Shadow DOM for star buttons, no Tailwind in content script. File structure: one exported function/class per file where practical, test files mirror source structure.
     - _Requirements: 19.2_
 
-  - [ ] 1.15 Create .kiro/steering/testing-standards.md (always included)
+  - [x] 1.15 Create .kiro/steering/testing-standards.md (always included)
     - Write testing standards steering file covering: TDD workflow (write failing test → minimal implementation → refactor → repeat), all tests mandatory (never optional), test file naming ({module}.test.ts for unit, {module}.property.test.ts for property, {flow}.e2e.test.ts for E2E). Unit tests: use Vitest, mock BrowserApiAdapter in ALL unit tests via the shared mock helper, never call real chrome.* APIs in tests, test both success and error paths, test edge cases (empty arrays, null fields, missing keys). Property-based tests: use fast-check with minimum 100 iterations (numRuns: 100), write custom arbitraries in tests/helpers/event-generators.ts, tag every property test with `// Feature: almedals-planner-extension, Property {N}: {title}`. E2E tests: use Playwright, build extension first then load unpacked, test only critical flows (star/unstar, ICS export). Coverage: all exported functions in src/core/ must have unit tests, coverage provider v8, exclude types.ts and index.ts from coverage. DOM testing: use fixtures/almedalsveckan-program-2026.html for content script tests, use tests/helpers/dom-helpers.ts for creating mock Event_Cards.
     - _Requirements: 19.2_
 
-  - [ ] 1.16 Create .kiro/steering/browser-extension-patterns.md (conditional: fileMatch src/extension/**, src/core/browser-api-adapter.ts)
+  - [x] 1.16 Create .kiro/steering/browser-extension-patterns.md (conditional: fileMatch src/extension/**, src/core/browser-api-adapter.ts)
     - Write browser extension patterns steering file with front-matter `inclusion: fileMatch` and `fileMatchPattern: 'src/extension/**'`. Content: all chrome.* API access must go through IBrowserApiAdapter — no direct chrome.* calls outside browser-api-adapter.ts. Content script isolation: content script runs in host page context, use Shadow DOM for all injected UI, mark processed elements with data-almedals-planner-initialized="1", one MutationObserver per document, never throw from content script (catch and log). Message passing: use the 6 defined MessageCommand types only, always send via adapter.sendMessage, always handle MessageResponseError, background service worker is the single source of truth for storage. Service worker lifecycle: service worker may be terminated and restarted by the browser, do not store state in module-level variables in background.ts, always read from storage.local. Star button: render inside Shadow DOM with open mode, use plain scoped CSS (no Tailwind), wire click handlers through callbacks (onStar/onUnstar), maintain eventId→StarButton[] map for cross-page consistency, listen to storage.onChanged for cross-tab consistency.
     - _Requirements: 19.2_
 
-  - [ ] 1.17 Create .kiro/steering/accessibility-standards.md (conditional: fileMatch src/ui/**, src/extension/star-button.*)
+  - [x] 1.17 Create .kiro/steering/accessibility-standards.md (conditional: fileMatch src/ui/**, src/extension/star-button.*)
     - Write accessibility standards steering file with front-matter `inclusion: fileMatch` and `fileMatchPattern: 'src/ui/**'`. Content: WCAG 2.1 AA baseline. All interactive elements must be keyboard-reachable via Tab. Buttons must activate on Enter and Space. Star button: use aria-pressed (true/false) to reflect starred state, use aria-label with localized "Star event"/"Unstar event", 32px minimum touch/click target, 16px icon, focus-visible outline 2px solid #2563eb with 2px offset. Sort selector: use native HTML <select> element (inherits keyboard behavior and ARIA), add aria-label from localized sortLabel key. Contrast: all text and interactive elements must meet 4.5:1 contrast ratio for normal text, 3:1 for large text. Focus indicators: visible focus outline on all interactive elements, minimum 2px width. Empty states: use appropriate heading level, provide instructional text. Links: title cells in stars page must be <a> elements opening source_url in new tab with appropriate link text.
     - _Requirements: 19.2_
 
-  - [ ] 1.18 Create .kiro/steering/i18n-guide.md (conditional: fileMatch _locales/**, src/**/*.tsx)
+  - [x] 1.18 Create .kiro/steering/i18n-guide.md (conditional: fileMatch _locales/**, src/**/*.tsx)
     - Write i18n guide steering file with front-matter `inclusion: fileMatch` and `fileMatchPattern: '**/*.tsx'`. Content: all user-facing strings must use message keys from _locales/{locale}/messages.json. Access strings via adapter.getMessage(key) — never hardcode UI text in React components, content scripts, or manifests. Swedish (sv) is the default locale. English (en) is the secondary locale. If browser language is neither sv nor en, display Swedish. Adding a new string: add the key to BOTH _locales/sv/messages.json and _locales/en/messages.json with message and description fields. Do NOT localize: event content from the host page (titles, descriptions, locations, organiser names, topic names, source URLs), the export filename pattern, ICS field names. DO localize: the source label in ICS DESCRIPTION ("Källa:" for sv, "Source:" for en). Manifest uses __MSG_extensionName__ and __MSG_extensionDescription__ references. Reference the i18n catalog at .kiro/specs/almedals-planner-extension/i18n-catalog.md for the complete key list.
     - _Requirements: 19.2_
 
-  - [ ] 1.19 Create .kiro/steering/commit-messages.md (always included)
+  - [x] 1.19 Create .kiro/steering/commit-messages.md (always included)
     - Write commit message format steering file with: structure (`<type>(<scope>): <subject>` with optional body), types (feat, fix, test, refactor, docs, chore, style), scopes (core, content, background, popup, stars, manifest, i18n, ci, config), rules (imperative mood, lowercase, no period, max 70 chars subject, wrap body at 72 chars, reference requirements with "Implements Req X.Y" or "Validates Req X.Y"). Git workflow rule: after completing each top-level task (e.g., all of task 5, all of task 8), stage all changed files, commit with a message referencing the task number (e.g., `feat(core): implement browser API adapter [Task 5]`), and push to the current branch. Do not batch multiple top-level tasks into a single commit. Sub-tasks within the same top-level task may share a commit.
     - _Requirements: 19.2_
 
-  - [ ] 1.20 Verify project scaffolding
+  - [x] 1.20 Verify project scaffolding
     - Run `pnpm install`, `pnpm run typecheck`, `pnpm run lint` to confirm zero errors on empty project
     - _Requirements: 1.1, 1.4, 1.6_
 
-- [ ] 2. Checkpoint — Verify project scaffolding
+- [x] 2. Checkpoint — Verify project scaffolding
   - Ensure `pnpm install` succeeds, `pnpm run typecheck` passes, `pnpm run lint` passes.
 
-- [ ] 3. Shared core types and i18n locale files
-  - [ ] 3.1 Create src/core/types.ts
+- [x] 3. Shared core types and i18n locale files
+  - [~] 3.1 Create src/core/types.ts
     - Implement all TypeScript interfaces and types exactly as specified in design: `EventId`, `SortOrder`, `SORT_ORDERS`, `DEFAULT_SORT_ORDER`, `NormalizedEvent`, `StarredEvent` (extends NormalizedEvent with `starred: true` and `starredAt: string`), `StorageSchema`, `MESSAGE_COMMANDS`, `MessageCommand`, all six payload interfaces, `MessagePayload` union, `MessageResponse`, `MessageResponseSuccess`, `MessageResponseError`, response type map, `NormalizerResult`, `NormalizerSuccess`, `NormalizerError`, `ICSEvent`, `ICSCalendar`, `IBrowserApiAdapter` (including `onStorageChanged` method that registers a listener for `chrome.storage.onChanged` and returns an unsubscribe function)
     - _Requirements: 6.2, 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7, 8.8, 11.1, 12.4, 13.1, 13.2_
 
-  - [ ] 3.2 Create src/core/index.ts barrel export
+  - [~] 3.2 Create src/core/index.ts barrel export
     - Re-export all public types and functions from core modules
     - _Requirements: 19.4_
 
