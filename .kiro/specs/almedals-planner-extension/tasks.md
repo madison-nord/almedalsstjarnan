@@ -96,23 +96,23 @@ This plan implements the Almedalsstjärnan Chrome extension from scratch using T
   - Ensure `pnpm install` succeeds, `pnpm run typecheck` passes, `pnpm run lint` passes.
 
 - [x] 3. Shared core types and i18n locale files
-  - [~] 3.1 Create src/core/types.ts
+  - [x] 3.1 Create src/core/types.ts
     - Implement all TypeScript interfaces and types exactly as specified in design: `EventId`, `SortOrder`, `SORT_ORDERS`, `DEFAULT_SORT_ORDER`, `NormalizedEvent`, `StarredEvent` (extends NormalizedEvent with `starred: true` and `starredAt: string`), `StorageSchema`, `MESSAGE_COMMANDS`, `MessageCommand`, all six payload interfaces, `MessagePayload` union, `MessageResponse`, `MessageResponseSuccess`, `MessageResponseError`, response type map, `NormalizerResult`, `NormalizerSuccess`, `NormalizerError`, `ICSEvent`, `ICSCalendar`, `IBrowserApiAdapter` (including `onStorageChanged` method that registers a listener for `chrome.storage.onChanged` and returns an unsubscribe function)
     - _Requirements: 6.2, 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7, 8.8, 11.1, 12.4, 13.1, 13.2_
 
-  - [~] 3.2 Create src/core/index.ts barrel export
+  - [x] 3.2 Create src/core/index.ts barrel export
     - Re-export all public types and functions from core modules
     - _Requirements: 19.4_
 
-  - [ ] 3.3 Create _locales/sv/messages.json
+  - [x] 3.3 Create _locales/sv/messages.json
     - Write the complete Swedish locale file with all 26 message keys exactly as defined in the i18n catalog: `extensionName`, `extensionDescription`, `starEvent`, `unstarEvent`, `popupTitle`, `starsPageTitle`, `openFullList`, `exportToCalendar`, `sortChronological`, `sortReverseChronological`, `sortAlphabeticalTitle`, `sortAlphabeticalOrganiser`, `sortLabel`, `emptyStateTitle`, `emptyStateMessage`, `unstarAction`, `icsSourceLabel`, `errorStorageFailed`, `errorExportFailed`, `successExport`, `columnTitle`, `columnOrganiser`, `columnDateTime`, `columnLocation`, `columnTopic`, `columnActions`
     - _Requirements: 3.1, 3.2, 3.4, 3.6, 3.7_
 
-  - [ ] 3.4 Create _locales/en/messages.json
+  - [x] 3.4 Create _locales/en/messages.json
     - Write the complete English locale file with all 26 message keys exactly as defined in the i18n catalog
     - _Requirements: 3.1, 3.3, 3.6, 3.7_
 
-  - [ ] 3.5 Create DOM fixture file fixtures/almedalsveckan-program-2026.html
+  - [x] 3.5 Create DOM fixture file fixtures/almedalsveckan-program-2026.html
     - Create a representative HTML fixture containing multiple Event_Card elements with realistic Almedalsveckan programme structure, including cards with all fields, cards with missing optional fields, and at least one malformed card for error-path testing
     - ⚠️ HUMAN REVIEW REQUIRED: The user must verify this fixture against the live almedalsveckan.info site before proceeding. This fixture is the ground truth for all content script and event normalizer tests. If the DOM structure is wrong, every downstream test validates against incorrect assumptions. Do not proceed to task 4 until the user confirms the fixture is accurate.
     - _Requirements: 18.5_

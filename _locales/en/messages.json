@@ -1,0 +1,106 @@
+{
+  "extensionName": {
+    "message": "Almedalsstjärnan",
+    "description": "Extension name shown in browser"
+  },
+  "extensionDescription": {
+    "message": "Star events in the Almedalsveckan programme and export your schedule as a calendar file.",
+    "description": "Extension description shown in browser"
+  },
+  "starEvent": {
+    "message": "Star event",
+    "description": "Accessible label for star button when event is not starred"
+  },
+  "unstarEvent": {
+    "message": "Unstar event",
+    "description": "Accessible label for star button when event is starred"
+  },
+  "popupTitle": {
+    "message": "Starred events",
+    "description": "Popup window title"
+  },
+  "starsPageTitle": {
+    "message": "All starred events",
+    "description": "Stars page title"
+  },
+  "openFullList": {
+    "message": "Open full list",
+    "description": "Button to open stars page from popup"
+  },
+  "exportToCalendar": {
+    "message": "Export to calendar",
+    "description": "Export button label"
+  },
+  "sortChronological": {
+    "message": "Chronological",
+    "description": "Sort order: earliest first"
+  },
+  "sortReverseChronological": {
+    "message": "Reverse chronological",
+    "description": "Sort order: latest first"
+  },
+  "sortAlphabeticalTitle": {
+    "message": "Title A–Z",
+    "description": "Sort order: alphabetical by title"
+  },
+  "sortStarredDesc": {
+    "message": "Recently starred",
+    "description": "Sort order: most recently starred first"
+  },
+  "sortLabel": {
+    "message": "Sort by",
+    "description": "Label for sort selector"
+  },
+  "emptyStateTitle": {
+    "message": "No starred events",
+    "description": "Empty state heading"
+  },
+  "emptyStateMessage": {
+    "message": "Visit the Almedalsveckan programme and click the star to save events.",
+    "description": "Empty state body text"
+  },
+  "unstarAction": {
+    "message": "Remove",
+    "description": "Unstar action label in stars page grid"
+  },
+  "icsSourceLabel": {
+    "message": "Source:",
+    "description": "Source label prefix in ICS DESCRIPTION field"
+  },
+  "errorStorageFailed": {
+    "message": "Could not save. Please try again.",
+    "description": "Generic storage error message"
+  },
+  "errorExportFailed": {
+    "message": "Export failed. Please try again.",
+    "description": "ICS export error message"
+  },
+  "successExport": {
+    "message": "Calendar file exported.",
+    "description": "ICS export success message"
+  },
+  "columnTitle": {
+    "message": "Title",
+    "description": "Stars page grid column header"
+  },
+  "columnOrganiser": {
+    "message": "Organiser",
+    "description": "Stars page grid column header"
+  },
+  "columnDateTime": {
+    "message": "Date & time",
+    "description": "Stars page grid column header"
+  },
+  "columnLocation": {
+    "message": "Location",
+    "description": "Stars page grid column header"
+  },
+  "columnTopic": {
+    "message": "Topic",
+    "description": "Stars page grid column header"
+  },
+  "columnActions": {
+    "message": "Actions",
+    "description": "Stars page grid column header"
+  }
+}

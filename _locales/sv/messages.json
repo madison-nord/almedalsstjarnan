@@ -1,0 +1,106 @@
+{
+  "extensionName": {
+    "message": "Almedalsstjärnan",
+    "description": "Extension name shown in browser"
+  },
+  "extensionDescription": {
+    "message": "Stjärnmärk evenemang i Almedalsveckans program och exportera ditt schema som kalenderfil.",
+    "description": "Extension description shown in browser"
+  },
+  "starEvent": {
+    "message": "Stjärnmärk evenemang",
+    "description": "Accessible label for star button when event is not starred"
+  },
+  "unstarEvent": {
+    "message": "Ta bort stjärnmärkning",
+    "description": "Accessible label for star button when event is starred"
+  },
+  "popupTitle": {
+    "message": "Stjärnmärkta evenemang",
+    "description": "Popup window title"
+  },
+  "starsPageTitle": {
+    "message": "Alla stjärnmärkta evenemang",
+    "description": "Stars page title"
+  },
+  "openFullList": {
+    "message": "Öppna hela listan",
+    "description": "Button to open stars page from popup"
+  },
+  "exportToCalendar": {
+    "message": "Exportera till kalender",
+    "description": "Export button label"
+  },
+  "sortChronological": {
+    "message": "Kronologisk",
+    "description": "Sort order: earliest first"
+  },
+  "sortReverseChronological": {
+    "message": "Omvänd kronologisk",
+    "description": "Sort order: latest first"
+  },
+  "sortAlphabeticalTitle": {
+    "message": "Titel A–Ö",
+    "description": "Sort order: alphabetical by title"
+  },
+  "sortStarredDesc": {
+    "message": "Senast stjärnmärkta",
+    "description": "Sort order: most recently starred first"
+  },
+  "sortLabel": {
+    "message": "Sortera efter",
+    "description": "Label for sort selector"
+  },
+  "emptyStateTitle": {
+    "message": "Inga stjärnmärkta evenemang",
+    "description": "Empty state heading"
+  },
+  "emptyStateMessage": {
+    "message": "Besök Almedalsveckans program och klicka på stjärnan för att spara evenemang.",
+    "description": "Empty state body text"
+  },
+  "unstarAction": {
+    "message": "Ta bort",
+    "description": "Unstar action label in stars page grid"
+  },
+  "icsSourceLabel": {
+    "message": "Källa:",
+    "description": "Source label prefix in ICS DESCRIPTION field"
+  },
+  "errorStorageFailed": {
+    "message": "Kunde inte spara. Försök igen.",
+    "description": "Generic storage error message"
+  },
+  "errorExportFailed": {
+    "message": "Exporten misslyckades. Försök igen.",
+    "description": "ICS export error message"
+  },
+  "successExport": {
+    "message": "Kalenderfil exporterad.",
+    "description": "ICS export success message"
+  },
+  "columnTitle": {
+    "message": "Titel",
+    "description": "Stars page grid column header"
+  },
+  "columnOrganiser": {
+    "message": "Arrangör",
+    "description": "Stars page grid column header"
+  },
+  "columnDateTime": {
+    "message": "Datum & tid",
+    "description": "Stars page grid column header"
+  },
+  "columnLocation": {
+    "message": "Plats",
+    "description": "Stars page grid column header"
+  },
+  "columnTopic": {
+    "message": "Ämne",
+    "description": "Stars page grid column header"
+  },
+  "columnActions": {
+    "message": "Åtgärder",
+    "description": "Stars page grid column header"
+  }
+}
