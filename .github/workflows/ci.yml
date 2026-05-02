@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Type check
+        run: pnpm run typecheck
+
+      - name: Unit tests
+        run: pnpm run test:unit
+
+      - name: Property-based tests
+        run: pnpm run test:property
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Verify bundle sizes
+        run: |
+          CONTENT_SIZE=$(stat -c%s dist/src/extension/content-script.js 2>/dev/null || echo "0")
+          if [ "$CONTENT_SIZE" -gt 51200 ]; then
+            echo "Content script bundle exceeds 50KB: ${CONTENT_SIZE} bytes"
+            exit 1
+          fi
+          TOTAL_SIZE=$(du -sb dist/ | cut -f1)
+          if [ "$TOTAL_SIZE" -gt 512000 ]; then
+            echo "Total package exceeds 500KB: ${TOTAL_SIZE} bytes"
+            exit 1
+          fi
+          echo "Content script: ${CONTENT_SIZE} bytes"
+          echo "Total dist: ${TOTAL_SIZE} bytes"

@@ -19,7 +19,7 @@
     "test:property": "vitest run --config vitest.config.ts --passWithNoTests tests/property/",
     "test:e2e": "playwright test",
     "test": "vitest run --config vitest.config.ts --passWithNoTests",
-    "package": "pnpm run build && cd dist && tar -cf ../almedalsstjarnan.zip ."
+    "package": "pnpm run build && node -e \"const fs=require('fs');const path=require('path');const{execSync}=require('child_process');try{fs.unlinkSync('almedalsstjarnan.zip')}catch{};execSync(process.platform==='win32'?'powershell Compress-Archive -Path dist\\\\* -DestinationPath almedalsstjarnan.zip -Force':'cd dist && zip -r ../almedalsstjarnan.zip .',{stdio:'inherit'})\""
   },
   "keywords": [
     "chrome-extension",

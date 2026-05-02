@@ -149,3 +149,6 @@ coverage/
 *.tsbuildinfo
 pnpm-store/
 *.zip
+
+# Personal notes
+TODO.md
