@@ -1,14 +1,22 @@
-import React from 'react';
+/**
+ * Popup entry point.
+ *
+ * Creates a real BrowserApiAdapter and renders the App component
+ * into the root div. This is the production entry point — tests
+ * pass a mock adapter directly to App.
+ *
+ * Requirements: 9.10, 9.11
+ */
+
 import { createRoot } from 'react-dom/client';
 
-function App(): React.JSX.Element {
-  return <div style={{ width: 360, minHeight: 480, padding: 16 }}>
-    <h1>Almedalsstjärnan</h1>
-    <p>Popup placeholder — full implementation in Task 18.</p>
-  </div>;
-}
+import { BrowserApiAdapter } from '#core/browser-api-adapter';
+
+import { App } from './App';
+import './popup.css';
 
 const root = document.getElementById('root');
 if (root) {
-  createRoot(root).render(<App />);
+  const adapter = new BrowserApiAdapter();
+  createRoot(root).render(<App adapter={adapter} />);
 }
