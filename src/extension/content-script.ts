@@ -15,6 +15,7 @@
 import type { IBrowserApiAdapter, EventId, NormalizedEvent, StarredEvent } from '#core/types';
 import { normalizeEvent } from '#core/event-normalizer';
 import { createStarButton } from '#extension/star-button';
+import { createBrowserApiAdapter } from '#core/browser-api-adapter';
 
 // ─── Internal State ───────────────────────────────────────────────
 
@@ -225,4 +226,13 @@ function updateAllButtonsForEvent(eventId: string, starred: boolean): void {
   for (const button of buttons) {
     button.update(starred);
   }
+}
+
+// ─── Runtime Initialization ───────────────────────────────────────
+
+// Auto-initialize when running in a browser extension context.
+// Guard against non-browser environments (e.g., Vitest) where chrome is undefined.
+if (typeof chrome !== 'undefined' && chrome.runtime?.id) {
+  const adapter = createBrowserApiAdapter();
+  initContentScript(adapter);
 }
