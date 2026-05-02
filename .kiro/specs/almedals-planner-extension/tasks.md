@@ -162,15 +162,15 @@ This plan implements the Almedalsstjärnan Chrome extension from scratch using T
     - Write Chrome override with `minimum_chrome_version: "110"`
     - _Requirements: 2.9, 17.8_
 
-- [ ] 7. Checkpoint — Verify core types, i18n, test helpers, adapter, and manifest
+- [x] 7. Checkpoint — Verify core types, i18n, test helpers, adapter, and manifest
   - Ensure all tests pass (`pnpm run test:unit`, `pnpm run test:property`), typecheck passes.
 
-- [ ] 8. ICS Parser (needed by Event Normalizer — must be implemented first)
-  - [ ] 8.1 Write unit tests for ICS Parser
+- [x] 8. ICS Parser (needed by Event Normalizer — must be implemented first)
+  - [x] 8.1 Write unit tests for ICS Parser
     - Create `tests/unit/core/ics-parser.test.ts` testing: parse valid VCALENDAR with single VEVENT, parse multiple VEVENTs, extract UID/DTSTART/DTEND/SUMMARY/LOCATION/DESCRIPTION/ORGANIZER fields, unfold continuation lines, unescape ICS text values, throw on malformed ICS, handle missing optional fields (DTEND, LOCATION, DESCRIPTION, ORGANIZER)
     - _Requirements: 12.8_
 
-  - [ ] 8.2 Implement src/core/ics-parser.ts
+  - [x] 8.2 Implement src/core/ics-parser.ts
     - Implement `parseICS(icsContent)`, `unfoldLines(content)`, and `unescapeICSText(text)` as specified in design. Parse ICS string into `ICSCalendar` with `ICSEvent[]`.
     - _Requirements: 12.8_
 
