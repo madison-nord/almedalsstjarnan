@@ -34,3 +34,9 @@ export { SORT_ORDERS, DEFAULT_SORT_ORDER, MESSAGE_COMMANDS } from './types';
 export { BrowserApiAdapter, createBrowserApiAdapter } from './browser-api-adapter';
 
 export { parseICS, unfoldLines, unescapeICSText } from './ics-parser';
+
+export { normalizeEvent, deriveEventId, parseDateTime } from './event-normalizer';
+
+export { sortEvents } from './sorter';
+
+export { generateICS, foldLine, escapeICSText, generateExportFilename } from './ics-generator';
