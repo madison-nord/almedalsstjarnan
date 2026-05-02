@@ -31,7 +31,7 @@ export function App({ adapter }: AppProps): React.JSX.Element {
     useStarredEvents(adapter);
 
   const handleOpenFullList = (): void => {
-    void adapter.createTab({ url: 'stars.html' });
+    void adapter.createTab({ url: 'src/ui/stars/stars.html' });
   };
 
   if (loading) {
