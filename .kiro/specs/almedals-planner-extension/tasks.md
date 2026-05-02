@@ -117,16 +117,16 @@ This plan implements the Almedalsstjärnan Chrome extension from scratch using T
     - ⚠️ HUMAN REVIEW REQUIRED: The user must verify this fixture against the live almedalsveckan.info site before proceeding. This fixture is the ground truth for all content script and event normalizer tests. If the DOM structure is wrong, every downstream test validates against incorrect assumptions. Do not proceed to task 4 until the user confirms the fixture is accurate.
     - _Requirements: 18.5_
 
-- [ ] 4. Test helpers
-  - [ ] 4.1 Create tests/helpers/mock-browser-api.ts
+- [x] 4. Test helpers
+  - [x] 4.1 Create tests/helpers/mock-browser-api.ts
     - Implement a mock `IBrowserApiAdapter` using `vi.fn()` for all seven methods: `storageLocalGet`, `storageLocalSet`, `sendMessage`, `getMessage`, `download`, `createTab`, `onStorageChanged` (returns a mock unsubscribe function). Export the mock instance and a `resetMocks()` utility. This file is auto-loaded via vitest setupFiles.
     - _Requirements: 13.4, 18.10_
 
-  - [ ] 4.2 Create tests/helpers/event-generators.ts
+  - [x] 4.2 Create tests/helpers/event-generators.ts
     - Implement `fast-check` arbitraries: `normalizedEventArb` (generates valid `NormalizedEvent` with realistic field values), `starredEventArb` (extends with `starredAt`), `sortOrderArb` (one of four valid values), `starredEventArrayArb` (0–50 items with unique IDs)
     - _Requirements: 18.3, 18.6, 18.7, 18.8_
 
-  - [ ] 4.3 Create tests/helpers/dom-helpers.ts
+  - [x] 4.3 Create tests/helpers/dom-helpers.ts
     - Implement `createMockEventCard(overrides?)` that builds a DOM element matching the almedalsveckan.info Event_Card structure, and `loadFixture()` that reads and parses `fixtures/almedalsveckan-program-2026.html`
     - _Requirements: 18.5, 18.10_
 
