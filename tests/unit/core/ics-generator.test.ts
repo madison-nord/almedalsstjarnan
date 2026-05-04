@@ -122,17 +122,14 @@ describe('generateICS', () => {
       expect(parsed.events[0]!.location).toBeNull();
     });
 
-    it('generates DESCRIPTION with event description and source URL', () => {
+    it('generates DESCRIPTION with event description only (no source URL)', () => {
       const event = createStarredEvent({
         description: 'Panelsamtal',
         sourceUrl: 'https://almedalsveckan.info/event/abc123',
       });
       const ics = generateICS([event], 'sv');
       const parsed = parseICS(ics);
-      expect(parsed.events[0]!.description).toContain('Panelsamtal');
-      expect(parsed.events[0]!.description).toContain(
-        'https://almedalsveckan.info/event/abc123',
-      );
+      expect(parsed.events[0]!.description).toBe('Panelsamtal');
     });
 
     it('omits DESCRIPTION when both description and sourceUrl are null', () => {
@@ -234,55 +231,113 @@ describe('generateICS', () => {
     });
   });
 
-  // ─── Localized source label ───────────────────────────────────
+  // ─── Localized source label (removed — source URL now uses URL property) ──
 
-  describe('localized source label', () => {
-    it('uses "Källa:" for Swedish locale', () => {
+  describe('DESCRIPTION without source label', () => {
+    it('does not include "Källa:" in DESCRIPTION for Swedish locale', () => {
       const event = createStarredEvent({
         description: 'Test',
         sourceUrl: 'https://almedalsveckan.info/event/abc123',
       });
       const ics = generateICS([event], 'sv');
       const parsed = parseICS(ics);
-      expect(parsed.events[0]!.description).toContain('Källa:');
+      expect(parsed.events[0]!.description).not.toContain('Källa:');
     });
 
-    it('uses "Source:" for English locale', () => {
+    it('does not include "Source:" in DESCRIPTION for English locale', () => {
       const event = createStarredEvent({
         description: 'Test',
         sourceUrl: 'https://almedalsveckan.info/event/abc123',
       });
       const ics = generateICS([event], 'en');
       const parsed = parseICS(ics);
-      expect(parsed.events[0]!.description).toContain('Source:');
+      expect(parsed.events[0]!.description).not.toContain('Source:');
     });
 
-    it('includes source URL after the label', () => {
+    it('DESCRIPTION contains only description text when sourceUrl is present', () => {
       const event = createStarredEvent({
         description: 'Test',
         sourceUrl: 'https://almedalsveckan.info/event/abc123',
       });
       const ics = generateICS([event], 'sv');
       const parsed = parseICS(ics);
-      expect(parsed.events[0]!.description).toContain(
-        'Källa: https://almedalsveckan.info/event/abc123',
-      );
+      expect(parsed.events[0]!.description).toBe('Test');
     });
 
-    it('generates DESCRIPTION with only source label when description is null but sourceUrl exists', () => {
+    it('omits DESCRIPTION when description is null even if sourceUrl exists', () => {
       const event = createStarredEvent({
         description: null,
         sourceUrl: 'https://almedalsveckan.info/event/abc123',
       });
       const ics = generateICS([event], 'en');
       const parsed = parseICS(ics);
-      expect(parsed.events[0]!.description).toContain(
-        'Source: https://almedalsveckan.info/event/abc123',
-      );
+      expect(parsed.events[0]!.description).toBeNull();
     });
   });
 
   // ─── Multiple events ──────────────────────────────────────────
+
+  describe('URL property', () => {
+    it('emits URL property when sourceUrl is non-null', () => {
+      const event = createStarredEvent({
+        sourceUrl: 'https://almedalsveckan.info/event/abc123',
+      });
+      const ics = generateICS([event], 'sv');
+      const parsed = parseICS(ics);
+      expect(parsed.events[0]!.url).toBe('https://almedalsveckan.info/event/abc123');
+    });
+
+    it('DESCRIPTION does not contain source URL when sourceUrl is non-null', () => {
+      const event = createStarredEvent({
+        description: 'Panelsamtal',
+        sourceUrl: 'https://almedalsveckan.info/event/abc123',
+      });
+      const ics = generateICS([event], 'sv');
+      const parsed = parseICS(ics);
+      expect(parsed.events[0]!.description).not.toContain('https://almedalsveckan.info/event/abc123');
+    });
+
+    it('DESCRIPTION does not contain localized source label when sourceUrl is non-null', () => {
+      const event = createStarredEvent({
+        description: 'Panelsamtal',
+        sourceUrl: 'https://almedalsveckan.info/event/abc123',
+      });
+      const icsSv = generateICS([event], 'sv');
+      const parsedSv = parseICS(icsSv);
+      expect(parsedSv.events[0]!.description).not.toContain('Källa:');
+
+      const icsEn = generateICS([event], 'en');
+      const parsedEn = parseICS(icsEn);
+      expect(parsedEn.events[0]!.description).not.toContain('Source:');
+    });
+
+    it('omits URL property when sourceUrl is null', () => {
+      const event = createStarredEvent({ sourceUrl: null });
+      const ics = generateICS([event], 'sv');
+      const parsed = parseICS(ics);
+      expect(parsed.events[0]!.url).toBeNull();
+    });
+
+    it('DESCRIPTION contains only description text when sourceUrl is non-null', () => {
+      const event = createStarredEvent({
+        description: 'Panelsamtal om demokratins framtid',
+        sourceUrl: 'https://almedalsveckan.info/event/abc123',
+      });
+      const ics = generateICS([event], 'sv');
+      const parsed = parseICS(ics);
+      expect(parsed.events[0]!.description).toBe('Panelsamtal om demokratins framtid');
+    });
+
+    it('omits DESCRIPTION when description is null and sourceUrl is non-null', () => {
+      const event = createStarredEvent({
+        description: null,
+        sourceUrl: 'https://almedalsveckan.info/event/abc123',
+      });
+      const ics = generateICS([event], 'sv');
+      const parsed = parseICS(ics);
+      expect(parsed.events[0]!.description).toBeNull();
+    });
+  });
 
   describe('multiple events', () => {
     it('generates one VEVENT per starred event', () => {

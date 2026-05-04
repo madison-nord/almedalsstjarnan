@@ -26,7 +26,7 @@ export function EventRow({ event, onUnstar, adapter }: EventRowProps): React.JSX
 
   return (
     <tr className="border-b border-gray-100 hover:bg-gray-50">
-      <td className="px-3 py-2 text-sm text-gray-900">
+      <td className="truncate px-3 py-2 text-sm text-gray-900" title={event.title}>
         {event.sourceUrl !== null ? (
           <a
             href={event.sourceUrl}
@@ -40,16 +40,16 @@ export function EventRow({ event, onUnstar, adapter }: EventRowProps): React.JSX
           event.title
         )}
       </td>
-      <td className="px-3 py-2 text-sm text-gray-600">
+      <td className="truncate px-3 py-2 text-sm text-gray-600" title={event.organiser ?? ''}>
         {event.organiser ?? ''}
       </td>
       <td className="px-3 py-2 text-sm text-gray-600">
         {event.startDateTime}
       </td>
-      <td className="px-3 py-2 text-sm text-gray-600">
+      <td className="truncate px-3 py-2 text-sm text-gray-600" title={event.location ?? ''}>
         {event.location ?? ''}
       </td>
-      <td className="px-3 py-2 text-sm text-gray-600">
+      <td className="truncate px-3 py-2 text-sm text-gray-600" title={event.topic ?? ''}>
         {event.topic ?? ''}
       </td>
       <td className="px-3 py-2">

@@ -158,6 +158,7 @@ export interface ICSEvent {
   readonly location: string | null;
   readonly description: string | null;
   readonly organizer: string | null;
+  readonly url: string | null;
 }
 
 export interface ICSCalendar {

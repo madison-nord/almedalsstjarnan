@@ -109,30 +109,13 @@ function toICSTimestamp(date: Date): string {
 }
 
 /**
- * Builds the DESCRIPTION field value from event description and source URL.
- * Returns null if both are absent.
+ * Builds the DESCRIPTION field value from event description.
+ * Returns null if description is absent.
  */
 function buildDescription(
   description: string | null,
-  sourceUrl: string | null,
-  locale: 'sv' | 'en',
 ): string | null {
-  const sourceLabel = locale === 'sv' ? 'Källa' : 'Source';
-  const parts: string[] = [];
-
-  if (description !== null) {
-    parts.push(description);
-  }
-
-  if (sourceUrl !== null) {
-    parts.push(`${sourceLabel}: ${sourceUrl}`);
-  }
-
-  if (parts.length === 0) {
-    return null;
-  }
-
-  return parts.join('\n');
+  return description;
 }
 
 /**
@@ -144,7 +127,7 @@ function buildDescription(
  */
 export function generateICS(
   events: readonly StarredEvent[],
-  locale: 'sv' | 'en',
+  _locale: 'sv' | 'en',
 ): string {
   const now = new Date();
   const dtstamp = toICSTimestamp(now);
@@ -173,13 +156,17 @@ export function generateICS(
       lines.push(`LOCATION:${escapeICSText(event.location)}`);
     }
 
-    const desc = buildDescription(event.description, event.sourceUrl, locale);
+    const desc = buildDescription(event.description);
     if (desc !== null) {
       lines.push(`DESCRIPTION:${escapeICSText(desc)}`);
     }
 
     if (event.organiser !== null) {
       lines.push(`ORGANIZER:${escapeICSText(event.organiser)}`);
+    }
+
+    if (event.sourceUrl !== null) {
+      lines.push(`URL:${event.sourceUrl}`);
     }
 
     lines.push('END:VEVENT');

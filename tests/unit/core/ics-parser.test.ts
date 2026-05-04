@@ -153,6 +153,17 @@ describe('parseICS', () => {
       const result = parseICS(buildICS([vevent]));
       expect(result.events[0]!.organizer).toBe('Sveriges Riksdag');
     });
+
+    it('extracts URL', () => {
+      const vevent = buildVEVENT({
+        UID: 'id1',
+        DTSTART: '20260628T100000',
+        SUMMARY: 'Test',
+        URL: 'https://almedalsveckan.info/event/abc123',
+      });
+      const result = parseICS(buildICS([vevent]));
+      expect(result.events[0]!.url).toBe('https://almedalsveckan.info/event/abc123');
+    });
   });
 
   describe('missing optional fields', () => {
@@ -194,6 +205,16 @@ describe('parseICS', () => {
       });
       const result = parseICS(buildICS([vevent]));
       expect(result.events[0]!.organizer).toBeNull();
+    });
+
+    it('sets url to null when URL is missing', () => {
+      const vevent = buildVEVENT({
+        UID: 'id1',
+        DTSTART: '20260628T100000',
+        SUMMARY: 'Test',
+      });
+      const result = parseICS(buildICS([vevent]));
+      expect(result.events[0]!.url).toBeNull();
     });
   });
 

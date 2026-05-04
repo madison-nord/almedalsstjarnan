@@ -19,25 +19,25 @@ export interface EventGridProps {
 
 export function EventGrid({ events, onUnstar, adapter }: EventGridProps): React.JSX.Element {
   return (
-    <table className="w-full border-collapse">
+    <table className="w-full border-collapse table-fixed">
       <thead>
         <tr className="border-b-2 border-gray-200 text-left">
-          <th className="px-3 py-2 text-sm font-semibold text-gray-700">
+          <th className="w-1/4 px-3 py-2 text-sm font-semibold text-gray-700">
             {adapter.getMessage('columnTitle')}
           </th>
-          <th className="px-3 py-2 text-sm font-semibold text-gray-700">
+          <th className="w-1/5 px-3 py-2 text-sm font-semibold text-gray-700">
             {adapter.getMessage('columnOrganiser')}
           </th>
-          <th className="px-3 py-2 text-sm font-semibold text-gray-700">
+          <th className="w-1/5 px-3 py-2 text-sm font-semibold text-gray-700">
             {adapter.getMessage('columnDateTime')}
           </th>
-          <th className="px-3 py-2 text-sm font-semibold text-gray-700">
+          <th className="w-[15%] px-3 py-2 text-sm font-semibold text-gray-700">
             {adapter.getMessage('columnLocation')}
           </th>
-          <th className="px-3 py-2 text-sm font-semibold text-gray-700">
+          <th className="w-[10%] px-3 py-2 text-sm font-semibold text-gray-700">
             {adapter.getMessage('columnTopic')}
           </th>
-          <th className="px-3 py-2 text-sm font-semibold text-gray-700">
+          <th className="w-[10%] px-3 py-2 text-sm font-semibold text-gray-700">
             {adapter.getMessage('columnActions')}
           </th>
         </tr>

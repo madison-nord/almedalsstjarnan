@@ -66,12 +66,14 @@ describe('Property 1: ICS round-trip preservation', () => {
 
             // DESCRIPTION contains original description if present
             if (original.description !== null) {
-              expect(roundTripped.description).toContain(original.description);
+              expect(roundTripped.description).toBe(original.description);
             }
 
-            // DESCRIPTION contains source URL if present
+            // URL round-trips correctly
             if (original.sourceUrl !== null) {
-              expect(roundTripped.description).toContain(original.sourceUrl);
+              expect(roundTripped.url).toBe(original.sourceUrl);
+            } else {
+              expect(roundTripped.url).toBeNull();
             }
           }
         },

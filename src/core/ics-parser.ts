@@ -65,6 +65,7 @@ function parseVEVENT(lines: readonly string[]): ICSEvent {
   let location: string | null = null;
   let description: string | null = null;
   let organizer: string | null = null;
+  let url: string | null = null;
 
   for (const line of lines) {
     const propName = extractPropertyName(line);
@@ -92,6 +93,9 @@ function parseVEVENT(lines: readonly string[]): ICSEvent {
       case 'ORGANIZER':
         organizer = unescapeICSText(value);
         break;
+      case 'URL':
+        url = value;
+        break;
     }
   }
 
@@ -103,6 +107,7 @@ function parseVEVENT(lines: readonly string[]): ICSEvent {
     location,
     description,
     organizer,
+    url,
   };
 }
 
