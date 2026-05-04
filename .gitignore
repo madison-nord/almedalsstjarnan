@@ -152,3 +152,6 @@ pnpm-store/
 
 # Personal notes
 TODO.md
+
+# Playwright test results
+test-results/
