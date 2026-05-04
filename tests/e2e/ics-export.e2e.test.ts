@@ -33,7 +33,7 @@ const ICS_FILENAME_PATTERN = /^almedalsstjarnan-starred-events-\d{8}-\d{6}\.ics$
  * Launches a persistent Chromium context with the extension loaded.
  * Extensions require a persistent context and non-headless mode.
  */
-async function launchExtensionContext(downloadDir: string): Promise<BrowserContext> {
+async function launchExtensionContext(_downloadDir: string): Promise<BrowserContext> {
   return chromium.launchPersistentContext('', {
     headless: false,
     args: [
