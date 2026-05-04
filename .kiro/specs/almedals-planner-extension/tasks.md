@@ -423,7 +423,7 @@ This plan implements the Almedalsstjärnan Chrome extension from scratch using T
     - Create `tests/e2e/ics-export.e2e.test.ts` using Playwright: star multiple events, open stars page, click export button, verify .ics file downloaded with filename matching `almedalsstjarnan-starred-events-YYYYMMDD-HHMMSS.ics`, verify file contains valid ICS content with correct PRODID and VEVENT entries
     - _Requirements: 18.4_
 
-- [-] 26. Final checkpoint — Full verification
+- [x] 26. Final checkpoint — Full verification
   - Run complete test suite: `pnpm run test:unit`, `pnpm run test:property`, `pnpm run test:e2e`. Run `pnpm run lint`, `pnpm run typecheck`, `pnpm run build`. Verify all pass. Ensure all requirements are covered.
   - ⚠️ HUMAN REVIEW REQUIRED — FINAL SIGN-OFF: Load the built extension in Chrome and perform a complete acceptance test against the live almedalsveckan.info site covering all 18 acceptance criteria from the specification. Verify: star injection on listing and detail pages, star/unstar toggle, persistence across browser restart, popup count and list, stars page with all 4 sort orders, unstar from stars page, ICS export with correct content and timezone, no network requests during star/unstar/sort/export, keyboard accessibility for all controls. This is the final gate before the extension is considered production-ready. Do not package for Chrome Web Store upload until the user signs off.
 
