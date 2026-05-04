@@ -410,16 +410,16 @@ This plan implements the Almedalsstjärnan Chrome extension from scratch using T
     - Run `pnpm run package` and verify it produces `almedalsstjarnan.zip` suitable for Chrome Web Store upload
     - _Requirements: 17.2_
 
-- [-] 24. Checkpoint — Verify full build, all tests, and CI config
+- [x] 24. Checkpoint — Verify full build, all tests, and CI config
   - Ensure `pnpm run build` succeeds, `pnpm run test:unit` passes, `pnpm run test:property` passes, `pnpm run lint` passes, `pnpm run typecheck` passes. Verify bundle sizes.
   - ⚠️ HUMAN REVIEW REQUIRED: Load the built extension as unpacked in Chrome and perform a full manual test on the live almedalsveckan.info site: (1) navigate to a programme listing page, (2) verify star buttons appear on all event cards, (3) star 3+ events, (4) open popup and verify starred events appear, (5) change sort order in popup, (6) open stars page from popup, (7) verify all starred events in 6-column grid, (8) change sort order on stars page, (9) unstar one event from stars page and verify it disappears, (10) click export and verify .ics file downloads with correct filename, (11) open the .ics file in a calendar app and verify events are correct. Do not proceed to task 25 until the user confirms the extension works end-to-end on the live site.
 
-- [ ] 25. E2E tests
-  - [ ] 25.1 Write E2E test: star/unstar flow
+- [x] 25. E2E tests
+  - [x] 25.1 Write E2E test: star/unstar flow
     - Create `tests/e2e/star-unstar.e2e.test.ts` using Playwright: load extension with fixture page, click star button on an event card, verify button switches to filled state, click again to unstar, verify button switches to outlined state, open popup, verify event appears in list when starred, verify event disappears when unstarred
     - _Requirements: 18.4_
 
-  - [ ] 25.2 Write E2E test: ICS export
+  - [x] 25.2 Write E2E test: ICS export
     - Create `tests/e2e/ics-export.e2e.test.ts` using Playwright: star multiple events, open stars page, click export button, verify .ics file downloaded with filename matching `almedalsstjarnan-starred-events-YYYYMMDD-HHMMSS.ics`, verify file contains valid ICS content with correct PRODID and VEVENT entries
     - _Requirements: 18.4_
 
