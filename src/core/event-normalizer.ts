@@ -121,7 +121,8 @@ function extractDomOrganiser(element: Element): string | null {
   if (buttons.length === 0) return null;
   const names: string[] = [];
   for (const button of buttons) {
-    const text = getVisibleText(button).trim();
+    // Remove trailing comma if present (from multi-organiser cards)
+    const text = getVisibleText(button).trim().replace(/,\s*$/, '').trim();
     if (text) {
       names.push(text);
     }
