@@ -36,7 +36,7 @@ describe('normalizeEvent', () => {
       expect(result.event.description).toBe(
         'Efter en kort inledning bjuder vi in till ett samtal ombord på båten Vagabonde. Varmt välkommen!',
       );
-      expect(result.event.topic).toBe('Hållbarhet');
+      expect(result.event.topic).toBe('Hållbarhet, Ekonomi');
       expect(result.event.sourceUrl).toBe(
         'https://almedalsveckan.info/rg/almedalsveckan/evenemang-almedalsveckan/2026/8363',
       );
@@ -264,7 +264,7 @@ describe('normalizeEvent', () => {
     });
 
     it('trims whitespace from topic', () => {
-      const card = createMockEventCard({ primaryTopic: '  Hållbarhet  ' });
+      const card = createMockEventCard({ primaryTopic: '  Hållbarhet  ', secondaryTopic: null });
       const result = normalizeEvent(card);
 
       expectSuccess(result);
@@ -326,6 +326,7 @@ describe('normalizeEvent', () => {
         location: 'Test Location',
         description: 'Test Description',
         primaryTopic: 'Demokrati',
+        secondaryTopic: null,
       });
       const result = normalizeEvent(card);
 

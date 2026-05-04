@@ -117,10 +117,17 @@ function extractDomTimeText(element: Element): string | null {
 }
 
 function extractDomOrganiser(element: Element): string | null {
-  const button = element.querySelector('.organizer-buttons .filter-button');
-  if (!button) return null;
-  const text = getVisibleText(button).trim();
-  return text || null;
+  const buttons = element.querySelectorAll('.organizer-buttons .filter-button');
+  if (buttons.length === 0) return null;
+  const names: string[] = [];
+  for (const button of buttons) {
+    const text = getVisibleText(button).trim();
+    if (text) {
+      names.push(text);
+    }
+  }
+  const joined = names.join(', ').trim();
+  return joined || null;
 }
 
 function extractDomLocation(element: Element): string | null {
@@ -140,12 +147,19 @@ function extractDomLocation(element: Element): string | null {
 }
 
 function extractDomTopic(element: Element): string | null {
-  const button = element.querySelector('.topic-buttons .filter-button');
-  if (!button) return null;
-  const text = getVisibleText(button).trim();
-  // Remove trailing comma if present (from multi-topic cards)
-  const cleaned = text.replace(/,\s*$/, '').trim();
-  return cleaned || null;
+  const buttons = element.querySelectorAll('.topic-buttons .filter-button');
+  if (buttons.length === 0) return null;
+  const topics: string[] = [];
+  for (const button of buttons) {
+    let text = getVisibleText(button).trim();
+    // Remove trailing comma if present (from multi-topic cards)
+    text = text.replace(/,\s*$/, '').trim();
+    if (text) {
+      topics.push(text);
+    }
+  }
+  const joined = topics.join(', ').trim();
+  return joined || null;
 }
 
 function extractDomDescription(element: Element): string | null {
