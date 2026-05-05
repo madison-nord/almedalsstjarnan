@@ -549,7 +549,15 @@ describe('Stars Page App', () => {
 
       const heading = screen.getByRole('heading', { level: 1 });
       const container = heading.closest('div');
-      expect(container).toHaveClass('bg-white');
+      expect(container).toHaveClass('bg-brand-surface');
+    });
+
+    it('page container uses bg-brand-surface background (Requirement 16.1)', async () => {
+      await renderApp(makeEvents(1));
+
+      const heading = screen.getByRole('heading', { level: 1 });
+      const pageContainer = heading.closest('div.min-h-screen');
+      expect(pageContainer).toHaveClass('bg-brand-surface');
     });
 
     it('does not constrain content with max-w-7xl class', async () => {

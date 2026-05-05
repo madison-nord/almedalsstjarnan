@@ -65,7 +65,7 @@ export function App({ adapter }: AppProps): React.JSX.Element {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-brand-surface">
       <header className="w-full px-4 sm:px-6 lg:px-8 pt-6 pb-4">
         <h1 className="text-xl font-semibold text-gray-900 mb-4">
           {adapter.getMessage('starsPageTitle')}

@@ -54,6 +54,46 @@ function makeEvent(overrides: Partial<StarredEvent> & { readonly id: string }): 
 
 // ─── Tests ────────────────────────────────────────────────────────
 
+describe('EventGrid header styling (Requirement 16)', () => {
+  it('header row uses border-b-2 border-brand-secondary', () => {
+    const adapter = setupAdapter();
+    render(
+      <EventGrid events={[makeEvent({ id: 'e1' })]} onUnstar={vi.fn()} adapter={adapter} />,
+    );
+
+    const headerRow = screen.getAllByRole('row')[0];
+    expect(headerRow).toHaveClass('border-b-2');
+    expect(headerRow).toHaveClass('border-brand-secondary');
+  });
+
+  it('header cells use text-brand-secondary font-semibold', () => {
+    const adapter = setupAdapter();
+    render(
+      <EventGrid events={[makeEvent({ id: 'e1' })]} onUnstar={vi.fn()} adapter={adapter} />,
+    );
+
+    const titleHeader = screen.getByText('Title').closest('th');
+    expect(titleHeader).toHaveClass('text-brand-secondary');
+    expect(titleHeader).toHaveClass('font-semibold');
+
+    const organiserHeader = screen.getByText('Organiser').closest('th');
+    expect(organiserHeader).toHaveClass('text-brand-secondary');
+    expect(organiserHeader).toHaveClass('font-semibold');
+
+    const dateHeader = screen.getByText('Date & time').closest('th');
+    expect(dateHeader).toHaveClass('text-brand-secondary');
+    expect(dateHeader).toHaveClass('font-semibold');
+
+    const locationHeader = screen.getByText('Location').closest('th');
+    expect(locationHeader).toHaveClass('text-brand-secondary');
+    expect(locationHeader).toHaveClass('font-semibold');
+
+    const topicHeader = screen.getByText('Topic').closest('th');
+    expect(topicHeader).toHaveClass('text-brand-secondary');
+    expect(topicHeader).toHaveClass('font-semibold');
+  });
+});
+
 describe('EventGrid table-fixed layout', () => {
   it('applies table-fixed class to the table element', () => {
     const adapter = setupAdapter();

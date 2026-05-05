@@ -113,7 +113,7 @@ export function EventGrid({ events, onUnstar, adapter, conflictingIds, conflictT
   return (
     <table className="w-full border-collapse table-fixed">
       <thead>
-        <tr className="border-b-2 border-gray-200 text-left">
+        <tr className="border-b-2 border-brand-secondary text-left">
           <th className="w-10 px-3 py-2">
             <input
               type="checkbox"
@@ -123,22 +123,22 @@ export function EventGrid({ events, onUnstar, adapter, conflictingIds, conflictT
               className="h-4 w-4 rounded border-gray-300 text-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-600"
             />
           </th>
-          <th className="w-1/4 px-3 py-2 text-sm font-semibold text-gray-700">
+          <th className="w-1/4 px-3 py-2 text-sm font-semibold text-brand-secondary">
             {adapter.getMessage('columnTitle')}
           </th>
-          <th className="w-1/5 px-3 py-2 text-sm font-semibold text-gray-700">
+          <th className="w-1/5 px-3 py-2 text-sm font-semibold text-brand-secondary">
             {adapter.getMessage('columnOrganiser')}
           </th>
-          <th className="w-1/5 px-3 py-2 text-sm font-semibold text-gray-700">
+          <th className="w-1/5 px-3 py-2 text-sm font-semibold text-brand-secondary">
             {adapter.getMessage('columnDateTime')}
           </th>
-          <th className="w-[15%] px-3 py-2 text-sm font-semibold text-gray-700">
+          <th className="w-[15%] px-3 py-2 text-sm font-semibold text-brand-secondary">
             {adapter.getMessage('columnLocation')}
           </th>
-          <th className="w-[10%] px-3 py-2 text-sm font-semibold text-gray-700">
+          <th className="w-[10%] px-3 py-2 text-sm font-semibold text-brand-secondary">
             {adapter.getMessage('columnTopic')}
           </th>
-          <th className="w-[10%] px-3 py-2 text-sm font-semibold text-gray-700">
+          <th className="w-[10%] px-3 py-2 text-sm font-semibold text-brand-secondary">
             <span className="sr-only">{adapter.getMessage('columnActions')}</span>
           </th>
         </tr>

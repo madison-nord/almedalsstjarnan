@@ -199,6 +199,18 @@ describe('EventRow truncation', () => {
   });
 });
 
+describe('EventRow zebra row styling (Requirement 16)', () => {
+  it('applies odd:bg-white even:bg-brand-surface hover:bg-amber-100 classes', () => {
+    const event = makeEvent();
+    renderRow(event);
+
+    const row = screen.getByRole('row');
+    expect(row).toHaveClass('odd:bg-white');
+    expect(row).toHaveClass('even:bg-brand-surface');
+    expect(row).toHaveClass('hover:bg-amber-100');
+  });
+});
+
 describe('EventRow unstar trash icon (Requirement 15)', () => {
   it('renders an SVG trash icon instead of text (Requirement 15.1)', () => {
     const event = makeEvent();
