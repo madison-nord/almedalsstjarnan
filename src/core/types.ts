@@ -57,6 +57,10 @@ export interface StorageSchema {
   readonly starredEvents: Record<EventId, StarredEvent>;
   /** Current sort order preference */
   readonly sortOrder: SortOrder;
+  /** Whether the onboarding view has been dismissed */
+  readonly onboardingDismissed: boolean;
+  /** Manual language override. null = follow browser default */
+  readonly languagePreference: 'sv' | 'en' | null;
 }
 
 // ─── Message Protocol ─────────────────────────────────────────────
@@ -68,6 +72,10 @@ export const MESSAGE_COMMANDS = [
   'GET_ALL_STARRED_EVENTS',
   'GET_SORT_ORDER',
   'SET_SORT_ORDER',
+  'GET_ONBOARDING_STATE',
+  'SET_ONBOARDING_STATE',
+  'GET_LANGUAGE_PREFERENCE',
+  'SET_LANGUAGE_PREFERENCE',
 ] as const;
 
 export type MessageCommand = (typeof MESSAGE_COMMANDS)[number];
@@ -100,13 +108,35 @@ export interface SetSortOrderPayload {
   readonly sortOrder: SortOrder;
 }
 
+export interface GetOnboardingStatePayload {
+  readonly command: 'GET_ONBOARDING_STATE';
+}
+
+export interface SetOnboardingStatePayload {
+  readonly command: 'SET_ONBOARDING_STATE';
+  readonly dismissed: boolean;
+}
+
+export interface GetLanguagePreferencePayload {
+  readonly command: 'GET_LANGUAGE_PREFERENCE';
+}
+
+export interface SetLanguagePreferencePayload {
+  readonly command: 'SET_LANGUAGE_PREFERENCE';
+  readonly locale: 'sv' | 'en' | null;
+}
+
 export type MessagePayload =
   | StarEventPayload
   | UnstarEventPayload
   | GetStarStatePayload
   | GetAllStarredEventsPayload
   | GetSortOrderPayload
-  | SetSortOrderPayload;
+  | SetSortOrderPayload
+  | GetOnboardingStatePayload
+  | SetOnboardingStatePayload
+  | GetLanguagePreferencePayload
+  | SetLanguagePreferencePayload;
 
 // ─── Message Responses ────────────────────────────────────────────
 
@@ -132,6 +162,10 @@ export type GetStarStateResponse = MessageResponse<boolean>;
 export type GetAllStarredEventsResponse = MessageResponse<StarredEvent[]>;
 export type GetSortOrderResponse = MessageResponse<SortOrder>;
 export type SetSortOrderResponse = MessageResponse<void>;
+export type GetOnboardingStateResponse = MessageResponse<boolean>;
+export type SetOnboardingStateResponse = MessageResponse<void>;
+export type GetLanguagePreferenceResponse = MessageResponse<'sv' | 'en' | null>;
+export type SetLanguagePreferenceResponse = MessageResponse<void>;
 
 // ─── Event Normalizer Result ──────────────────────────────────────
 

@@ -16,7 +16,7 @@
     "description": "Accessible label for star button when event is starred"
   },
   "popupTitle": {
-    "message": "Stjärnmärkta evenemang",
+    "message": "Almedalsstjärnan",
     "description": "Popup window title"
   },
   "starsPageTitle": {
@@ -102,5 +102,131 @@
   "columnActions": {
     "message": "Åtgärder",
     "description": "Stars page grid column header"
+  },
+  "conflictWarning": {
+    "message": "Överlappar",
+    "description": "Short label indicating an event overlaps with another"
+  },
+  "conflictTooltip": {
+    "message": "Överlappar med: $1",
+    "description": "Tooltip text showing which events overlap with this one",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "Demokrati i förändring"
+      }
+    }
+  },
+  "undoAction": {
+    "message": "Ångra",
+    "description": "Button label for undoing a removal action"
+  },
+  "eventRemoved": {
+    "message": "Evenemang borttaget",
+    "description": "Toast message shown when an event is unstarred"
+  },
+  "expandEvent": {
+    "message": "Visa detaljer",
+    "description": "Accessible label for expand toggle button when event is collapsed"
+  },
+  "collapseEvent": {
+    "message": "Dölj detaljer",
+    "description": "Accessible label for collapse toggle button when event is expanded"
+  },
+  "eventCountIndicator": {
+    "message": "{count} av {total}",
+    "description": "Count indicator showing displayed vs total events in popup header"
+  },
+  "loadMore": {
+    "message": "Visa fler",
+    "description": "Button label to load more events in the popup list"
+  },
+  "filterPlaceholder": {
+    "message": "Filtrera evenemang…",
+    "description": "Placeholder text for the search filter input on the stars page"
+  },
+  "filterLabel": {
+    "message": "Filtrera",
+    "description": "Accessible label for the search filter input on the stars page"
+  },
+  "selectAll": {
+    "message": "Markera alla",
+    "description": "Label for select-all checkbox in bulk selection header"
+  },
+  "unstarSelected": {
+    "message": "Ta bort markerade",
+    "description": "Button label for batch unstar action on selected events"
+  },
+  "exportSelected": {
+    "message": "Exportera markerade",
+    "description": "Button label for batch export action on selected events"
+  },
+  "onboardingTitle": {
+    "message": "Välkommen till Almedalsstjärnan",
+    "description": "Onboarding view heading shown on first run"
+  },
+  "onboardingStep1": {
+    "message": "Besök Almedalsveckans program",
+    "description": "Onboarding step 1: visit the programme"
+  },
+  "onboardingStep2": {
+    "message": "Klicka på stjärnan för att spara event",
+    "description": "Onboarding step 2: star events"
+  },
+  "onboardingStep3": {
+    "message": "Öppna tillägget för att se sparade event",
+    "description": "Onboarding step 3: open extension"
+  },
+  "onboardingStep4": {
+    "message": "Exportera till din kalender",
+    "description": "Onboarding step 4: export to calendar"
+  },
+  "onboardingDismiss": {
+    "message": "Stäng",
+    "description": "Button label to dismiss the onboarding view"
+  },
+  "helpLink": {
+    "message": "Hur fungerar det?",
+    "description": "Persistent help link to re-open onboarding view"
+  },
+  "languageLabel": {
+    "message": "Språk",
+    "description": "Accessible label for the language toggle select element"
+  },
+  "languageAuto": {
+    "message": "Auto (webbläsare)",
+    "description": "Language toggle option to follow browser language setting"
+  },
+  "languageSv": {
+    "message": "Svenska",
+    "description": "Language toggle option for Swedish"
+  },
+  "languageEn": {
+    "message": "English",
+    "description": "Language toggle option for English"
+  },
+  "goToProgramme": {
+    "message": "Gå till programmet",
+    "description": "Link to open the Almedalsveckan programme page"
+  },
+  "reloadPopupHint": {
+    "message": "(ladda om)",
+    "description": "Hint shown next to language dropdown indicating popup needs to be reopened"
+  },
+  "languageVisibleLabel": {
+    "message": "Språk:",
+    "description": "Visible label shown before the language dropdown"
+  },
+  "sortVisibleLabel": {
+    "message": "Sortera:",
+    "description": "Visible label shown before the sort dropdown"
+  },
+  "showMore": {
+    "message": "Visa mer",
+    "description": "Tooltip for expand button on event items"
+  },
+  "showLess": {
+    "message": "Visa mindre",
+    "description": "Tooltip for collapse button on event items"
   }
 }
