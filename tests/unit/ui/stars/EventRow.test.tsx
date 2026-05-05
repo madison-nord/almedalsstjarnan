@@ -1,10 +1,11 @@
 /**
- * Unit tests for EventRow truncation on text cells.
+ * Unit tests for EventRow truncation on text cells and unstar trash icon.
  *
  * Validates that EventRow applies truncation classes and title attributes
  * to text cells (title, organiser, location, topic) for overflow handling.
+ * Also validates the trash icon button for the unstar action (Requirement 15).
  *
- * Requirements: 2.1, 2.2, 2.3
+ * Requirements: 2.1, 2.2, 2.3, 15.1, 15.2, 15.3
  */
 
 import { describe, it, expect, vi } from 'vitest';
@@ -195,5 +196,47 @@ describe('EventRow truncation', () => {
       // The <a> itself should not have the break-words class
       expect(link).not.toHaveClass('break-words');
     });
+  });
+});
+
+describe('EventRow unstar trash icon (Requirement 15)', () => {
+  it('renders an SVG trash icon instead of text (Requirement 15.1)', () => {
+    const event = makeEvent();
+    renderRow(event);
+
+    const button = screen.getByRole('button', { name: 'Remove' });
+    const svg = button.querySelector('svg');
+    expect(svg).toBeInTheDocument();
+    expect(svg).toHaveAttribute('aria-hidden', 'true');
+    expect(svg).toHaveAttribute('viewBox', '0 0 24 24');
+    // Button should not contain visible text
+    expect(button.textContent).toBe('');
+  });
+
+  it('has aria-label with localized unstar action text (Requirement 15.2)', () => {
+    const event = makeEvent();
+    renderRow(event);
+
+    const button = screen.getByRole('button', { name: 'Remove' });
+    expect(button).toHaveAttribute('aria-label', 'Remove');
+  });
+
+  it('has minimum 32×32px clickable area via w-8 h-8 classes (Requirement 15.3)', () => {
+    const event = makeEvent();
+    renderRow(event);
+
+    const button = screen.getByRole('button', { name: 'Remove' });
+    expect(button).toHaveClass('w-8');
+    expect(button).toHaveClass('h-8');
+  });
+
+  it('SVG icon is rendered at 18×18 size', () => {
+    const event = makeEvent();
+    renderRow(event);
+
+    const button = screen.getByRole('button', { name: 'Remove' });
+    const svg = button.querySelector('svg');
+    expect(svg).toHaveAttribute('width', '18');
+    expect(svg).toHaveAttribute('height', '18');
   });
 });
