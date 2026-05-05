@@ -157,6 +157,18 @@ describe('EventRow truncation', () => {
     });
   });
 
+  describe('date-time cell whitespace-nowrap', () => {
+    it('applies whitespace-nowrap class to the date-time cell (Requirement 10.3)', () => {
+      const event = makeEvent();
+      renderRow(event);
+
+      // The date-time cell contains the formatted date text inside a span
+      const dateText = screen.getByText(/Sön 28 juni/);
+      const dateCell = dateText.closest('td');
+      expect(dateCell).toHaveClass('whitespace-nowrap');
+    });
+  });
+
   describe('link in title cell still works', () => {
     it('renders title as a link when sourceUrl is present', () => {
       const event = makeEvent({
