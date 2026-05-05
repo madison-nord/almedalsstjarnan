@@ -406,3 +406,89 @@ describe('Popup EventItem star toggle and source link', () => {
     });
   });
 });
+
+
+describe('description URL stripping (Requirement 11)', () => {
+  let adapter: IBrowserApiAdapter;
+  let onUnstar: (eventId: string) => void;
+
+  beforeEach(() => {
+    resetMocks();
+    adapter = mockBrowserApi;
+    onUnstar = vi.fn();
+    (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
+      (key: string) => {
+        if (key === 'unstarEvent') return 'Unstar event';
+        if (key === 'expandEvent') return 'Show details';
+        if (key === 'collapseEvent') return 'Hide details';
+        if (key === 'showMore') return 'Show more';
+        if (key === 'showLess') return 'Show less';
+        return '';
+      },
+    );
+  });
+
+  it('strips sourceUrl from rendered description when sourceUrl is present in description', async () => {
+    const user = userEvent.setup();
+    const sourceUrl = 'https://www.almedalsveckan.info/event/12345';
+    const event = makeEvent({
+      sourceUrl,
+      description: `Event details here ${sourceUrl} more text`,
+    });
+    render(<EventItem event={event} onUnstar={onUnstar} adapter={adapter} />);
+
+    const toggle = screen.getByRole('button', { name: 'Show details' });
+    await user.click(toggle);
+
+    // The description should not contain the sourceUrl
+    const descriptionText = screen.getByText(/Event details here/);
+    expect(descriptionText.textContent).not.toContain(sourceUrl);
+    expect(descriptionText.textContent).toContain('Event details here');
+    expect(descriptionText.textContent).toContain('more text');
+  });
+
+  it('renders description unchanged when sourceUrl is null', async () => {
+    const user = userEvent.setup();
+    const event = makeEvent({
+      sourceUrl: null,
+      description: 'A plain description without any URL',
+    });
+    render(<EventItem event={event} onUnstar={onUnstar} adapter={adapter} />);
+
+    const toggle = screen.getByRole('button', { name: 'Show details' });
+    await user.click(toggle);
+
+    expect(screen.getByText('A plain description without any URL')).toBeInTheDocument();
+  });
+
+  it('renders description unchanged when sourceUrl is not in description', async () => {
+    const user = userEvent.setup();
+    const event = makeEvent({
+      sourceUrl: 'https://www.almedalsveckan.info/event/99999',
+      description: 'Description that does not contain the URL',
+    });
+    render(<EventItem event={event} onUnstar={onUnstar} adapter={adapter} />);
+
+    const toggle = screen.getByRole('button', { name: 'Show details' });
+    await user.click(toggle);
+
+    expect(screen.getByText('Description that does not contain the URL')).toBeInTheDocument();
+  });
+
+  it('trims whitespace after stripping sourceUrl', async () => {
+    const user = userEvent.setup();
+    const sourceUrl = 'https://www.almedalsveckan.info/event/abc';
+    const event = makeEvent({
+      sourceUrl,
+      description: `  ${sourceUrl}  `,
+    });
+    render(<EventItem event={event} onUnstar={onUnstar} adapter={adapter} />);
+
+    const toggle = screen.getByRole('button', { name: 'Show details' });
+    await user.click(toggle);
+
+    // After stripping URL and trimming, description should be empty
+    // so the description paragraph should not be rendered
+    expect(screen.queryByText(sourceUrl)).not.toBeInTheDocument();
+  });
+});

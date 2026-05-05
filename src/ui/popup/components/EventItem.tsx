@@ -17,6 +17,16 @@ import { useState } from 'react';
 import type { IBrowserApiAdapter, StarredEvent } from '#core/types';
 import { formatEventDateTime } from '#core/date-formatter';
 
+/**
+ * Strips the sourceUrl from a description string to avoid redundant display.
+ * Returns the description unchanged if sourceUrl is null or not found.
+ */
+export function stripSourceUrl(description: string, sourceUrl: string | null): string {
+  if (!sourceUrl || !description) return description;
+  if (!description.includes(sourceUrl)) return description;
+  return description.replace(sourceUrl, '').trim();
+}
+
 export interface EventItemProps {
   readonly event: StarredEvent;
   readonly onUnstar: (eventId: string) => void;
@@ -130,7 +140,7 @@ export function EventItem({ event, onUnstar, adapter, isConflicting, conflictTit
               </p>
             )}
             {event.description && (
-              <p className="whitespace-pre-line">{event.description}</p>
+              <p className="whitespace-pre-line">{stripSourceUrl(event.description, event.sourceUrl)}</p>
             )}
           </div>
         )}
