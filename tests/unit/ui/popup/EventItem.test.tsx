@@ -12,8 +12,12 @@
  * - Clicking again collapses the expanded content
  * - aria-expanded attribute reflects state
  * - Expanded content is conditionally rendered (not just hidden)
+ * - Chevron button has 32×32px clickable area (w-8 h-8)
+ * - Chevron SVG is 20×20px rendered size
+ * - Chevron uses downward path when collapsed and upward path when expanded
+ * - Chevron tooltip uses showMore/showLess i18n keys
  *
- * Requirements: 1.2, 1.3, 1.4, 1.5, 1.6, 1.7
+ * Requirements: 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 8.1, 8.2, 8.3, 8.4
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -158,7 +162,9 @@ describe('Popup EventItem star toggle and source link', () => {
 
       const toggle = screen.getByRole('button', { name: 'Show details' });
       expect(toggle).toBeInTheDocument();
-      expect(toggle).toHaveTextContent('▸');
+      // SVG chevron is rendered (no text content, uses SVG path)
+      const svg = toggle.querySelector('svg');
+      expect(svg).toBeInTheDocument();
     });
 
     it('toggle has aria-expanded="false" when collapsed', () => {
@@ -181,7 +187,9 @@ describe('Popup EventItem star toggle and source link', () => {
       await user.click(toggle);
 
       expect(toggle).toHaveAttribute('aria-expanded', 'true');
-      expect(toggle).toHaveTextContent('▾');
+      // SVG chevron changes direction (no text content check needed)
+      const svg = toggle.querySelector('svg');
+      expect(svg).toBeInTheDocument();
     });
 
     it('expanded state shows description', async () => {
@@ -310,6 +318,91 @@ describe('Popup EventItem star toggle and source link', () => {
       render(<EventItem event={event} onUnstar={onUnstar} adapter={adapter} />);
 
       expect(adapter.getMessage).toHaveBeenCalledWith('expandEvent');
+    });
+  });
+
+  describe('chevron size and direction (Requirement 8)', () => {
+    it('chevron button has 32×32px clickable area (w-8 h-8 classes)', () => {
+      const event = makeEvent();
+      render(<EventItem event={event} onUnstar={onUnstar} adapter={adapter} />);
+
+      const toggle = screen.getByRole('button', { name: 'Show details' });
+      expect(toggle.className).toContain('w-8');
+      expect(toggle.className).toContain('h-8');
+    });
+
+    it('chevron SVG is 20×20px rendered size', () => {
+      const event = makeEvent();
+      render(<EventItem event={event} onUnstar={onUnstar} adapter={adapter} />);
+
+      const toggle = screen.getByRole('button', { name: 'Show details' });
+      const svg = toggle.querySelector('svg');
+      expect(svg).toBeInTheDocument();
+      expect(svg!.getAttribute('width')).toBe('20');
+      expect(svg!.getAttribute('height')).toBe('20');
+    });
+
+    it('uses downward-pointing chevron path when collapsed', () => {
+      const event = makeEvent();
+      render(<EventItem event={event} onUnstar={onUnstar} adapter={adapter} />);
+
+      const toggle = screen.getByRole('button', { name: 'Show details' });
+      const path = toggle.querySelector('svg path');
+      expect(path).toBeInTheDocument();
+      expect(path!.getAttribute('d')).toBe('M6 9l6 6 6-6');
+    });
+
+    it('uses upward-pointing chevron path when expanded', async () => {
+      const user = userEvent.setup();
+      const event = makeEvent({ description: 'Test' });
+      render(<EventItem event={event} onUnstar={onUnstar} adapter={adapter} />);
+
+      const toggle = screen.getByRole('button', { name: 'Show details' });
+      await user.click(toggle);
+
+      const path = toggle.querySelector('svg path');
+      expect(path).toBeInTheDocument();
+      expect(path!.getAttribute('d')).toBe('M18 15l-6-6-6 6');
+    });
+
+    it('tooltip shows "Show more" when collapsed via showMore i18n key', () => {
+      (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
+        (key: string) => {
+          if (key === 'showMore') return 'Show more';
+          if (key === 'showLess') return 'Show less';
+          if (key === 'expandEvent') return 'Show details';
+          if (key === 'collapseEvent') return 'Hide details';
+          if (key === 'unstarEvent') return 'Unstar event';
+          return '';
+        },
+      );
+      const event = makeEvent();
+      render(<EventItem event={event} onUnstar={onUnstar} adapter={adapter} />);
+
+      const toggle = screen.getByRole('button', { name: 'Show details' });
+      expect(toggle).toHaveAttribute('title', 'Show more');
+    });
+
+    it('tooltip shows "Show less" when expanded via showLess i18n key', async () => {
+      const user = userEvent.setup();
+      (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
+        (key: string) => {
+          if (key === 'showMore') return 'Show more';
+          if (key === 'showLess') return 'Show less';
+          if (key === 'expandEvent') return 'Show details';
+          if (key === 'collapseEvent') return 'Hide details';
+          if (key === 'unstarEvent') return 'Unstar event';
+          return '';
+        },
+      );
+      const event = makeEvent({ description: 'Test' });
+      render(<EventItem event={event} onUnstar={onUnstar} adapter={adapter} />);
+
+      const toggle = screen.getByRole('button', { name: 'Show details' });
+      await user.click(toggle);
+
+      const expandedToggle = screen.getByRole('button', { name: 'Hide details' });
+      expect(expandedToggle).toHaveAttribute('title', 'Show less');
     });
   });
 });

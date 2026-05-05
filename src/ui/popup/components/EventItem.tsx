@@ -74,18 +74,17 @@ export function EventItem({ event, onUnstar, adapter, isConflicting, conflictTit
             aria-expanded={expanded}
             aria-label={toggleLabel}
             title={toggleTooltip}
-            className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded text-gray-500 hover:text-gray-800 hover:bg-gray-200 text-base leading-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
+            className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded text-gray-500 hover:text-gray-800 hover:bg-gray-200 text-base leading-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
           >
             <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
               fill="none"
               aria-hidden="true"
-              className={`transform transition-transform ${expanded ? 'rotate-90' : ''}`}
             >
               <path
-                d="M6 4l4 4-4 4"
+                d={expanded ? 'M18 15l-6-6-6 6' : 'M6 9l6 6 6-6'}
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
