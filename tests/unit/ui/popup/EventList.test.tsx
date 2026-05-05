@@ -56,7 +56,7 @@ function makeEvents(count: number): StarredEvent[] {
 // ─── i18n Message Map ─────────────────────────────────────────────
 
 const messageMap: Record<string, string> = {
-  eventCountIndicator: '$1 of $2',
+  eventCountIndicator: '{count} of {total}',
   loadMore: 'Load more',
   expandEvent: 'Show details',
   collapseEvent: 'Hide details',
@@ -112,6 +112,45 @@ describe('EventList', () => {
 
       const indicator = screen.getByText('5 of 5');
       expect(indicator).toHaveAttribute('aria-live', 'polite');
+    });
+
+    it('substitutes {count} and {total} placeholders with actual numeric values', () => {
+      const events = makeEvents(12);
+      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} />);
+
+      const indicator = screen.getByText('12 of 12');
+      expect(indicator).toBeInTheDocument();
+      // Verify no raw tokens remain
+      expect(indicator.textContent).not.toContain('{count}');
+      expect(indicator.textContent).not.toContain('{total}');
+    });
+
+    it('substitutes correctly with Swedish locale message', () => {
+      (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
+        (key: string) => {
+          if (key === 'eventCountIndicator') return '{count} av {total}';
+          return messageMap[key] ?? '';
+        },
+      );
+      const events = makeEvents(7);
+      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} />);
+
+      expect(screen.getByText('7 av 7')).toBeInTheDocument();
+    });
+
+    it('hides count indicator when no events are starred (0 total)', () => {
+      render(<EventList events={[]} onUnstar={vi.fn()} adapter={adapter} />);
+
+      // The count indicator div should not be rendered
+      const ariaLiveElements = document.querySelectorAll('[aria-live="polite"]');
+      expect(ariaLiveElements).toHaveLength(0);
+    });
+
+    it('shows count indicator when at least one event is starred', () => {
+      const events = makeEvents(1);
+      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} />);
+
+      expect(screen.getByText('1 of 1')).toBeInTheDocument();
     });
   });
 

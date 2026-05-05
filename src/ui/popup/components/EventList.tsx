@@ -37,16 +37,20 @@ export function EventList({ events, onUnstar, adapter, conflictingIds, conflictT
     setDisplayCount((prev) => prev + PAGE_SIZE);
   };
 
-  const countText = adapter
-    .getMessage('eventCountIndicator')
-    .replace('{count}', String(displayed))
-    .replace('{total}', String(total));
+  const countText = total > 0
+    ? adapter
+        .getMessage('eventCountIndicator')
+        .replace('{count}', String(displayed))
+        .replace('{total}', String(total))
+    : null;
 
   return (
     <div className="flex flex-col flex-1 overflow-hidden">
-      <div className="px-4 py-1 text-xs text-gray-500" aria-live="polite">
-        {countText}
-      </div>
+      {countText !== null && (
+        <div className="px-4 py-1 text-xs text-gray-500" aria-live="polite">
+          {countText}
+        </div>
+      )}
       <ul className="overflow-y-auto flex-1" role="list">
         {displayedEvents.map((event) => (
           <EventItem
