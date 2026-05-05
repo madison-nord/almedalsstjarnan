@@ -46,9 +46,24 @@ inclusion: always
 - Wrap body text at 72 characters.
 - Reference requirements: `Implements Req X.Y` or `Validates Req X.Y`.
 
-## Git Workflow
+## Git Workflow — MANDATORY
 
-- After completing each top-level task (e.g., all of task 5, all of task 8), stage all changed files, commit with a message referencing the task number.
-- Example: `feat(core): implement browser API adapter [Task 5]`
-- Do not batch multiple top-level tasks into a single commit.
-- Sub-tasks within the same top-level task may share a commit.
+**CRITICAL: You MUST commit and push after completing each top-level task. This is non-negotiable. Do NOT proceed to the next task until the current task's changes are committed and pushed.**
+
+1. After completing each top-level task (e.g., all of task 5, all of task 8):
+   - Stage all changed files related to that task.
+   - Commit with a message referencing the task number.
+   - Push to origin immediately.
+2. Only then proceed to the next task.
+3. Do not batch multiple top-level tasks into a single commit.
+4. Sub-tasks within the same top-level task may share a commit.
+5. Push directly to main unless instructed otherwise.
+
+Example workflow after finishing Task 5:
+```
+git add <files>
+git commit -m "feat(core): implement browser API adapter [Task 5]"
+git push
+```
+
+If you forget to commit after a task, you are violating this rule. Stop and commit before continuing.

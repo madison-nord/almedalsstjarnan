@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Commit and Push After Task",
+  "description": "Reminds the agent to commit and push all changes after completing a spec task",
+  "version": "1",
+  "when": {
+    "type": "postTaskExecution"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "You just completed a task. STOP and commit+push now before doing anything else. Stage all changed files, commit with a message referencing the task number (following the commit-messages.md steering format), and push to origin. Do NOT proceed to the next task until this is done."
+  }
+}
