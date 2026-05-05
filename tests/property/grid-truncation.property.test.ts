@@ -1,4 +1,5 @@
 // Feature: grid-and-ics-bugfixes, Property 1: Grid cells constrain content with overflow handling
+// Feature: ui-polish-fixes, Property 2: Grid cell tooltips match full content
 
 import { describe, it, expect, vi } from 'vitest';
 import fc from 'fast-check';
@@ -85,6 +86,63 @@ describe('Property 1: Grid cells constrain content with overflow handling', () =
 
         // Title cell should have a title attribute
         expect(cells[1]!.hasAttribute('title')).toBe(true);
+
+        // Cleanup for next iteration
+        cleanup();
+      }),
+      { numRuns: 100 },
+    );
+  });
+});
+
+
+// ─── Property 2: Grid cell tooltips match full content ────────────
+
+describe('Property 2: Grid cell tooltips match full content', () => {
+  /**
+   * Validates: Requirements 9.2, 10.2, 13.1, 13.2, 13.4
+   *
+   * For any StarredEvent rendered in the Stars Page EventRow, the title attribute
+   * on the title cell SHALL equal event.title, the title attribute on the organiser
+   * cell SHALL equal event.organiser ?? '', the title attribute on the location cell
+   * SHALL equal event.location ?? '', and the title attribute on the topic cell
+   * SHALL equal event.topic ?? ''.
+   */
+  it('for any StarredEvent, title attributes on text cells match the full event field values', () => {
+    const adapter = setupAdapter();
+
+    fc.assert(
+      fc.property(starredEventArb, (event) => {
+        const { container } = render(
+          React.createElement(
+            'table',
+            null,
+            React.createElement(
+              'tbody',
+              null,
+              React.createElement(EventRow, {
+                event,
+                onUnstar: vi.fn(),
+                adapter,
+              }),
+            ),
+          ),
+        );
+
+        const cells = container.querySelectorAll('td');
+        // Cells: 0=checkbox, 1=title, 2=organiser, 3=datetime, 4=location, 5=topic, 6=actions
+
+        // Title cell title attribute equals event.title
+        expect(cells[1]!.getAttribute('title')).toBe(event.title);
+
+        // Organiser cell title attribute equals event.organiser ?? ''
+        expect(cells[2]!.getAttribute('title')).toBe(event.organiser ?? '');
+
+        // Location cell title attribute equals event.location ?? ''
+        expect(cells[4]!.getAttribute('title')).toBe(event.location ?? '');
+
+        // Topic cell title attribute equals event.topic ?? ''
+        expect(cells[5]!.getAttribute('title')).toBe(event.topic ?? '');
 
         // Cleanup for next iteration
         cleanup();
