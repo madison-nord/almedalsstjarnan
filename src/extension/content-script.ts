@@ -112,23 +112,45 @@ export async function processEventCard(
       initialStarred,
       adapter,
       onStar: async (id: string) => {
-        const starResponse = await adapter.sendMessage({
-          command: 'STAR_EVENT',
-          event,
-        });
-        if (starResponse.success) {
-          // Update all star buttons for this eventId (cross-page consistency)
-          updateAllButtonsForEvent(id, true);
+        try {
+          const starResponse = await adapter.sendMessage({
+            command: 'STAR_EVENT',
+            event,
+          });
+          if (starResponse.success) {
+            // Update all star buttons for this eventId (cross-page consistency)
+            updateAllButtonsForEvent(id, true);
+          } else {
+            // Revert and flash error
+            updateAllButtonsForEvent(id, false);
+            flashError(host);
+          }
+        } catch {
+          // Revert and flash error
+          updateAllButtonsForEvent(id, false);
+          flashError(host);
+          console.warn('[Almedalsstjärnan] STAR_EVENT failed for event:', id);
         }
       },
       onUnstar: async (id: string) => {
-        const unstarResponse = await adapter.sendMessage({
-          command: 'UNSTAR_EVENT',
-          eventId: id,
-        });
-        if (unstarResponse.success) {
-          // Update all star buttons for this eventId (cross-page consistency)
-          updateAllButtonsForEvent(id, false);
+        try {
+          const unstarResponse = await adapter.sendMessage({
+            command: 'UNSTAR_EVENT',
+            eventId: id,
+          });
+          if (unstarResponse.success) {
+            // Update all star buttons for this eventId (cross-page consistency)
+            updateAllButtonsForEvent(id, false);
+          } else {
+            // Revert and flash error
+            updateAllButtonsForEvent(id, true);
+            flashError(host);
+          }
+        } catch {
+          // Revert and flash error
+          updateAllButtonsForEvent(id, true);
+          flashError(host);
+          console.warn('[Almedalsstjärnan] UNSTAR_EVENT failed for event:', id);
         }
       },
     });
@@ -226,6 +248,26 @@ function updateAllButtonsForEvent(eventId: string, starred: boolean): void {
   for (const button of buttons) {
     button.update(starred);
   }
+}
+
+/**
+ * Flashes an error indicator on the star button inside the given host element.
+ * Adds the `.star-btn--error` CSS class to the button in the shadow DOM and
+ * removes it after the animation completes.
+ */
+function flashError(host: HTMLElement): void {
+  const btn = host.shadowRoot?.querySelector('button.star-btn') as HTMLButtonElement | null;
+  if (!btn) return;
+  btn.classList.add('star-btn--error');
+  const onAnimationEnd = (): void => {
+    btn.classList.remove('star-btn--error');
+    btn.removeEventListener('animationend', onAnimationEnd);
+  };
+  btn.addEventListener('animationend', onAnimationEnd);
+  // Fallback: remove class after 700ms if animationend doesn't fire
+  setTimeout(() => {
+    btn.classList.remove('star-btn--error');
+  }, 700);
 }
 
 // ─── Runtime Initialization ───────────────────────────────────────

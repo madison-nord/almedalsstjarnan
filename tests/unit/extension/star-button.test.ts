@@ -403,6 +403,132 @@ describe('Star Button', () => {
     });
   });
 
+  describe('error flash CSS', () => {
+    it('scoped CSS includes star-error-flash keyframes', () => {
+      createStarButton(hostElement, {
+        eventId,
+        initialStarred: false,
+        adapter,
+        onStar: vi.fn().mockResolvedValue(undefined),
+        onUnstar: vi.fn().mockResolvedValue(undefined),
+      });
+
+      const style = hostElement.shadowRoot!.querySelector('style');
+      const css = style!.textContent!;
+      expect(css).toContain('@keyframes star-error-flash');
+      expect(css).toContain('.star-btn--error');
+      expect(css).toContain('animation: star-error-flash');
+    });
+
+    it('scoped CSS error flash uses red background color', () => {
+      createStarButton(hostElement, {
+        eventId,
+        initialStarred: false,
+        adapter,
+        onStar: vi.fn().mockResolvedValue(undefined),
+        onUnstar: vi.fn().mockResolvedValue(undefined),
+      });
+
+      const style = hostElement.shadowRoot!.querySelector('style');
+      const css = style!.textContent!;
+      expect(css).toContain('rgba(239, 68, 68');
+    });
+
+    it('flashError adds star-btn--error class to button', () => {
+      createStarButton(hostElement, {
+        eventId,
+        initialStarred: false,
+        adapter,
+        onStar: vi.fn().mockRejectedValue(new Error('fail')),
+        onUnstar: vi.fn().mockResolvedValue(undefined),
+      });
+
+      const btn = getButton(hostElement);
+      btn.click();
+
+      // After the async rejection settles, the error class should be added
+      return new Promise<void>((resolve) => {
+        setTimeout(() => {
+          expect(btn.classList.contains('star-btn--error')).toBe(true);
+          resolve();
+        }, 10);
+      });
+    });
+
+    it('flashError removes star-btn--error class after animation completes', () => {
+      createStarButton(hostElement, {
+        eventId,
+        initialStarred: false,
+        adapter,
+        onStar: vi.fn().mockRejectedValue(new Error('fail')),
+        onUnstar: vi.fn().mockResolvedValue(undefined),
+      });
+
+      const btn = getButton(hostElement);
+      btn.click();
+
+      return new Promise<void>((resolve) => {
+        setTimeout(() => {
+          // Class should be added
+          expect(btn.classList.contains('star-btn--error')).toBe(true);
+
+          // Simulate animationend event
+          btn.dispatchEvent(new Event('animationend'));
+
+          // Class should be removed
+          expect(btn.classList.contains('star-btn--error')).toBe(false);
+          resolve();
+        }, 10);
+      });
+    });
+
+    it('button reverts visual state when onStar rejects', () => {
+      createStarButton(hostElement, {
+        eventId,
+        initialStarred: false,
+        adapter,
+        onStar: vi.fn().mockRejectedValue(new Error('fail')),
+        onUnstar: vi.fn().mockResolvedValue(undefined),
+      });
+
+      const btn = getButton(hostElement);
+      expect(btn.getAttribute('aria-pressed')).toBe('false');
+
+      btn.click();
+
+      return new Promise<void>((resolve) => {
+        setTimeout(() => {
+          // Should revert to unstarred
+          expect(btn.getAttribute('aria-pressed')).toBe('false');
+          resolve();
+        }, 10);
+      });
+    });
+
+    it('button reverts visual state when onUnstar rejects', () => {
+      createStarButton(hostElement, {
+        eventId,
+        initialStarred: true,
+        adapter,
+        onStar: vi.fn().mockResolvedValue(undefined),
+        onUnstar: vi.fn().mockRejectedValue(new Error('fail')),
+      });
+
+      const btn = getButton(hostElement);
+      expect(btn.getAttribute('aria-pressed')).toBe('true');
+
+      btn.click();
+
+      return new Promise<void>((resolve) => {
+        setTimeout(() => {
+          // Should revert to starred
+          expect(btn.getAttribute('aria-pressed')).toBe('true');
+          resolve();
+        }, 10);
+      });
+    });
+  });
+
   describe('all tests use mocked BrowserApiAdapter', () => {
     it('adapter.getMessage is called for localization', () => {
       createStarButton(hostElement, {

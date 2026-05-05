@@ -48,11 +48,25 @@ const STAR_BUTTON_CSS = `.star-btn {
 .star-btn[aria-pressed="true"] svg {
   fill: #f59e0b;
   stroke: #f59e0b;
+  animation: star-pop 0.3s ease-out;
 }
 .star-btn[aria-pressed="false"] svg {
   fill: none;
   stroke: #6b7280;
   stroke-width: 1.5;
+}
+@keyframes star-pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+@keyframes star-error-flash {
+  0% { background-color: transparent; }
+  50% { background-color: rgba(239, 68, 68, 0.2); }
+  100% { background-color: transparent; }
+}
+.star-btn--error {
+  animation: star-error-flash 0.6s ease-out;
 }`;
 
 // ─── Star Button Options ──────────────────────────────────────────
@@ -63,6 +77,25 @@ export interface StarButtonOptions {
   readonly adapter: IBrowserApiAdapter;
   readonly onStar: (eventId: string) => Promise<void>;
   readonly onUnstar: (eventId: string) => Promise<void>;
+}
+
+// ─── Error Flash Helper ───────────────────────────────────────────
+
+/**
+ * Adds the error flash CSS class to a button element and removes it
+ * after the animation completes.
+ */
+function flashError(button: HTMLButtonElement): void {
+  button.classList.add('star-btn--error');
+  const onAnimationEnd = (): void => {
+    button.classList.remove('star-btn--error');
+    button.removeEventListener('animationend', onAnimationEnd);
+  };
+  button.addEventListener('animationend', onAnimationEnd);
+  // Fallback: remove class after 700ms if animationend doesn't fire (e.g., in test env)
+  setTimeout(() => {
+    button.classList.remove('star-btn--error');
+  }, 700);
 }
 
 // ─── Factory Function ─────────────────────────────────────────────
@@ -109,9 +142,29 @@ export function createStarButton(
   // Wire click handler
   function handleClick(): void {
     if (starred) {
-      void onUnstar(eventId);
+      void (async () => {
+        try {
+          await onUnstar(eventId);
+        } catch {
+          // Revert to original state and flash error
+          starred = true;
+          render();
+          flashError(button);
+          console.warn('[Almedalsstjärnan] onUnstar failed for event:', eventId);
+        }
+      })();
     } else {
-      void onStar(eventId);
+      void (async () => {
+        try {
+          await onStar(eventId);
+        } catch {
+          // Revert to original state and flash error
+          starred = false;
+          render();
+          flashError(button);
+          console.warn('[Almedalsstjärnan] onStar failed for event:', eventId);
+        }
+      })();
     }
   }
 
