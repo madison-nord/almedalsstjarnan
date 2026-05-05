@@ -79,6 +79,7 @@ const messageMap: Record<string, string> = {
   sortStarredDesc: 'Recently starred',
   sortLabel: 'Sort by',
   helpLink: 'How does it work?',
+  goToProgramme: 'Go to programme',
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────
@@ -389,6 +390,11 @@ describe('Popup App', () => {
       const exportBtn = screen.getByRole('button', { name: 'Export to calendar' });
       expect(exportBtn).toHaveFocus();
 
+      // Tab to programme link
+      await user.tab();
+      const programmeLink = screen.getByRole('link', { name: 'Go to programme' });
+      expect(programmeLink).toHaveFocus();
+
       // Tab to "Open full list" button
       await user.tab();
       const button = screen.getByRole('button', { name: 'Open full list' });
@@ -409,6 +415,7 @@ describe('Popup App', () => {
       await user.tab(); // star toggle
       await user.tab(); // expand/collapse toggle
       await user.tab(); // export button
+      await user.tab(); // programme link
       await user.tab(); // open full list
       await user.tab(); // help link
       const helpLink = screen.getByRole('button', { name: 'How does it work?' });
@@ -418,6 +425,11 @@ describe('Popup App', () => {
       await user.tab({ shift: true });
       const button = screen.getByRole('button', { name: 'Open full list' });
       expect(button).toHaveFocus();
+
+      // Shift+Tab back to programme link
+      await user.tab({ shift: true });
+      const programmeLink = screen.getByRole('link', { name: 'Go to programme' });
+      expect(programmeLink).toHaveFocus();
 
       // Shift+Tab back to export button
       await user.tab({ shift: true });

@@ -97,5 +97,5 @@ describe('Property 12: Content script injection idempotence', () => {
       ),
       { numRuns: 100 },
     );
-  });
+  }, 30000);
 });

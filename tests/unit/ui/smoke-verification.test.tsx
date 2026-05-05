@@ -13,7 +13,6 @@ import '@testing-library/jest-dom/vitest';
 
 import type {
   IBrowserApiAdapter,
-  StarredEvent,
   MessagePayload,
   MessageResponse,
 } from '#core/types';

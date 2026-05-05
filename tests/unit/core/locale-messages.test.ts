@@ -15,12 +15,12 @@ describe('getLocalizedMessage', () => {
   describe('basic retrieval', () => {
     it('returns Swedish message for sv locale', () => {
       const result = getLocalizedMessage('popupTitle', 'sv');
-      expect(result).toBe('Stjärnmärkta evenemang');
+      expect(result).toBe('Almedalsstjärnan');
     });
 
     it('returns English message for en locale', () => {
       const result = getLocalizedMessage('popupTitle', 'en');
-      expect(result).toBe('Starred events');
+      expect(result).toBe('Almedalsstjärnan');
     });
 
     it('returns empty string for unknown key', () => {
@@ -35,25 +35,32 @@ describe('getLocalizedMessage', () => {
   });
 
   describe('placeholder substitution', () => {
-    it('substitutes $1 and $2 placeholders', () => {
-      const result = getLocalizedMessage('eventCountIndicator', 'en', ['20', '47']);
-      expect(result).toBe('20 of 47');
-    });
-
-    it('substitutes placeholders in Swedish', () => {
-      const result = getLocalizedMessage('eventCountIndicator', 'sv', ['5', '12']);
-      expect(result).toBe('5 av 12');
-    });
-
-    it('substitutes single placeholder', () => {
+    it('substitutes $1 placeholder in conflictTooltip', () => {
       const result = getLocalizedMessage('conflictTooltip', 'en', ['Event A']);
       expect(result).toBe('Overlaps with: Event A');
     });
 
+    it('substitutes $1 placeholder in Swedish conflictTooltip', () => {
+      const result = getLocalizedMessage('conflictTooltip', 'sv', ['Event A']);
+      expect(result).toBe('Överlappar med: Event A');
+    });
+
+    it('returns raw template for eventCountIndicator (uses {count}/{total} format)', () => {
+      // eventCountIndicator uses {count}/{total} placeholders which are
+      // substituted at the component level, not by getLocalizedMessage
+      const result = getLocalizedMessage('eventCountIndicator', 'en');
+      expect(result).toBe('{count} of {total}');
+    });
+
+    it('returns raw Swedish template for eventCountIndicator', () => {
+      const result = getLocalizedMessage('eventCountIndicator', 'sv');
+      expect(result).toBe('{count} av {total}');
+    });
+
     it('handles missing substitution values gracefully', () => {
-      const result = getLocalizedMessage('eventCountIndicator', 'en', []);
-      // $1 and $2 remain as-is or become empty
-      expect(result).toContain('of');
+      const result = getLocalizedMessage('conflictTooltip', 'en', []);
+      // $1 remains as-is when no substitution provided
+      expect(result).toContain('Overlaps with:');
     });
   });
 

@@ -106,11 +106,9 @@ export function detectConflicts(
       const next = sorted[j];
       if (!next) continue;
 
-      // Sweep-line optimization: if next starts at or after current's effective end,
+      // Sweep-line optimization: if next starts strictly after current's effective end,
       // no further events can overlap with current (since they're sorted by start).
-      // But we need to handle zero-duration events at the same start time,
-      // so we only break when next.start >= currentEnd AND they don't overlap.
-      if (next.startDateTime >= currentEnd && !eventsOverlap(current, next)) {
+      if (next.startDateTime > currentEnd) {
         break;
       }
 
