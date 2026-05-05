@@ -66,7 +66,7 @@ export function App({ adapter }: AppProps): React.JSX.Element {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <header className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-6 pb-4">
+      <header className="w-full px-4 sm:px-6 lg:px-8 pt-6 pb-4">
         <h1 className="text-xl font-semibold text-gray-900 mb-4">
           {adapter.getMessage('starsPageTitle')}
         </h1>
@@ -85,7 +85,7 @@ export function App({ adapter }: AppProps): React.JSX.Element {
         </div>
       </header>
 
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-6">
+      <main className="flex-1 w-full px-4 sm:px-6 lg:px-8 pb-6">
         {filteredEvents.length === 0 ? (
           <EmptyState adapter={adapter} />
         ) : (

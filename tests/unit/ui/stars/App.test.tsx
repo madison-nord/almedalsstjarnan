@@ -551,6 +551,30 @@ describe('Stars Page App', () => {
       const container = heading.closest('div');
       expect(container).toHaveClass('bg-white');
     });
+
+    it('does not constrain content with max-w-7xl class', async () => {
+      await renderApp(makeEvents(1));
+
+      const header = screen.getByRole('heading', { level: 1 }).closest('header');
+      expect(header).not.toHaveClass('max-w-7xl');
+
+      const table = screen.getByRole('table');
+      const main = table.closest('main');
+      expect(main).not.toHaveClass('max-w-7xl');
+    });
+
+    it('header and main containers use full width with padding', async () => {
+      await renderApp(makeEvents(1));
+
+      const header = screen.getByRole('heading', { level: 1 }).closest('header');
+      expect(header).toHaveClass('w-full');
+      expect(header).toHaveClass('px-4');
+
+      const table = screen.getByRole('table');
+      const main = table.closest('main');
+      expect(main).toHaveClass('w-full');
+      expect(main).toHaveClass('px-4');
+    });
   });
 
   describe('keyboard navigation', () => {
