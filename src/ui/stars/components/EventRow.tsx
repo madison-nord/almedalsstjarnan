@@ -55,7 +55,7 @@ export function EventRow({ event, onUnstar, adapter, isConflicting, conflictTitl
           className="h-4 w-4 rounded border-gray-300 text-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-600"
         />
       </td>
-      <td className="truncate px-3 py-2 text-sm text-gray-900" title={event.title}>
+      <td className="px-3 py-2 text-sm text-gray-900 break-words" title={event.title}>
         {event.sourceUrl !== null ? (
           <a
             href={event.sourceUrl}

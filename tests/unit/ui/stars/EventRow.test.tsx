@@ -62,12 +62,13 @@ function renderRow(event: StarredEvent): void {
 
 describe('EventRow truncation', () => {
   describe('truncate class on text cells', () => {
-    it('applies truncate class to the title cell', () => {
+    it('does NOT apply truncate class to the title cell (allows wrapping)', () => {
       const event = makeEvent({ title: 'Demokrati i förändring' });
       renderRow(event);
 
       const titleCell = screen.getByText('Demokrati i förändring').closest('td');
-      expect(titleCell).toHaveClass('truncate');
+      expect(titleCell).not.toHaveClass('truncate');
+      expect(titleCell).toHaveClass('break-words');
     });
 
     it('applies truncate class to the organiser cell', () => {
@@ -94,12 +95,13 @@ describe('EventRow truncation', () => {
       expect(cell).toHaveClass('truncate');
     });
 
-    it('applies truncate class to title cell with comma-containing text', () => {
+    it('does NOT apply truncate class to title cell with comma-containing text', () => {
       const event = makeEvent({ title: 'Event A, Event B, Event C' });
       renderRow(event);
 
       const cell = screen.getByText('Event A, Event B, Event C').closest('td');
-      expect(cell).toHaveClass('truncate');
+      expect(cell).not.toHaveClass('truncate');
+      expect(cell).toHaveClass('break-words');
     });
 
     it('applies truncate class to organiser cell with long text', () => {
@@ -119,6 +121,15 @@ describe('EventRow truncation', () => {
 
       const titleCell = screen.getByText('Demokrati i förändring').closest('td');
       expect(titleCell).toHaveAttribute('title', 'Demokrati i förändring');
+    });
+
+    it('title attribute equals event.title for long titles (Requirement 9.2)', () => {
+      const longTitle = 'Tillräcklighet krävs för att klara klimatkrisen – en paneldiskussion om framtidens hållbara samhälle';
+      const event = makeEvent({ title: longTitle });
+      renderRow(event);
+
+      const titleCell = screen.getByText(longTitle).closest('td');
+      expect(titleCell).toHaveAttribute('title', longTitle);
     });
 
     it('adds title attribute to the organiser cell', () => {
@@ -158,7 +169,7 @@ describe('EventRow truncation', () => {
       expect(link).toHaveAttribute('href', 'https://almedalsveckan.info/event/e1');
     });
 
-    it('truncate is on the td, not the a element', () => {
+    it('break-words is on the td, not the a element', () => {
       const event = makeEvent({
         title: 'Linked Event',
         sourceUrl: 'https://almedalsveckan.info/event/e1',
@@ -167,9 +178,10 @@ describe('EventRow truncation', () => {
 
       const link = screen.getByRole('link', { name: 'Linked Event' });
       const td = link.closest('td');
-      expect(td).toHaveClass('truncate');
-      // The <a> itself should not have the truncate class
-      expect(link).not.toHaveClass('truncate');
+      expect(td).toHaveClass('break-words');
+      expect(td).not.toHaveClass('truncate');
+      // The <a> itself should not have the break-words class
+      expect(link).not.toHaveClass('break-words');
     });
   });
 });
