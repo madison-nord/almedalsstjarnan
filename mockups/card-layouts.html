@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Almedalsstjärnan – Card Layout Options</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f3f4f6;
+  padding: 32px;
+  color: #374151;
+}
+h1 {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 8px;
+  color: #1f2937;
+}
+.subtitle {
+  text-align: center;
+  color: #6b7280;
+  margin-bottom: 40px;
+  font-size: 14px;
+}
+.layouts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.layout-section {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.layout-section h2 {
+  font-size: 20px;
+  margin-bottom: 4px;
+  color: #1f2937;
+}
+.layout-section .desc {
+  color: #6b7280;
+  font-size: 13px;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.layout-section .features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.layout-section .features span {
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+.mockup-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+.popup-frame {
+  width: 340px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.popup-frame .frame-header {
+  background: #1e3a5f;
+  color: #fff;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Layout A: Compact Card */
+.card-a {
+  margin: 8px 12px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #fffbeb;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  position: relative;
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+.card-a:hover {
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+  transform: translateY(-1px);
+}
+.card-a .card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e3a5f;
+  margin-bottom: 3px;
+  padding-right: 28px;
+}
+.card-a .card-line2 {
+  font-size: 11px;
+  color: #6b7280;
+}
+.card-a .star-toggle {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  color: #f59e0b;
+  font-size: 16px;
+  cursor: pointer;
+}
+.card-a .star-toggle:hover {
+  color: #d97706;
+}
+.card-a .expand-btn {
+  display: block;
+  margin-top: 6px;
+  font-size: 10px;
+  color: #9ca3af;
+  cursor: pointer;
+  text-align: center;
+}
+.card-a .expand-btn:hover {
+  color: #6b7280;
+}
+
+/* Layout B: Spacious Card */
+.card-b {
+  margin: 10px 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #fffbeb;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  position: relative;
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+.card-b:hover {
+  box-shadow: 0 4px 14px rgba(0,0,0,0.14);
+  transform: translateY(-1px);
+}
+.card-b .card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e3a5f;
+  margin-bottom: 8px;
+  padding-right: 60px;
+}
+.card-b .card-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+.card-b .card-row .icon {
+  font-size: 12px;
+  width: 16px;
+  text-align: center;
+  color: #9ca3af;
+}
+.card-b .star-pill {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  color: #d97706;
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+.card-b .star-pill:hover {
+  background: #fde68a;
+}
+
+/* Layout C: List-style Card */
+.card-c {
+  margin: 0 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  transition: background 0.15s;
+}
+.card-c:hover {
+  background: #fffbeb;
+}
+.card-c:last-child {
+  border-bottom: none;
+}
+.card-c .star-inline {
+  color: #f59e0b;
+  font-size: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.card-c .star-inline:hover {
+  color: #d97706;
+}
+.card-c .card-content {
+  flex: 1;
+  min-width: 0;
+}
+.card-c .card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+.card-c .card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e3a5f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-c .card-date {
+  font-size: 11px;
+  color: #6b7280;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.card-c .card-org {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: 1px;
+}
+</style>
+</head>
+<body>
+
+<h1>📐 Card Layout Options</h1>
+<p class="subtitle">Almedalsstjärnan – EventItem layout for the popup · Open in browser to compare</p>
+
+<div class="layouts">
+
+<!-- LAYOUT A: Compact Card -->
+<div class="layout-section">
+  <h2>Layout A: "Compact Card"</h2>
+  <p class="desc">Rounded corners (8px), subtle box-shadow. Title bold on first line, organiser + formatted date on second line. Star toggle in top-right corner. Chevron at bottom for expand/collapse. Minimal padding (12px).</p>
+  <div class="features">
+    <span>8px radius</span>
+    <span>Subtle shadow</span>
+    <span>12px padding</span>
+    <span>Star top-right</span>
+    <span>Chevron expand</span>
+  </div>
+
+  <p class="mockup-label">Popup Preview</p>
+  <div class="popup-frame">
+    <div class="frame-header">★ Almedalsstjärnan</div>
+    <div class="card-a">
+      <span class="star-toggle">★</span>
+      <p class="card-title">Demokratins framtid i en digital värld</p>
+      <p class="card-line2">Sveriges Riksdag · Mån 22 juni 07:30–08:30</p>
+      <span class="expand-btn">▾ Visa mer</span>
+    </div>
+    <div class="card-a">
+      <span class="star-toggle">★</span>
+      <p class="card-title">Hållbar energi för alla</p>
+      <p class="card-line2">Energimyndigheten · Tis 23 juni 10:00–11:30</p>
+      <span class="expand-btn">▸</span>
+    </div>
+    <div class="card-a">
+      <span class="star-toggle">★</span>
+      <p class="card-title">AI och framtidens arbetsmarknad</p>
+      <p class="card-line2">Arbetsförmedlingen · Ons 24 juni 14:00–15:00</p>
+      <span class="expand-btn">▸</span>
+    </div>
+  </div>
+</div>
+
+<!-- LAYOUT B: Spacious Card -->
+<div class="layout-section">
+  <h2>Layout B: "Spacious Card"</h2>
+  <p class="desc">Larger rounded corners (12px), more prominent shadow. Title on its own line (larger font). Organiser and date each on separate lines with icons. Star toggle as a pill button in top-right. More generous padding (16px).</p>
+  <div class="features">
+    <span>12px radius</span>
+    <span>Prominent shadow</span>
+    <span>16px padding</span>
+    <span>Star pill button</span>
+    <span>Icon labels</span>
+  </div>
+
+  <p class="mockup-label">Popup Preview</p>
+  <div class="popup-frame">
+    <div class="frame-header">★ Almedalsstjärnan</div>
+    <div class="card-b">
+      <span class="star-pill">★ Sparad</span>
+      <p class="card-title">Demokratins framtid i en digital värld</p>
+      <div class="card-row"><span class="icon">🏢</span> Sveriges Riksdag</div>
+      <div class="card-row"><span class="icon">📅</span> Mån 22 juni 07:30–08:30</div>
+      <div class="card-row"><span class="icon">📍</span> Wisby Strand, Sal A</div>
+    </div>
+    <div class="card-b">
+      <span class="star-pill">★ Sparad</span>
+      <p class="card-title">Hållbar energi för alla</p>
+      <div class="card-row"><span class="icon">🏢</span> Energimyndigheten</div>
+      <div class="card-row"><span class="icon">📅</span> Tis 23 juni 10:00–11:30</div>
+      <div class="card-row"><span class="icon">📍</span> Almedalsparken</div>
+    </div>
+  </div>
+</div>
+
+<!-- LAYOUT C: List-style Card -->
+<div class="layout-section">
+  <h2>Layout C: "List-style Card"</h2>
+  <p class="desc">Minimal border (1px bottom), no shadow. Title and date on same line (title left, date right). Organiser below in muted text. Star toggle inline on the left. Compact vertical spacing — fits more events in view.</p>
+  <div class="features">
+    <span>No shadow</span>
+    <span>1px border</span>
+    <span>Inline star</span>
+    <span>Compact spacing</span>
+    <span>More events visible</span>
+  </div>
+
+  <p class="mockup-label">Popup Preview</p>
+  <div class="popup-frame">
+    <div class="frame-header">★ Almedalsstjärnan</div>
+    <div style="padding: 4px 0;">
+      <div class="card-c">
+        <span class="star-inline">★</span>
+        <div class="card-content">
+          <div class="card-top">
+            <span class="card-title">Demokratins framtid i en digital värld</span>
+            <span class="card-date">Mån 22 jun 07:30</span>
+          </div>
+          <p class="card-org">Sveriges Riksdag</p>
+        </div>
+      </div>
+      <div class="card-c">
+        <span class="star-inline">★</span>
+        <div class="card-content">
+          <div class="card-top">
+            <span class="card-title">Hållbar energi för alla</span>
+            <span class="card-date">Tis 23 jun 10:00</span>
+          </div>
+          <p class="card-org">Energimyndigheten</p>
+        </div>
+      </div>
+      <div class="card-c">
+        <span class="star-inline">★</span>
+        <div class="card-content">
+          <div class="card-top">
+            <span class="card-title">AI och framtidens arbetsmarknad</span>
+            <span class="card-date">Ons 24 jun 14:00</span>
+          </div>
+          <p class="card-org">Arbetsförmedlingen</p>
+        </div>
+      </div>
+      <div class="card-c">
+        <span class="star-inline">★</span>
+        <div class="card-content">
+          <div class="card-top">
+            <span class="card-title">Framtidens sjukvård</span>
+            <span class="card-date">Tor 25 jun 09:00</span>
+          </div>
+          <p class="card-org">Socialstyrelsen</p>
+        </div>
+      </div>
+      <div class="card-c">
+        <span class="star-inline">★</span>
+        <div class="card-content">
+          <div class="card-top">
+            <span class="card-title">Cybersäkerhet i offentlig sektor</span>
+            <span class="card-date">Fre 26 jun 11:00</span>
+          </div>
+          <p class="card-org">MSB</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

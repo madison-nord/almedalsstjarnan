@@ -70,6 +70,7 @@ function makeEvents(count: number): StarredEvent[] {
 const messageMap: Record<string, string> = {
   popupTitle: 'Starred events',
   openFullList: 'Open full list',
+  exportToCalendar: 'Export to calendar',
   emptyStateTitle: 'No starred events',
   emptyStateMessage: 'Visit the Almedalsveckan programme and click the star to save events.',
   sortChronological: 'Chronological',
@@ -77,6 +78,7 @@ const messageMap: Record<string, string> = {
   sortAlphabeticalTitle: 'Title A–Z',
   sortStarredDesc: 'Recently starred',
   sortLabel: 'Sort by',
+  helpLink: 'How does it work?',
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────
@@ -100,6 +102,8 @@ function setupAdapter(events: StarredEvent[] = [], sortOrder: SortOrder = 'chron
           return Promise.resolve({ success: true as const, data: sortOrder });
         case 'SET_SORT_ORDER':
           return Promise.resolve({ success: true as const, data: undefined });
+        case 'GET_ONBOARDING_STATE':
+          return Promise.resolve({ success: true as const, data: true });
         default:
           return Promise.resolve({ success: true as const, data: undefined });
       }
@@ -192,10 +196,10 @@ describe('Popup App', () => {
     });
 
     it('displays each event with date-time', async () => {
-      const events = [makeEvent({ id: 'e1', startDateTime: '2026-06-28T10:00:00+02:00' })];
+      const events = [makeEvent({ id: 'e1', startDateTime: '2026-06-28T10:00:00+02:00', endDateTime: '2026-06-28T11:00:00+02:00' })];
       await renderApp(events);
 
-      expect(screen.getByText('2026-06-28T10:00:00+02:00')).toBeInTheDocument();
+      expect(screen.getByText('Sön 28 juni 10:00\u201311:00')).toBeInTheDocument();
     });
 
     it('displays each event with location', async () => {
@@ -224,7 +228,7 @@ describe('Popup App', () => {
     it('renders SortSelector with current sort order', async () => {
       await renderApp(makeEvents(3), 'reverse-chronological');
 
-      const select = screen.getByRole('combobox') as HTMLSelectElement;
+      const select = screen.getByRole('combobox', { name: 'Sort by' }) as HTMLSelectElement;
       expect(select.value).toBe('reverse-chronological');
     });
 
@@ -232,7 +236,7 @@ describe('Popup App', () => {
       const user = userEvent.setup();
       await renderApp(makeEvents(3), 'chronological');
 
-      const select = screen.getByRole('combobox');
+      const select = screen.getByRole('combobox', { name: 'Sort by' });
       await user.selectOptions(select, 'alphabetical-by-title');
 
       expect(adapter.sendMessage).toHaveBeenCalledWith(
@@ -257,7 +261,7 @@ describe('Popup App', () => {
       expect(items[1]).toHaveTextContent('Alpha event');
 
       // Change to alphabetical
-      const select = screen.getByRole('combobox');
+      const select = screen.getByRole('combobox', { name: 'Sort by' });
       await user.selectOptions(select, 'alphabetical-by-title');
 
       items = screen.getAllByRole('listitem');
@@ -308,21 +312,24 @@ describe('Popup App', () => {
     it('renders at 360px width', async () => {
       await renderApp();
 
-      const container = screen.getByRole('heading', { level: 1 }).closest('div');
+      const heading = screen.getByRole('heading', { level: 1 });
+      const container = heading.closest('.w-\\[360px\\]');
       expect(container).toHaveClass('w-[360px]');
     });
 
     it('renders with min-height 480px', async () => {
       await renderApp();
 
-      const container = screen.getByRole('heading', { level: 1 }).closest('div');
+      const heading = screen.getByRole('heading', { level: 1 });
+      const container = heading.closest('.min-h-\\[480px\\]');
       expect(container).toHaveClass('min-h-[480px]');
     });
 
     it('uses Tailwind classes for styling', async () => {
       await renderApp(makeEvents(1));
 
-      const container = screen.getByRole('heading', { level: 1 }).closest('div');
+      const heading = screen.getByRole('heading', { level: 1 });
+      const container = heading.closest('.w-\\[360px\\]');
       expect(container).toHaveClass('flex', 'flex-col', 'bg-white');
     });
 
@@ -337,6 +344,28 @@ describe('Popup App', () => {
 
       expect(adapter.getMessage).toHaveBeenCalledWith('popupTitle');
     });
+
+    it('displays branded header with dark background', async () => {
+      await renderApp();
+
+      const header = screen.getByRole('heading', { level: 1 }).closest('header');
+      expect(header).toHaveClass('bg-brand-secondary');
+    });
+
+    it('displays accent-colored star icon in header', async () => {
+      await renderApp();
+
+      const header = screen.getByRole('heading', { level: 1 }).closest('header');
+      const starIcon = header?.querySelector('.text-brand-accent');
+      expect(starIcon).toBeInTheDocument();
+    });
+
+    it('displays primary-colored bottom border on header', async () => {
+      await renderApp();
+
+      const header = screen.getByRole('heading', { level: 1 }).closest('header');
+      expect(header).toHaveClass('border-b-[3px]', 'border-brand-primary');
+    });
   });
 
   describe('keyboard navigation', () => {
@@ -346,28 +375,64 @@ describe('Popup App', () => {
 
       // Tab to sort selector
       await user.tab();
-      const select = screen.getByRole('combobox');
+      const select = screen.getByRole('combobox', { name: 'Sort by' });
       expect(select).toHaveFocus();
+
+      // Tab through star toggle button(s) in the event list
+      await user.tab();
+
+      // Tab through expand/collapse toggle
+      await user.tab();
+
+      // Tab to export button
+      await user.tab();
+      const exportBtn = screen.getByRole('button', { name: 'Export to calendar' });
+      expect(exportBtn).toHaveFocus();
 
       // Tab to "Open full list" button
       await user.tab();
       const button = screen.getByRole('button', { name: 'Open full list' });
       expect(button).toHaveFocus();
+
+      // Tab to "How it works" help link
+      await user.tab();
+      const helpLink = screen.getByRole('button', { name: 'How does it work?' });
+      expect(helpLink).toHaveFocus();
     });
 
     it('Shift+Tab navigates backwards', async () => {
       const user = userEvent.setup();
       await renderApp(makeEvents(1));
 
-      // Tab forward twice
-      await user.tab();
-      await user.tab();
+      // Tab forward to reach "How it works" help link
+      await user.tab(); // sort selector
+      await user.tab(); // star toggle
+      await user.tab(); // expand/collapse toggle
+      await user.tab(); // export button
+      await user.tab(); // open full list
+      await user.tab(); // help link
+      const helpLink = screen.getByRole('button', { name: 'How does it work?' });
+      expect(helpLink).toHaveFocus();
+
+      // Shift+Tab back to "Open full list"
+      await user.tab({ shift: true });
       const button = screen.getByRole('button', { name: 'Open full list' });
       expect(button).toHaveFocus();
 
+      // Shift+Tab back to export button
+      await user.tab({ shift: true });
+      const exportBtn = screen.getByRole('button', { name: 'Export to calendar' });
+      expect(exportBtn).toHaveFocus();
+
+      // Shift+Tab back to expand/collapse toggle
+      await user.tab({ shift: true });
+
+      // Shift+Tab back to star toggle
+      await user.tab({ shift: true });
+
       // Shift+Tab back to sort selector
       await user.tab({ shift: true });
-      const select = screen.getByRole('combobox');
+      const select = screen.getByRole('combobox', { name: 'Sort by' });
       expect(select).toHaveFocus();
     });
 

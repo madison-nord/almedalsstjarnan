@@ -3,23 +3,33 @@
  *
  * On mount:
  * - Sends GET_ALL_STARRED_EVENTS and GET_SORT_ORDER via adapter
+ * - Sends GET_ONBOARDING_STATE to check if onboarding was dismissed
  * - Displays up to 20 events sorted by current order using Sorter
  * - Renders SortSelector
  * - Handles sort order change (sends SET_SORT_ORDER, re-sorts)
  * - Renders "Open full list" button (opens stars.html via createTab)
  * - Renders empty state when no events
+ * - Renders UndoToast for each pending deletion
+ * - Renders OnboardingView on first run (before dismissal)
+ * - Renders "How it works" help link in footer
  * - Registers adapter.onStorageChanged for live updates, cleans up on unmount
  * - All strings via i18n
  *
- * Requirements: 9.1–9.9
+ * Requirements: 9.1–9.9, 7.1, 7.2, 7.3, 6.1, 6.2, 6.3, 6.4
  */
+
+import { useState, useEffect, useCallback } from 'react';
 
 import type { IBrowserApiAdapter } from '#core/types';
 
 import { SortSelector } from '#ui/shared/SortSelector';
+import { UndoToast } from '#ui/shared/UndoToast';
+import { LanguageToggle } from '#ui/shared/LanguageToggle';
 
 import { EventList } from './components/EventList';
 import { EmptyState } from './components/EmptyState';
+import { ExportButton } from './components/ExportButton';
+import { OnboardingView } from './components/OnboardingView';
 import { useStarredEvents } from './hooks/useStarredEvents';
 
 export interface AppProps {
@@ -27,14 +37,72 @@ export interface AppProps {
 }
 
 export function App({ adapter }: AppProps): React.JSX.Element {
-  const { events, sortOrder, changeSortOrder, loading } =
-    useStarredEvents(adapter);
+  const {
+    events,
+    sortOrder,
+    changeSortOrder,
+    unstarEvent,
+    undoUnstar,
+    confirmUnstar,
+    pendingDeletions,
+    exportEvents,
+    loading,
+    conflictingIds,
+    conflictTitlesMap,
+  } = useStarredEvents(adapter);
+
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingLoaded, setOnboardingLoaded] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetchOnboardingState(): Promise<void> {
+      const response = await adapter.sendMessage<boolean>({
+        command: 'GET_ONBOARDING_STATE',
+      });
+
+      if (cancelled) return;
+
+      if (response.success) {
+        // response.data is true when dismissed, so show when NOT dismissed
+        setShowOnboarding(!response.data);
+      } else {
+        // Default to showing onboarding if we can't read state
+        setShowOnboarding(true);
+      }
+      setOnboardingLoaded(true);
+    }
+
+    void fetchOnboardingState();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [adapter]);
+
+  const handleDismissOnboarding = useCallback((): void => {
+    setShowOnboarding(false);
+    void adapter.sendMessage({
+      command: 'SET_ONBOARDING_STATE',
+      dismissed: true,
+    });
+  }, [adapter]);
+
+  const handleShowOnboarding = useCallback((): void => {
+    setShowOnboarding(true);
+  }, []);
+
+  const handleLocaleChange = useCallback((): void => {
+    // Reload the popup to apply the new locale strings
+    window.location.reload();
+  }, []);
 
   const handleOpenFullList = (): void => {
     void adapter.createTab({ url: 'src/ui/stars/stars.html' });
   };
 
-  if (loading) {
+  if (loading || !onboardingLoaded) {
     return (
       <div className="w-[360px] min-h-[480px] flex items-center justify-center">
         <span className="text-sm text-gray-400">…</span>
@@ -44,10 +112,16 @@ export function App({ adapter }: AppProps): React.JSX.Element {
 
   return (
     <div className="w-[360px] min-h-[480px] flex flex-col bg-white">
-      <header className="px-4 pt-4 pb-2">
-        <h1 className="text-lg font-semibold text-gray-900 mb-2">
-          {adapter.getMessage('popupTitle')}
-        </h1>
+      <header className="bg-brand-secondary px-4 pt-4 pb-2 border-b-[3px] border-brand-primary">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-brand-accent text-lg" aria-hidden="true">★</span>
+          <h1 className="text-lg font-semibold text-white">
+            {adapter.getMessage('popupTitle')}
+            {events.length > 0 && (
+              <span className="ml-1 font-normal text-sm text-gray-300">({events.length})</span>
+            )}
+          </h1>
+        </div>
         <SortSelector
           currentOrder={sortOrder}
           onOrderChange={changeSortOrder}
@@ -55,13 +129,30 @@ export function App({ adapter }: AppProps): React.JSX.Element {
         />
       </header>
 
+      {showOnboarding && (
+        <OnboardingView adapter={adapter} onDismiss={handleDismissOnboarding} />
+      )}
+
       {events.length === 0 ? (
         <EmptyState adapter={adapter} />
       ) : (
-        <EventList events={events} />
+        <EventList events={events} onUnstar={unstarEvent} adapter={adapter} conflictingIds={conflictingIds} conflictTitlesMap={conflictTitlesMap} />
       )}
 
-      <footer className="px-4 py-3 border-t border-gray-200">
+      <footer className="px-4 py-3 border-t border-gray-200 flex flex-col gap-2">
+        <ExportButton
+          onExport={exportEvents}
+          adapter={adapter}
+          disabled={events.length === 0}
+        />
+        <a
+          href="https://almedalsveckan.info/rg/almedalsveckan/officiellt-program/program-2026"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full py-2 px-4 text-sm font-medium text-center text-brand-primary bg-brand-surface rounded hover:bg-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
+        >
+          {adapter.getMessage('goToProgramme')}
+        </a>
         <button
           type="button"
           onClick={handleOpenFullList}
@@ -69,7 +160,31 @@ export function App({ adapter }: AppProps): React.JSX.Element {
         >
           {adapter.getMessage('openFullList')}
         </button>
+        <div className="flex items-center justify-between">
+          <button
+            type="button"
+            onClick={handleShowOnboarding}
+            className="py-1 text-xs text-gray-500 hover:text-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
+          >
+            {adapter.getMessage('helpLink')}
+          </button>
+          <LanguageToggle adapter={adapter} onLocaleChange={handleLocaleChange} />
+        </div>
       </footer>
+
+      {pendingDeletions.length > 0 && (
+        <div className="fixed bottom-4 left-4 right-4 flex flex-col gap-2 z-50">
+          {pendingDeletions.map((event) => (
+            <UndoToast
+              key={event.id}
+              eventTitle={event.title}
+              onUndo={() => undoUnstar(event.id)}
+              onExpire={() => confirmUnstar(event.id)}
+              adapter={adapter}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

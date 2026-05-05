@@ -21,7 +21,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor, act, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom/vitest';
 
@@ -79,6 +79,8 @@ const messageMap: Record<string, string> = {
   sortStarredDesc: 'Recently starred',
   sortLabel: 'Sort by',
   unstarAction: 'Remove',
+  undoAction: 'Undo',
+  eventRemoved: 'Event removed',
   columnTitle: 'Title',
   columnOrganiser: 'Organiser',
   columnDateTime: 'Date & time',
@@ -194,7 +196,10 @@ describe('Stars Page App', () => {
       expect(screen.getByText('Date & time')).toBeInTheDocument();
       expect(screen.getByText('Location')).toBeInTheDocument();
       expect(screen.getByText('Topic')).toBeInTheDocument();
-      expect(screen.getByText('Actions')).toBeInTheDocument();
+      // Actions header is visually hidden (sr-only) but still in the DOM for accessibility
+      const actionsText = screen.getByText('Actions');
+      expect(actionsText).toBeInTheDocument();
+      expect(actionsText).toHaveClass('sr-only');
     });
 
     it('uses getMessage for column header labels', async () => {
@@ -223,10 +228,10 @@ describe('Stars Page App', () => {
     });
 
     it('displays event date-time in grid', async () => {
-      const events = [makeEvent({ id: 'e1', startDateTime: '2026-06-28T10:00:00+02:00' })];
+      const events = [makeEvent({ id: 'e1', startDateTime: '2026-06-28T10:00:00+02:00', endDateTime: '2026-06-28T11:00:00+02:00' })];
       await renderApp(events);
 
-      expect(screen.getByText('2026-06-28T10:00:00+02:00')).toBeInTheDocument();
+      expect(screen.getByText('Sön 28 juni 10:00\u201311:00')).toBeInTheDocument();
     });
 
     it('displays event location in grid', async () => {
@@ -301,18 +306,20 @@ describe('Stars Page App', () => {
       await renderApp(events, 'chronological');
 
       // Initially chronological: e1 (June 28) before e2 (June 29)
+      // Row layout: [0] thead, [1] section header (June 28), [2] Zebra, [3] section header (June 29), [4] Alpha
       let rows = screen.getAllByRole('row');
-      // First row is header, so data rows start at index 1
-      expect(rows[1]).toHaveTextContent('Zebra event');
-      expect(rows[2]).toHaveTextContent('Alpha event');
+      expect(rows[2]).toHaveTextContent('Zebra event');
+      expect(rows[4]).toHaveTextContent('Alpha event');
 
       // Change to alphabetical
       const select = screen.getByRole('combobox');
       await user.selectOptions(select, 'alphabetical-by-title');
 
+      // After alphabetical sort: Alpha (June 29) first, then Zebra (June 28)
+      // Row layout: [0] thead, [1] section header (June 29), [2] Alpha, [3] section header (June 28), [4] Zebra
       rows = screen.getAllByRole('row');
-      expect(rows[1]).toHaveTextContent('Alpha event');
-      expect(rows[2]).toHaveTextContent('Zebra event');
+      expect(rows[2]).toHaveTextContent('Alpha event');
+      expect(rows[4]).toHaveTextContent('Zebra event');
     });
   });
 
@@ -371,13 +378,87 @@ describe('Stars Page App', () => {
       expect(adapter.getMessage).toHaveBeenCalledWith('unstarAction');
     });
 
-    it('clicking unstar sends UNSTAR_EVENT', async () => {
-      const user = userEvent.setup();
+    it('clicking unstar removes event from grid immediately (optimistic)', async () => {
+      const events = [
+        makeEvent({ id: 'e1', title: 'Keep this' }),
+        makeEvent({ id: 'e2', title: 'Remove this' }),
+      ];
+      await renderApp(events);
+
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+
+      const table = screen.getByRole('table');
+      expect(table).toHaveTextContent('Remove this');
+
+      const removeButtons = screen.getAllByRole('button', { name: 'Remove' });
+      // Click the second remove button (for 'Remove this')
+      fireEvent.click(removeButtons[1]!);
+
+      await waitFor(() => {
+        // Event should no longer be in the table
+        expect(screen.getByRole('table')).not.toHaveTextContent('Remove this');
+      });
+      expect(screen.getByRole('table')).toHaveTextContent('Keep this');
+
+      // Cleanup: advance timer to avoid pending timers
+      act(() => { vi.advanceTimersByTime(5000); });
+      vi.useRealTimers();
+    });
+
+    it('clicking unstar does NOT immediately send UNSTAR_EVENT (deferred)', async () => {
       const events = [makeEvent({ id: 'e1', title: 'Event to remove' })];
       await renderApp(events);
 
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+      (adapter.sendMessage as ReturnType<typeof vi.fn>).mockClear();
+
       const removeButton = screen.getByRole('button', { name: 'Remove' });
-      await user.click(removeButton);
+      fireEvent.click(removeButton);
+
+      // UNSTAR_EVENT should NOT be sent immediately
+      expect(adapter.sendMessage).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          command: 'UNSTAR_EVENT',
+          eventId: 'e1',
+        }),
+      );
+
+      // Cleanup: advance timer to avoid pending timers
+      act(() => { vi.advanceTimersByTime(5000); });
+      vi.useRealTimers();
+    });
+
+    it('clicking unstar shows an undo toast', async () => {
+      const events = [makeEvent({ id: 'e1', title: 'Event to remove' })];
+      await renderApp(events);
+
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+
+      const removeButton = screen.getByRole('button', { name: 'Remove' });
+      fireEvent.click(removeButton);
+
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+      expect(screen.getByText('Event to remove')).toBeInTheDocument();
+
+      // Cleanup: advance timer to avoid pending timers
+      act(() => { vi.advanceTimersByTime(5000); });
+      vi.useRealTimers();
+    });
+
+    it('sends UNSTAR_EVENT after undo toast timer expires', async () => {
+      const events = [makeEvent({ id: 'e1', title: 'Event to remove' })];
+      await renderApp(events);
+
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+      (adapter.sendMessage as ReturnType<typeof vi.fn>).mockClear();
+
+      const removeButton = screen.getByRole('button', { name: 'Remove' });
+      fireEvent.click(removeButton);
+
+      // Advance past the 5-second timer
+      act(() => {
+        vi.advanceTimersByTime(5000);
+      });
 
       expect(adapter.sendMessage).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -385,26 +466,42 @@ describe('Stars Page App', () => {
           eventId: 'e1',
         }),
       );
+
+      vi.useRealTimers();
     });
 
-    it('clicking unstar removes event from list', async () => {
-      const user = userEvent.setup();
+    it('clicking undo restores the event and sends STAR_EVENT', async () => {
       const events = [
-        makeEvent({ id: 'e1', title: 'Keep this' }),
-        makeEvent({ id: 'e2', title: 'Remove this' }),
+        makeEvent({ id: 'e1', title: 'Event to restore' }),
+        makeEvent({ id: 'e2', title: 'Another event' }),
       ];
       await renderApp(events);
 
-      expect(screen.getByText('Remove this')).toBeInTheDocument();
+      vi.useFakeTimers({ shouldAdvanceTime: true });
 
       const removeButtons = screen.getAllByRole('button', { name: 'Remove' });
-      // Click the second remove button (for 'Remove this')
-      await user.click(removeButtons[1]!);
+      fireEvent.click(removeButtons[0]!);
+
+      // Event should be gone from the table
+      expect(screen.getByRole('table')).not.toHaveTextContent('Event to restore');
+
+      (adapter.sendMessage as ReturnType<typeof vi.fn>).mockClear();
+
+      // Click the undo button
+      const undoButton = screen.getByRole('button', { name: 'Undo' });
+      fireEvent.click(undoButton);
 
       await waitFor(() => {
-        expect(screen.queryByText('Remove this')).not.toBeInTheDocument();
+        expect(screen.getByRole('table')).toHaveTextContent('Event to restore');
       });
-      expect(screen.getByText('Keep this')).toBeInTheDocument();
+
+      expect(adapter.sendMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          command: 'STAR_EVENT',
+        }),
+      );
+
+      vi.useRealTimers();
     });
   });
 
@@ -466,6 +563,11 @@ describe('Stars Page App', () => {
       const select = screen.getByRole('combobox');
       expect(select).toHaveFocus();
 
+      // Tab to search filter input
+      await user.tab();
+      const filterInput = screen.getByRole('textbox');
+      expect(filterInput).toHaveFocus();
+
       // Tab to export button
       await user.tab();
       const exportButton = screen.getByRole('button', { name: 'Export to calendar' });
@@ -476,11 +578,17 @@ describe('Stars Page App', () => {
       const user = userEvent.setup();
       await renderApp(makeEvents(1));
 
-      // Tab forward twice
+      // Tab forward three times (sort → filter → export)
+      await user.tab();
       await user.tab();
       await user.tab();
       const exportButton = screen.getByRole('button', { name: 'Export to calendar' });
       expect(exportButton).toHaveFocus();
+
+      // Shift+Tab back to filter input
+      await user.tab({ shift: true });
+      const filterInput = screen.getByRole('textbox');
+      expect(filterInput).toHaveFocus();
 
       // Shift+Tab back to sort selector
       await user.tab({ shift: true });

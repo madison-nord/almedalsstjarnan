@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Almedalsstjärnan – Color Palette Options</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f3f4f6;
+  padding: 32px;
+  color: #374151;
+}
+h1 {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 8px;
+  color: #1f2937;
+}
+.subtitle {
+  text-align: center;
+  color: #6b7280;
+  margin-bottom: 40px;
+  font-size: 14px;
+}
+.palettes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.palette-section {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.palette-section h2 {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+.palette-section .desc {
+  color: #6b7280;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+.swatches {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.swatch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.swatch-color {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+.swatch-label {
+  font-size: 9px;
+  color: #6b7280;
+  text-align: center;
+}
+.mockup-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  margin-top: 16px;
+}
+
+/* Popup mockup */
+.popup-mock {
+  width: 320px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.popup-header {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.popup-header h3 {
+  font-size: 15px;
+  font-weight: 600;
+}
+.popup-header .count {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+.popup-card {
+  margin: 0 12px 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  position: relative;
+  transition: box-shadow 0.2s;
+}
+.popup-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.popup-card .card-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 2px;
+  padding-right: 24px;
+}
+.popup-card .card-meta {
+  font-size: 11px;
+  margin-bottom: 1px;
+}
+.popup-card .star-icon {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.popup-footer {
+  padding: 10px 16px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  gap: 8px;
+}
+.popup-footer button {
+  flex: 1;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+}
+
+/* Stars page mockup */
+.stars-mock {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.stars-mock table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+.stars-mock th {
+  padding: 8px 10px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.stars-mock td {
+  padding: 8px 10px;
+}
+.stars-mock tr.hover-row:hover {
+  cursor: pointer;
+}
+.stars-mock .section-row td {
+  font-weight: 600;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 6px 10px;
+}
+
+/* Palette A: Gotland Sunset */
+.palette-a .popup-header { background: #1e3a5f; color: #fff; }
+.palette-a .popup-header .count { background: #d97706; color: #fff; }
+.palette-a .popup-card { background: #fffbeb; }
+.palette-a .popup-card .card-title { color: #1e3a5f; }
+.palette-a .popup-card .card-meta { color: #6b7280; }
+.palette-a .popup-card .star-icon { color: #f59e0b; }
+.palette-a .popup-footer button.primary { background: #d97706; color: #fff; }
+.palette-a .popup-footer button.secondary { background: #fffbeb; color: #1e3a5f; border: 1px solid #d97706; }
+.palette-a .stars-mock th { background: #1e3a5f; color: #fff; }
+.palette-a .stars-mock .section-row td { background: #fffbeb; color: #d97706; }
+.palette-a .stars-mock tr.even { background: #fffbeb; }
+.palette-a .stars-mock tr.odd { background: #fff; }
+.palette-a .stars-mock tr.hover-row:hover { background: #fef3c7; }
+.palette-a .stars-mock .star-cell { color: #f59e0b; }
+
+/* Palette B: Baltic Blue */
+.palette-b .popup-header { background: #1e40af; color: #fff; }
+.palette-b .popup-header .count { background: #0d9488; color: #fff; }
+.palette-b .popup-card { background: #f0fdfa; }
+.palette-b .popup-card .card-title { color: #1e40af; }
+.palette-b .popup-card .card-meta { color: #6b7280; }
+.palette-b .popup-card .star-icon { color: #14b8a6; }
+.palette-b .popup-footer button.primary { background: #0d9488; color: #fff; }
+.palette-b .popup-footer button.secondary { background: #f0fdfa; color: #1e40af; border: 1px solid #0d9488; }
+.palette-b .stars-mock th { background: #1e40af; color: #fff; }
+.palette-b .stars-mock .section-row td { background: #f0fdfa; color: #0d9488; }
+.palette-b .stars-mock tr.even { background: #f0fdfa; }
+.palette-b .stars-mock tr.odd { background: #fff; }
+.palette-b .stars-mock tr.hover-row:hover { background: #ccfbf1; }
+.palette-b .stars-mock .star-cell { color: #14b8a6; }
+
+/* Palette C: Almedalen Rose */
+.palette-c .popup-header { background: #581c87; color: #fff; }
+.palette-c .popup-header .count { background: #be185d; color: #fff; }
+.palette-c .popup-card { background: #fdf2f8; }
+.palette-c .popup-card .card-title { color: #581c87; }
+.palette-c .popup-card .card-meta { color: #6b7280; }
+.palette-c .popup-card .star-icon { color: #ec4899; }
+.palette-c .popup-footer button.primary { background: #be185d; color: #fff; }
+.palette-c .popup-footer button.secondary { background: #fdf2f8; color: #581c87; border: 1px solid #be185d; }
+.palette-c .stars-mock th { background: #581c87; color: #fff; }
+.palette-c .stars-mock .section-row td { background: #fdf2f8; color: #be185d; }
+.palette-c .stars-mock tr.even { background: #fdf2f8; }
+.palette-c .stars-mock tr.odd { background: #fff; }
+.palette-c .stars-mock tr.hover-row:hover { background: #fce7f3; }
+.palette-c .stars-mock .star-cell { color: #ec4899; }
+</style>
+</head>
+<body>
+
+<h1>🎨 Color Palette Options</h1>
+<p class="subtitle">Almedalsstjärnan – Visual Design Direction · Open in browser to compare</p>
+
+<div class="palettes">
+
+<!-- PALETTE A -->
+<div class="palette-section">
+  <h2>Palette A: "Gotland Sunset"</h2>
+  <p class="desc">Warm amber/gold tones inspired by Visby's golden hour</p>
+  <div class="swatches">
+    <div class="swatch"><div class="swatch-color" style="background:#d97706"></div><span class="swatch-label">Primary<br>#d97706</span></div>
+    <div class="swatch"><div class="swatch-color" style="background:#1e3a5f"></div><span class="swatch-label">Secondary<br>#1e3a5f</span></div>
+    <div class="swatch"><div class="swatch-color" style="background:#f59e0b"></div><span class="swatch-label">Accent<br>#f59e0b</span></div>
+    <div class="swatch"><div class="swatch-color" style="background:#fffbeb"></div><span class="swatch-label">Surface<br>#fffbeb</span></div>
+    <div class="swatch"><div class="swatch-color" style="background:#374151"></div><span class="swatch-label">Text<br>#374151</span></div>
+    <div class="swatch"><div class="swatch-color" style="background:#6b7280"></div><span class="swatch-label">Muted<br>#6b7280</span></div>
+  </div>
+
+  <p class="mockup-label">Popup UI</p>
+  <div class="popup-mock palette-a">
+    <div class="popup-header">
+      <h3>★ Almedalsstjärnan</h3>
+      <span class="count">3 event</span>
+    </div>
+    <div class="popup-card">
+      <span class="star-icon">★</span>
+      <p class="card-title">Demokratins framtid i en digital värld</p>
+      <p class="card-meta">Sveriges Riksdag</p>
+      <p class="card-meta">Mån 22 juni 07:30–08:30</p>
+    </div>
+    <div class="popup-card">
+      <span class="star-icon">★</span>
+      <p class="card-title">Hållbar energi för alla</p>
+      <p class="card-meta">Energimyndigheten</p>
+      <p class="card-meta">Tis 23 juni 10:00–11:30</p>
+    </div>
+    <div class="popup-card">
+      <span class="star-icon">★</span>
+      <p class="card-title">AI och framtidens arbetsmarknad</p>
+      <p class="card-meta">Arbetsförmedlingen</p>
+      <p class="card-meta">Ons 24 juni 14:00–15:00</p>
+    </div>
+    <div class="popup-footer">
+      <button class="primary">Exportera .ics</button>
+      <button class="secondary">Öppna full lista</button>
+    </div>
+  </div>
+
+  <p class="mockup-label">Stars Page Grid</p>
+  <div class="stars-mock palette-a">
+    <table>
+      <thead><tr><th>Titel</th><th>Arrangör</th><th>Tid</th><th>Plats</th><th></th></tr></thead>
+      <tbody>
+        <tr class="section-row"><td colspan="5">Måndag 22 juni</td></tr>
+        <tr class="even hover-row"><td>Demokratins framtid i en digital värld</td><td>Sveriges Riksdag</td><td>07:30–08:30</td><td>Wisby Strand, Sal A</td><td class="star-cell">★</td></tr>
+        <tr class="section-row"><td colspan="5">Tisdag 23 juni</td></tr>
+        <tr class="odd hover-row"><td>Hållbar energi för alla</td><td>Energimyndigheten</td><td>10:00–11:30</td><td>Almedalsparken</td><td class="star-cell">★</td></tr>
+        <tr class="section-row"><td colspan="5">Onsdag 24 juni</td></tr>
+        <tr class="even hover-row"><td>AI och framtidens arbetsmarknad</td><td>Arbetsförmedlingen</td><td>14:00–15:00</td><td>Donnerska huset</td><td class="star-cell">★</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PALETTE B -->
+<div class="palette-section">
+  <h2>Palette B: "Baltic Blue"</h2>
+  <p class="desc">Cool blue-teal palette evoking the Baltic Sea</p>
+  <div class="swatches">
+    <div class="swatch"><div class="swatch-color" style="background:#0d9488"></div><span class="swatch-label">Primary<br>#0d9488</span></div>
+    <div class="swatch"><div class="swatch-color" style="background:#1e40af"></div><span class="swatch-label">Secondary<br>#1e40af</span></div>
+    <div class="swatch"><div class="swatch-color" style="background:#14b8a6"></div><span class="swatch-label">Accent<br>#14b8a6</span></div>
+    <div class="swatch"><div class="swatch-color" style="background:#f0fdfa"></div><span class="swatch-label">Surface<br>#f0fdfa</span></div>
+    <div class="swatch"><div class="swatch-color" style="background:#374151"></div><span class="swatch-label">Text<br>#374151</span></div>
+    <div class="swatch"><div class="swatch-color" style="background:#6b7280"></div><span class="swatch-label">Muted<br>#6b7280</span></div>
+  </div>
+
+  <p class="mockup-label">Popup UI</p>
+  <div class="popup-mock palette-b">
+    <div class="popup-header">
+      <h3>★ Almedalsstjärnan</h3>
+      <span class="count">3 event</span>
+    </div>
+    <div class="popup-card">
+      <span class="star-icon">★</span>
+      <p class="card-title">Demokratins framtid i en digital värld</p>
+      <p class="card-meta">Sveriges Riksdag</p>
+      <p class="card-meta">Mån 22 juni 07:30–08:30</p>
+    </div>
+    <div class="popup-card">
+      <span class="star-icon">★</span>
+      <p class="card-title">Hållbar energi för alla</p>
+      <p class="card-meta">Energimyndigheten</p>
+      <p class="card-meta">Tis 23 juni 10:00–11:30</p>
+    </div>
+    <div class="popup-card">
+      <span class="star-icon">★</span>
+      <p class="card-title">AI och framtidens arbetsmarknad</p>
+      <p class="card-meta">Arbetsförmedlingen</p>
+      <p class="card-meta">Ons 24 juni 14:00–15:00</p>
+    </div>
+    <div class="popup-footer">
+      <button class="primary">Exportera .ics</button>
+      <button class="secondary">Öppna full lista</button>
+    </div>
+  </div>
+
+  <p class="mockup-label">Stars Page Grid</p>
+  <div class="stars-mock palette-b">
+    <table>
+      <thead><tr><th>Titel</th><th>Arrangör</th><th>Tid</th><th>Plats</th><th></th></tr></thead>
+      <tbody>
+        <tr class="section-row"><td colspan="5">Måndag 22 juni</td></tr>
+        <tr class="even hover-row"><td>Demokratins framtid i en digital värld</td><td>Sveriges Riksdag</td><td>07:30–08:30</td><td>Wisby Strand, Sal A</td><td class="star-cell">★</td></tr>
+        <tr class="section-row"><td colspan="5">Tisdag 23 juni</td></tr>
+        <tr class="odd hover-row"><td>Hållbar energi för alla</td><td>Energimyndigheten</td><td>10:00–11:30</td><td>Almedalsparken</td><td class="star-cell">★</td></tr>
+        <tr class="section-row"><td colspan="5">Onsdag 24 juni</td></tr>
+        <tr class="even hover-row"><td>AI och framtidens arbetsmarknad</td><td>Arbetsförmedlingen</td><td>14:00–15:00</td><td>Donnerska huset</td><td class="star-cell">★</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PALETTE C -->
+<div class="palette-section">
+  <h2>Palette C: "Almedalen Rose"</h2>
+  <p class="desc">Soft rose/plum palette with a distinctive Nordic feel</p>
+  <div class="swatches">
+    <div class="swatch"><div class="swatch-color" style="background:#be185d"></div><span class="swatch-label">Primary<br>#be185d</span></div>
+    <div class="swatch"><div class="swatch-color" style="background:#581c87"></div><span class="swatch-label">Secondary<br>#581c87</span></div>
+    <div class="swatch"><div class="swatch-color" style="background:#ec4899"></div><span class="swatch-label">Accent<br>#ec4899</span></div>
+    <div class="swatch"><div class="swatch-color" style="background:#fdf2f8"></div><span class="swatch-label">Surface<br>#fdf2f8</span></div>
+    <div class="swatch"><div class="swatch-color" style="background:#374151"></div><span class="swatch-label">Text<br>#374151</span></div>
+    <div class="swatch"><div class="swatch-color" style="background:#6b7280"></div><span class="swatch-label">Muted<br>#6b7280</span></div>
+  </div>
+
+  <p class="mockup-label">Popup UI</p>
+  <div class="popup-mock palette-c">
+    <div class="popup-header">
+      <h3>★ Almedalsstjärnan</h3>
+      <span class="count">3 event</span>
+    </div>
+    <div class="popup-card">
+      <span class="star-icon">★</span>
+      <p class="card-title">Demokratins framtid i en digital värld</p>
+      <p class="card-meta">Sveriges Riksdag</p>
+      <p class="card-meta">Mån 22 juni 07:30–08:30</p>
+    </div>
+    <div class="popup-card">
+      <span class="star-icon">★</span>
+      <p class="card-title">Hållbar energi för alla</p>
+      <p class="card-meta">Energimyndigheten</p>
+      <p class="card-meta">Tis 23 juni 10:00–11:30</p>
+    </div>
+    <div class="popup-card">
+      <span class="star-icon">★</span>
+      <p class="card-title">AI och framtidens arbetsmarknad</p>
+      <p class="card-meta">Arbetsförmedlingen</p>
+      <p class="card-meta">Ons 24 juni 14:00–15:00</p>
+    </div>
+    <div class="popup-footer">
+      <button class="primary">Exportera .ics</button>
+      <button class="secondary">Öppna full lista</button>
+    </div>
+  </div>
+
+  <p class="mockup-label">Stars Page Grid</p>
+  <div class="stars-mock palette-c">
+    <table>
+      <thead><tr><th>Titel</th><th>Arrangör</th><th>Tid</th><th>Plats</th><th></th></tr></thead>
+      <tbody>
+        <tr class="section-row"><td colspan="5">Måndag 22 juni</td></tr>
+        <tr class="even hover-row"><td>Demokratins framtid i en digital värld</td><td>Sveriges Riksdag</td><td>07:30–08:30</td><td>Wisby Strand, Sal A</td><td class="star-cell">★</td></tr>
+        <tr class="section-row"><td colspan="5">Tisdag 23 juni</td></tr>
+        <tr class="odd hover-row"><td>Hållbar energi för alla</td><td>Energimyndigheten</td><td>10:00–11:30</td><td>Almedalsparken</td><td class="star-cell">★</td></tr>
+        <tr class="section-row"><td colspan="5">Onsdag 24 juni</td></tr>
+        <tr class="even hover-row"><td>AI och framtidens arbetsmarknad</td><td>Arbetsförmedlingen</td><td>14:00–15:00</td><td>Donnerska huset</td><td class="star-cell">★</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

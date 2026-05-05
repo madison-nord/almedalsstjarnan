@@ -70,9 +70,9 @@ describe('Property 1: Grid cells constrain content with overflow handling', () =
         );
 
         const cells = container.querySelectorAll('td');
-        // Cells: 0=title, 1=organiser, 2=datetime, 3=location, 4=topic, 5=actions
-        // Text cells (0, 1, 3, 4) should have truncate class
-        const textCellIndices = [0, 1, 3, 4];
+        // Cells: 0=checkbox, 1=title, 2=organiser, 3=datetime, 4=location, 5=topic, 6=actions
+        // Text cells (1, 2, 4, 5) should have truncate class
+        const textCellIndices = [1, 2, 4, 5];
         for (const idx of textCellIndices) {
           const cell = cells[idx];
           expect(cell).toBeDefined();
@@ -80,7 +80,7 @@ describe('Property 1: Grid cells constrain content with overflow handling', () =
         }
 
         // Title cell should have a title attribute
-        expect(cells[0]!.hasAttribute('title')).toBe(true);
+        expect(cells[1]!.hasAttribute('title')).toBe(true);
 
         // Cleanup for next iteration
         cleanup();

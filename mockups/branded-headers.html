@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Almedalsstjärnan – Branded Header Concepts</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f3f4f6;
+  padding: 32px;
+  color: #374151;
+}
+h1 {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 8px;
+  color: #1f2937;
+}
+.subtitle {
+  text-align: center;
+  color: #6b7280;
+  margin-bottom: 40px;
+  font-size: 14px;
+}
+.headers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.header-section {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.header-section h2 {
+  font-size: 20px;
+  margin-bottom: 4px;
+  color: #1f2937;
+}
+.header-section .desc {
+  color: #6b7280;
+  font-size: 13px;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.mockup-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  margin-top: 16px;
+}
+.popup-frame {
+  width: 340px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.event-card {
+  margin: 8px 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fffbeb;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.event-card .title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e3a5f;
+  margin-bottom: 2px;
+}
+.event-card .meta {
+  font-size: 11px;
+  color: #6b7280;
+}
+.popup-footer-mock {
+  padding: 10px 16px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  gap: 8px;
+}
+.popup-footer-mock button {
+  flex: 1;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  background: #d97706;
+  color: #fff;
+}
+.popup-footer-mock button.sec {
+  background: #fffbeb;
+  color: #1e3a5f;
+  border: 1px solid #d97706;
+}
+
+/* Header A: Gradient Banner */
+.header-a {
+  background: linear-gradient(135deg, #d97706 0%, #1e3a5f 100%);
+  padding: 16px 16px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header-a .brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header-a .brand .star-icon {
+  font-size: 20px;
+  color: #fef3c7;
+}
+.header-a .brand .name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.3px;
+}
+.header-a .badge {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-weight: 500;
+  backdrop-filter: blur(4px);
+}
+.header-a .sort-row {
+  background: rgba(255,255,255,0.08);
+  padding: 6px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header-a .sort-row select {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+/* Header B: Clean Minimal */
+.header-b {
+  background: #fff;
+  padding: 16px 16px 12px;
+  border-bottom: 3px solid #d97706;
+}
+.header-b .brand {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.header-b .brand .name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e3a5f;
+  letter-spacing: -0.3px;
+}
+.header-b .brand .star-icon {
+  font-size: 14px;
+  color: #f59e0b;
+}
+.header-b .brand .count {
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 400;
+}
+.header-b .sort-row {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header-b .sort-row label {
+  font-size: 11px;
+  color: #6b7280;
+}
+.header-b .sort-row select {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+/* Header C: Dark Header */
+.header-c {
+  background: #1e3a5f;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header-c .brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header-c .brand .star-icon {
+  font-size: 18px;
+  color: #f59e0b;
+}
+.header-c .brand .name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.2px;
+}
+.header-c .controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.header-c .controls .count {
+  font-size: 11px;
+  color: rgba(255,255,255,0.7);
+}
+.header-c .controls select {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: #fff;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+</style>
+</head>
+<body>
+
+<h1>🏷️ Branded Header Concepts</h1>
+<p class="subtitle">Almedalsstjärnan – Popup header design options · Open in browser to compare</p>
+
+<div class="headers">
+
+<!-- HEADER A: Gradient Banner -->
+<div class="header-section">
+  <h2>Header A: "Gradient Banner"</h2>
+  <p class="desc">Subtle gradient background (primary → secondary). "Almedalsstjärnan" in white/light text. Star icon (★) before the name. Event count badge in the corner. Sort selector integrated below in a translucent bar.</p>
+
+  <p class="mockup-label">Popup Preview</p>
+  <div class="popup-frame">
+    <div class="header-a">
+      <div class="brand">
+        <span class="star-icon">★</span>
+        <span class="name">Almedalsstjärnan</span>
+      </div>
+      <span class="badge">3 sparade</span>
+    </div>
+    <div class="header-a sort-row">
+      <select>
+        <option>Kronologisk</option>
+        <option>Senast sparad</option>
+      </select>
+    </div>
+    <div class="event-card">
+      <p class="title">Demokratins framtid i en digital värld</p>
+      <p class="meta">Sveriges Riksdag · Mån 22 juni 07:30–08:30</p>
+    </div>
+    <div class="event-card">
+      <p class="title">Hållbar energi för alla</p>
+      <p class="meta">Energimyndigheten · Tis 23 juni 10:00–11:30</p>
+    </div>
+    <div class="popup-footer-mock">
+      <button>Exportera .ics</button>
+      <button class="sec">Öppna full lista</button>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER B: Clean Minimal -->
+<div class="header-section">
+  <h2>Header B: "Clean Minimal"</h2>
+  <p class="desc">White background with colored bottom border (3px, primary color). "Almedalsstjärnan" in secondary color, bold. Star icon beside the name. Count shown as "(47)" after the title. Sort selector on a separate row below.</p>
+
+  <p class="mockup-label">Popup Preview</p>
+  <div class="popup-frame">
+    <div class="header-b">
+      <div class="brand">
+        <span class="star-icon">★</span>
+        <span class="name">Almedalsstjärnan</span>
+        <span class="count">(3)</span>
+      </div>
+      <div class="sort-row">
+        <label>Sortering:</label>
+        <select>
+          <option>Kronologisk</option>
+          <option>Senast sparad</option>
+        </select>
+      </div>
+    </div>
+    <div class="event-card">
+      <p class="title">Demokratins framtid i en digital värld</p>
+      <p class="meta">Sveriges Riksdag · Mån 22 juni 07:30–08:30</p>
+    </div>
+    <div class="event-card">
+      <p class="title">Hållbar energi för alla</p>
+      <p class="meta">Energimyndigheten · Tis 23 juni 10:00–11:30</p>
+    </div>
+    <div class="event-card">
+      <p class="title">AI och framtidens arbetsmarknad</p>
+      <p class="meta">Arbetsförmedlingen · Ons 24 juni 14:00–15:00</p>
+    </div>
+    <div class="popup-footer-mock">
+      <button>Exportera .ics</button>
+      <button class="sec">Öppna full lista</button>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER C: Dark Header -->
+<div class="header-section">
+  <h2>Header C: "Dark Header"</h2>
+  <p class="desc">Solid dark background (secondary color). "Almedalsstjärnan" in white. Accent-colored star icon. Sort selector and count integrated directly into the header bar — single compact row.</p>
+
+  <p class="mockup-label">Popup Preview</p>
+  <div class="popup-frame">
+    <div class="header-c">
+      <div class="brand">
+        <span class="star-icon">★</span>
+        <span class="name">Almedalsstjärnan</span>
+      </div>
+      <div class="controls">
+        <span class="count">3 sparade</span>
+        <select>
+          <option>Kronologisk</option>
+          <option>Senast sparad</option>
+        </select>
+      </div>
+    </div>
+    <div class="event-card">
+      <p class="title">Demokratins framtid i en digital värld</p>
+      <p class="meta">Sveriges Riksdag · Mån 22 juni 07:30–08:30</p>
+    </div>
+    <div class="event-card">
+      <p class="title">Hållbar energi för alla</p>
+      <p class="meta">Energimyndigheten · Tis 23 juni 10:00–11:30</p>
+    </div>
+    <div class="event-card">
+      <p class="title">AI och framtidens arbetsmarknad</p>
+      <p class="meta">Arbetsförmedlingen · Ons 24 juni 14:00–15:00</p>
+    </div>
+    <div class="popup-footer-mock">
+      <button>Exportera .ics</button>
+      <button class="sec">Öppna full lista</button>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
