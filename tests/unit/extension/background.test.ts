@@ -378,3 +378,81 @@ describe('handleMessage — error handling', () => {
     expect(errorResult.error).toMatch(/unknown|unsupported|unrecognized/i);
   });
 });
+
+// ─── GET_LANGUAGE_PREFERENCE ─────────────────────────────────────
+
+describe('handleMessage — GET_LANGUAGE_PREFERENCE', () => {
+  it('returns null when no language preference is stored', async () => {
+    (mockBrowserApi.storageLocalGet as ReturnType<typeof vi.fn>).mockResolvedValue({});
+
+    const result = await handleMessage(mockBrowserApi, {
+      command: 'GET_LANGUAGE_PREFERENCE',
+    } as MessagePayload);
+
+    expect(result).toEqual({ success: true, data: null });
+  });
+
+  it('returns sv when Swedish preference is stored', async () => {
+    (mockBrowserApi.storageLocalGet as ReturnType<typeof vi.fn>).mockResolvedValue({
+      languagePreference: 'sv',
+    });
+
+    const result = await handleMessage(mockBrowserApi, {
+      command: 'GET_LANGUAGE_PREFERENCE',
+    } as MessagePayload);
+
+    expect(result).toEqual({ success: true, data: 'sv' });
+  });
+
+  it('returns en when English preference is stored', async () => {
+    (mockBrowserApi.storageLocalGet as ReturnType<typeof vi.fn>).mockResolvedValue({
+      languagePreference: 'en',
+    });
+
+    const result = await handleMessage(mockBrowserApi, {
+      command: 'GET_LANGUAGE_PREFERENCE',
+    } as MessagePayload);
+
+    expect(result).toEqual({ success: true, data: 'en' });
+  });
+});
+
+// ─── SET_LANGUAGE_PREFERENCE ─────────────────────────────────────
+
+describe('handleMessage — SET_LANGUAGE_PREFERENCE', () => {
+  it('persists sv locale and responds success', async () => {
+    const result = await handleMessage(mockBrowserApi, {
+      command: 'SET_LANGUAGE_PREFERENCE',
+      locale: 'sv',
+    } as MessagePayload);
+
+    expect(result).toEqual({ success: true, data: undefined });
+    expect(mockBrowserApi.storageLocalSet).toHaveBeenCalledWith({
+      languagePreference: 'sv',
+    });
+  });
+
+  it('persists en locale and responds success', async () => {
+    const result = await handleMessage(mockBrowserApi, {
+      command: 'SET_LANGUAGE_PREFERENCE',
+      locale: 'en',
+    } as MessagePayload);
+
+    expect(result).toEqual({ success: true, data: undefined });
+    expect(mockBrowserApi.storageLocalSet).toHaveBeenCalledWith({
+      languagePreference: 'en',
+    });
+  });
+
+  it('persists null (auto) and responds success', async () => {
+    const result = await handleMessage(mockBrowserApi, {
+      command: 'SET_LANGUAGE_PREFERENCE',
+      locale: null,
+    } as MessagePayload);
+
+    expect(result).toEqual({ success: true, data: undefined });
+    expect(mockBrowserApi.storageLocalSet).toHaveBeenCalledWith({
+      languagePreference: null,
+    });
+  });
+});

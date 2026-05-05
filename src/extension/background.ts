@@ -94,6 +94,42 @@ async function setSortOrder(
   return { success: true, data: undefined };
 }
 
+async function getOnboardingState(
+  adapter: IBrowserApiAdapter,
+): Promise<MessageResponse<boolean>> {
+  const result = await adapter.storageLocalGet(['onboardingDismissed']);
+  const dismissed = result.onboardingDismissed ?? false;
+
+  return { success: true, data: dismissed };
+}
+
+async function setOnboardingState(
+  adapter: IBrowserApiAdapter,
+  dismissed: boolean,
+): Promise<MessageResponse<void>> {
+  await adapter.storageLocalSet({ onboardingDismissed: dismissed });
+
+  return { success: true, data: undefined };
+}
+
+async function getLanguagePreference(
+  adapter: IBrowserApiAdapter,
+): Promise<MessageResponse<'sv' | 'en' | null>> {
+  const result = await adapter.storageLocalGet(['languagePreference']);
+  const preference = result.languagePreference ?? null;
+
+  return { success: true, data: preference };
+}
+
+async function setLanguagePreference(
+  adapter: IBrowserApiAdapter,
+  locale: 'sv' | 'en' | null,
+): Promise<MessageResponse<void>> {
+  await adapter.storageLocalSet({ languagePreference: locale });
+
+  return { success: true, data: undefined };
+}
+
 // ─── Message Dispatcher ──────────────────────────────────────────
 
 /**
@@ -122,6 +158,14 @@ export async function handleMessage(
         return await getSortOrder(adapter);
       case 'SET_SORT_ORDER':
         return await setSortOrder(adapter, message.sortOrder);
+      case 'GET_ONBOARDING_STATE':
+        return await getOnboardingState(adapter);
+      case 'SET_ONBOARDING_STATE':
+        return await setOnboardingState(adapter, message.dismissed);
+      case 'GET_LANGUAGE_PREFERENCE':
+        return await getLanguagePreference(adapter);
+      case 'SET_LANGUAGE_PREFERENCE':
+        return await setLanguagePreference(adapter, message.locale);
       default:
         return {
           success: false,
@@ -134,6 +178,50 @@ export async function handleMessage(
       error: error instanceof Error ? error.message : String(error),
     };
   }
+}
+
+// ─── Badge Logic ─────────────────────────────────────────────────
+
+/**
+ * Computes the badge text for a given record of starred events.
+ * Returns the count as a string when count > 0, or empty string when count is 0.
+ *
+ * Exported for direct testing.
+ */
+export function computeBadgeText(starredEvents: Record<string, unknown>): string {
+  const count = Object.keys(starredEvents).length;
+  return count > 0 ? String(count) : '';
+}
+
+/**
+ * Badge update result returned by handleStorageChange.
+ */
+export interface BadgeUpdate {
+  readonly text: string;
+  readonly color: string;
+}
+
+/**
+ * Handles a storage.onChanged event and determines if a badge update is needed.
+ * Returns a BadgeUpdate if the badge should be updated, or null if no update is needed.
+ *
+ * Exported for direct testing.
+ *
+ * @param changes - The storage changes object
+ * @param areaName - The storage area that changed ('local', 'sync', etc.)
+ */
+export function handleStorageChange(
+  changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
+  areaName: string,
+): BadgeUpdate | null {
+  if (areaName !== 'local' || !('starredEvents' in changes)) {
+    return null;
+  }
+
+  const newEvents = (changes.starredEvents?.newValue ?? {}) as Record<string, unknown>;
+  const text = computeBadgeText(newEvents);
+
+  return { text, color: '#f59e0b' };
 }
 
 // ─── Runtime Registration ────────────────────────────────────────
@@ -163,4 +251,20 @@ if (typeof chrome !== 'undefined' && chrome.runtime?.onMessage) {
       return true;
     },
   );
+}
+
+// Register the storage.onChanged listener for badge updates.
+// Guard against non-browser environments (e.g., Vitest) where chrome is undefined.
+if (typeof chrome !== 'undefined' && chrome.storage?.onChanged) {
+  chrome.storage.onChanged.addListener((changes, areaName) => {
+    const update = handleStorageChange(
+      changes as Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
+      areaName,
+    );
+
+    if (update) {
+      chrome.action.setBadgeText({ text: update.text });
+      chrome.action.setBadgeBackgroundColor({ color: update.color });
+    }
+  });
 }
