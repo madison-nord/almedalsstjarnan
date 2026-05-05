@@ -66,10 +66,13 @@ export function App({ adapter }: AppProps): React.JSX.Element {
 
   return (
     <div className="min-h-screen flex flex-col bg-brand-surface">
-      <header className="w-full px-4 sm:px-6 lg:px-8 pt-6 pb-4">
-        <h1 className="text-xl font-semibold text-gray-900 mb-4">
-          {adapter.getMessage('starsPageTitle')}
-        </h1>
+      <header className="bg-brand-secondary px-4 sm:px-6 lg:px-8 pt-4 pb-3 border-b-[3px] border-brand-primary">
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-brand-accent text-lg" aria-hidden="true">★</span>
+          <h1 className="text-lg font-bold text-white">
+            {adapter.getMessage('extensionName')}
+          </h1>
+        </div>
         <div className="flex flex-wrap items-center gap-4">
           <SortSelector
             currentOrder={sortOrder}

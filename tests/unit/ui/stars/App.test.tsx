@@ -69,6 +69,7 @@ function makeEvents(count: number): StarredEvent[] {
 // ─── i18n Message Map ─────────────────────────────────────────────
 
 const messageMap: Record<string, string> = {
+  extensionName: 'Almedalsstjärnan',
   starsPageTitle: 'All starred events',
   exportToCalendar: 'Export to calendar',
   emptyStateTitle: 'No starred events',
@@ -532,24 +533,24 @@ describe('Stars Page App', () => {
   });
 
   describe('layout and styling', () => {
-    it('displays stars page title heading', async () => {
+    it('displays stars page branded header with extension name', async () => {
       await renderApp();
 
-      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('All starred events');
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Almedalsstjärnan');
     });
 
-    it('uses getMessage for page title', async () => {
+    it('uses getMessage for branded header title', async () => {
       await renderApp();
 
-      expect(adapter.getMessage).toHaveBeenCalledWith('starsPageTitle');
+      expect(adapter.getMessage).toHaveBeenCalledWith('extensionName');
     });
 
     it('uses Tailwind classes for styling', async () => {
       await renderApp(makeEvents(1));
 
       const heading = screen.getByRole('heading', { level: 1 });
-      const container = heading.closest('div');
-      expect(container).toHaveClass('bg-brand-surface');
+      const header = heading.closest('header');
+      expect(header).toHaveClass('bg-brand-secondary');
     });
 
     it('page container uses bg-brand-surface background (Requirement 16.1)', async () => {
@@ -575,13 +576,53 @@ describe('Stars Page App', () => {
       await renderApp(makeEvents(1));
 
       const header = screen.getByRole('heading', { level: 1 }).closest('header');
-      expect(header).toHaveClass('w-full');
       expect(header).toHaveClass('px-4');
 
       const table = screen.getByRole('table');
       const main = table.closest('main');
       expect(main).toHaveClass('w-full');
       expect(main).toHaveClass('px-4');
+    });
+
+    it('branded header has bg-brand-secondary background (Requirement 17.1)', async () => {
+      await renderApp(makeEvents(1));
+
+      const header = screen.getByRole('heading', { level: 1 }).closest('header');
+      expect(header).toHaveClass('bg-brand-secondary');
+    });
+
+    it('branded header has 3px amber bottom border (Requirement 17.3)', async () => {
+      await renderApp(makeEvents(1));
+
+      const header = screen.getByRole('heading', { level: 1 }).closest('header');
+      expect(header).toHaveClass('border-b-[3px]');
+      expect(header).toHaveClass('border-brand-primary');
+    });
+
+    it('branded header displays amber star icon (Requirement 17.2)', async () => {
+      await renderApp(makeEvents(1));
+
+      const header = screen.getByRole('heading', { level: 1 }).closest('header');
+      const starIcon = header!.querySelector('[aria-hidden="true"]');
+      expect(starIcon).toBeInTheDocument();
+      expect(starIcon).toHaveTextContent('★');
+      expect(starIcon).toHaveClass('text-brand-accent');
+    });
+
+    it('branded header title is white and bold (Requirement 7.5)', async () => {
+      await renderApp(makeEvents(1));
+
+      const heading = screen.getByRole('heading', { level: 1 });
+      expect(heading).toHaveClass('text-white');
+      expect(heading).toHaveClass('font-bold');
+    });
+
+    it('branded header uses extensionName i18n key (Requirement 7.5)', async () => {
+      await renderApp(makeEvents(1));
+
+      const heading = screen.getByRole('heading', { level: 1 });
+      expect(heading).toHaveTextContent('Almedalsstjärnan');
+      expect(adapter.getMessage).toHaveBeenCalledWith('extensionName');
     });
   });
 
@@ -760,7 +801,7 @@ describe('Stars Page App', () => {
     it('uses getMessage for all user-facing strings', async () => {
       await renderApp(makeEvents(1));
 
-      expect(adapter.getMessage).toHaveBeenCalledWith('starsPageTitle');
+      expect(adapter.getMessage).toHaveBeenCalledWith('extensionName');
       expect(adapter.getMessage).toHaveBeenCalledWith('exportToCalendar');
       expect(adapter.getMessage).toHaveBeenCalledWith('sortLabel');
       expect(adapter.getMessage).toHaveBeenCalledWith('unstarAction');
