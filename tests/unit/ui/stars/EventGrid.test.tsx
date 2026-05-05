@@ -132,4 +132,14 @@ describe('EventGrid table-fixed layout', () => {
     expect(header).toBeTruthy();
     expect(header!.className).toMatch(/w-\[10%\]/);
   });
+
+  it('visually hides the Actions column header text with sr-only', () => {
+    const adapter = setupAdapter();
+    render(
+      <EventGrid events={[makeEvent({ id: 'e1' })]} onUnstar={vi.fn()} adapter={adapter} />,
+    );
+
+    const actionsText = screen.getByText('Actions');
+    expect(actionsText).toHaveClass('sr-only');
+  });
 });
