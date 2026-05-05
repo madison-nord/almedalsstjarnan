@@ -51,6 +51,7 @@ export function useStarredEvents(
   const [loading, setLoading] = useState(true);
   const [pendingDeletions, setPendingDeletions] = useState<StarredEvent[]>([]);
   const sortOrderRef = useRef<SortOrder>(DEFAULT_SORT_ORDER);
+  const pendingDeletionsRef = useRef<Set<string>>(new Set());
 
   const fetchEvents = useCallback(
     async (order: SortOrder): Promise<void> => {
@@ -60,7 +61,11 @@ export function useStarredEvents(
         }) as GetAllStarredEventsResponse;
 
       if (response.success) {
-        const sorted = sortEvents(response.data, order);
+        const pendingIds = pendingDeletionsRef.current;
+        const filtered = pendingIds.size > 0
+          ? response.data.filter((e) => !pendingIds.has(e.id))
+          : response.data;
+        const sorted = sortEvents(filtered, order);
         setEvents(sorted);
       }
     },
@@ -128,6 +133,7 @@ export function useStarredEvents(
 
   const unstarEvent = useCallback(
     (eventId: string): void => {
+      pendingDeletionsRef.current.add(eventId);
       // Find the event before removing it
       setEvents((prev) => {
         const event = prev.find((e) => e.id === eventId);
@@ -142,6 +148,7 @@ export function useStarredEvents(
 
   const undoUnstar = useCallback(
     (eventId: string): void => {
+      pendingDeletionsRef.current.delete(eventId);
       setPendingDeletions((prev) => {
         const event = prev.find((e) => e.id === eventId);
         if (event) {
@@ -160,6 +167,7 @@ export function useStarredEvents(
 
   const confirmUnstar = useCallback(
     (eventId: string): void => {
+      pendingDeletionsRef.current.delete(eventId);
       setPendingDeletions((prev) => prev.filter((e) => e.id !== eventId));
       // Now actually send the UNSTAR_EVENT to background
       void adapter.sendMessage({ command: 'UNSTAR_EVENT', eventId });
