@@ -34,11 +34,22 @@ export function UndoToast({
 }: UndoToastProps): React.JSX.Element {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const undoneRef = useRef(false);
+  const onExpireRef = useRef(onExpire);
+  const onUndoRef = useRef(onUndo);
+
+  // Keep refs in sync with latest callbacks without resetting the timer
+  useEffect(() => {
+    onExpireRef.current = onExpire;
+  }, [onExpire]);
+
+  useEffect(() => {
+    onUndoRef.current = onUndo;
+  }, [onUndo]);
 
   useEffect(() => {
     timerRef.current = setTimeout(() => {
       if (!undoneRef.current) {
-        onExpire();
+        onExpireRef.current();
       }
     }, durationMs);
 
@@ -47,7 +58,7 @@ export function UndoToast({
         clearTimeout(timerRef.current);
       }
     };
-  }, [durationMs, onExpire]);
+  }, [durationMs]);
 
   const handleUndo = useCallback(() => {
     undoneRef.current = true;
@@ -55,8 +66,8 @@ export function UndoToast({
       clearTimeout(timerRef.current);
       timerRef.current = null;
     }
-    onUndo();
-  }, [onUndo]);
+    onUndoRef.current();
+  }, []);
 
   return (
     <div
