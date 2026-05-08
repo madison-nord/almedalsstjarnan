@@ -62,11 +62,23 @@ export function useStarredEvents(
 
       if (response.success) {
         const pendingIds = pendingDeletionsRef.current;
-        const filtered = pendingIds.size > 0
-          ? response.data.filter((e) => !pendingIds.has(e.id))
-          : response.data;
-        const sorted = sortEvents(filtered, order);
-        setEvents(sorted);
+        if (pendingIds.size > 0) {
+          const storageIds = new Set(response.data.map((e) => e.id));
+          // Clean up IDs that are no longer in storage (background confirmed removal)
+          for (const id of pendingIds) {
+            if (!storageIds.has(id)) {
+              pendingIds.delete(id);
+            }
+          }
+          const filtered = pendingIds.size > 0
+            ? response.data.filter((e) => !pendingIds.has(e.id))
+            : response.data;
+          const sorted = sortEvents(filtered, order);
+          setEvents(sorted);
+        } else {
+          const sorted = sortEvents(response.data, order);
+          setEvents(sorted);
+        }
       }
     },
     [adapter],
@@ -167,7 +179,10 @@ export function useStarredEvents(
 
   const confirmUnstar = useCallback(
     (eventId: string): void => {
-      pendingDeletionsRef.current.delete(eventId);
+      // Keep eventId in pendingDeletionsRef — it will be cleaned up by fetchEvents
+      // once the background has actually removed the event from storage.
+      // This prevents the race condition where a storage change fires between
+      // confirmUnstar and the background processing UNSTAR_EVENT.
       setPendingDeletions((prev) => prev.filter((e) => e.id !== eventId));
       // Now actually send the UNSTAR_EVENT to background
       void adapter.sendMessage({ command: 'UNSTAR_EVENT', eventId });
