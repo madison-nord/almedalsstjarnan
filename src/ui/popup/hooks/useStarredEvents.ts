@@ -52,13 +52,19 @@ export function useStarredEvents(
   const [pendingDeletions, setPendingDeletions] = useState<StarredEvent[]>([]);
   const sortOrderRef = useRef<SortOrder>(DEFAULT_SORT_ORDER);
   const pendingDeletionsRef = useRef<Set<string>>(new Set());
+  const fetchGenerationRef = useRef(0);
 
   const fetchEvents = useCallback(
     async (order: SortOrder): Promise<void> => {
+      const generation = ++fetchGenerationRef.current;
+
       const response =
         await adapter.sendMessage<StarredEvent[]>({
           command: 'GET_ALL_STARRED_EVENTS',
         }) as GetAllStarredEventsResponse;
+
+      // Discard stale responses — only the latest fetch should set state
+      if (generation !== fetchGenerationRef.current) return;
 
       if (response.success) {
         const pendingIds = pendingDeletionsRef.current;
