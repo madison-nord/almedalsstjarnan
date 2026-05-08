@@ -13,7 +13,8 @@
  * Validates: Requirements 1.1, 1.2, 1.3, 1.4
  */
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
+import type { vi } from 'vitest';
 import fc from 'fast-check';
 import { renderHook, act, waitFor } from '@testing-library/react';
 

@@ -46,6 +46,21 @@ inclusion: always
 - Wrap body text at 72 characters.
 - Reference requirements: `Implements Req X.Y` or `Validates Req X.Y`.
 
+## Pre-Commit Verification — MANDATORY
+
+**CRITICAL: You MUST run lint and typecheck before every commit. Do NOT commit code that fails these checks.**
+
+Before staging and committing, run:
+1. `pnpm run lint` — fix all ESLint errors (unused imports, unused vars, type-only imports, etc.)
+2. `pnpm run typecheck` — fix all TypeScript errors
+
+If either command fails, fix the issues before committing. Do NOT use `--no-verify` or skip these steps.
+
+Common issues to watch for:
+- Unused imports (remove them or prefix with `_`)
+- Imports used only as types (use `import type` syntax)
+- Unused variables (remove or prefix with `_`)
+
 ## Git Workflow — MANDATORY
 
 **CRITICAL: You MUST commit and push after completing each top-level task. This is non-negotiable. Do NOT proceed to the next task until the current task's changes are committed and pushed.**

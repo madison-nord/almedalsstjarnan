@@ -12,13 +12,14 @@
  * Validates: Requirements 3.1, 3.2, 3.3, 3.4
  */
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
+import type { vi } from 'vitest';
 import fc from 'fast-check';
 import { renderHook, act, waitFor } from '@testing-library/react';
 
 import { starredEventArrayArb, sortOrderArb } from '#test/helpers/event-generators';
 import { mockBrowserApi } from '#test/helpers/mock-browser-api';
-import type { StarredEvent, SortOrder } from '#core/types';
+import type { StarredEvent } from '#core/types';
 import { sortEvents } from '#core/sorter';
 import { useStarredEvents } from '#ui/popup/hooks/useStarredEvents';
 
