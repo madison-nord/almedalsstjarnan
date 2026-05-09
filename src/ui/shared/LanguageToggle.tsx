@@ -9,7 +9,7 @@
  * On mount, fetches the current language preference from storage via
  * GET_LANGUAGE_PREFERENCE message. On change, persists the selection
  * via SET_LANGUAGE_PREFERENCE and notifies the parent via onLocaleChange.
- * Shows a visible label and a hint to reload the popup after changing.
+ * Shows a visible label for the selector.
  *
  * Requirements: 6.5, 6.6, 6.7
  */
@@ -29,7 +29,6 @@ export function LanguageToggle({
 }: LanguageToggleProps): React.JSX.Element {
   const [locale, setLocale] = useState<'sv' | 'en' | null>(null);
   const [loaded, setLoaded] = useState(false);
-  const [changed, setChanged] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -61,7 +60,6 @@ export function LanguageToggle({
         value === 'sv' ? 'sv' : value === 'en' ? 'en' : null;
 
       setLocale(newLocale);
-      setChanged(true);
       onLocaleChange(newLocale);
 
       void adapter.sendMessage({
@@ -92,11 +90,6 @@ export function LanguageToggle({
         <option value="sv">{adapter.getMessage('languageSv')}</option>
         <option value="en">{adapter.getMessage('languageEn')}</option>
       </select>
-      {changed && (
-        <span className="text-xs text-gray-400 italic">
-          {adapter.getMessage('reloadPopupHint')}
-        </span>
-      )}
     </div>
   );
 }

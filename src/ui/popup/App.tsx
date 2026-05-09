@@ -53,6 +53,29 @@ export function App({ adapter }: AppProps): React.JSX.Element {
 
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [onboardingLoaded, setOnboardingLoaded] = useState(false);
+  const [locale, setLocale] = useState<'sv' | 'en' | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetchLanguagePreference(): Promise<void> {
+      const response = await adapter.sendMessage<'sv' | 'en' | null>({
+        command: 'GET_LANGUAGE_PREFERENCE',
+      });
+
+      if (cancelled) return;
+
+      if (response.success) {
+        setLocale(response.data);
+      }
+    }
+
+    void fetchLanguagePreference();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [adapter]);
 
   useEffect(() => {
     let cancelled = false;
@@ -93,9 +116,8 @@ export function App({ adapter }: AppProps): React.JSX.Element {
     setShowOnboarding(true);
   }, []);
 
-  const handleLocaleChange = useCallback((): void => {
-    // Reload the popup to apply the new locale strings
-    window.location.reload();
+  const handleLocaleChange = useCallback((newLocale: 'sv' | 'en' | null): void => {
+    setLocale(newLocale);
   }, []);
 
   const handleOpenFullList = (): void => {
@@ -111,7 +133,7 @@ export function App({ adapter }: AppProps): React.JSX.Element {
   }
 
   return (
-    <div className="w-[360px] min-h-[480px] flex flex-col bg-white">
+    <div key={locale ?? 'auto'} className="w-[360px] min-h-[480px] flex flex-col bg-white">
       <header className="bg-brand-secondary px-4 pt-4 pb-2 border-b-[3px] border-brand-primary">
         <div className="flex items-center gap-2 mb-2">
           <span className="text-brand-accent text-lg" aria-hidden="true">★</span>

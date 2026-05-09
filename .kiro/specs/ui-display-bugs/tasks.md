@@ -59,7 +59,7 @@
     - **EXPECTED OUTCOME**: Test PASSES (confirms bug is fixed)
     - _Requirements: 2.2_
 
-  - [-] 3.3 Verify preservation tests still pass
+  - [x] 3.3 Verify preservation tests still pass
     - **Property 2: Preservation** - Descriptions Without Link Label Unchanged
     - **IMPORTANT**: Re-run the SAME tests from task 2 — do NOT write new tests
     - Run: `pnpm vitest --run tests/property/link-label-strip-preservation.property.test.ts`
@@ -69,7 +69,7 @@
 
 - [ ] 4. Fix for language toggle closing popup on reload
 
-  - [~] 4.1 Write unit test for handleLocaleChange (TDD — test first)
+  - [x] 4.1 Write unit test for handleLocaleChange (TDD — test first)
     - Test file: `tests/unit/popup/language-toggle-no-reload.test.ts`
     - Test that `handleLocaleChange` does NOT call `window.location.reload()`
     - Test that changing locale triggers a React re-render with new locale state
@@ -78,7 +78,7 @@
     - Run test on UNFIXED code — expect FAILURE
     - _Requirements: 1.3, 2.3_
 
-  - [~] 4.2 Implement the locale re-render fix
+  - [x] 4.2 Implement the locale re-render fix
     - File: `src/ui/popup/App.tsx`
     - Add `locale` state (type `'sv' | 'en' | null`) initialized from `GET_LANGUAGE_PREFERENCE` on mount
     - Update `handleLocaleChange` to set locale state instead of calling `window.location.reload()`
@@ -89,13 +89,13 @@
     - _Preservation: language preference still persisted via SET_LANGUAGE_PREFERENCE_
     - _Requirements: 1.3, 2.3, 3.3, 3.5, 3.6_
 
-  - [~] 4.3 Remove reload hint from LanguageToggle
+  - [x] 4.3 Remove reload hint from LanguageToggle
     - File: `src/ui/shared/LanguageToggle.tsx`
     - Remove the `changed` state and the `{changed && <span>...reloadPopupHint...</span>}` JSX since reload is no longer needed
     - The `onLocaleChange` callback already notifies the parent — no other changes needed
     - _Requirements: 2.3_
 
-  - [~] 4.4 Verify unit test passes
+  - [-] 4.4 Verify unit test passes
     - Run: `pnpm vitest --run tests/unit/popup/language-toggle-no-reload.test.ts`
     - **EXPECTED OUTCOME**: Test PASSES (confirms locale change works without reload)
     - _Requirements: 2.3_
