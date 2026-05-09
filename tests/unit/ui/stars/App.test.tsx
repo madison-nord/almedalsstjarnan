@@ -406,7 +406,7 @@ describe('Stars Page App', () => {
       vi.useRealTimers();
     });
 
-    it('clicking unstar does NOT immediately send UNSTAR_EVENT (deferred)', async () => {
+    it('clicking unstar sends UNSTAR_EVENT immediately for instant sync', async () => {
       const events = [makeEvent({ id: 'e1', title: 'Event to remove' })];
       await renderApp(events);
 
@@ -416,8 +416,8 @@ describe('Stars Page App', () => {
       const removeButton = screen.getByRole('button', { name: 'Remove' });
       fireEvent.click(removeButton);
 
-      // UNSTAR_EVENT should NOT be sent immediately
-      expect(adapter.sendMessage).not.toHaveBeenCalledWith(
+      // UNSTAR_EVENT should be sent immediately for instant cross-view sync
+      expect(adapter.sendMessage).toHaveBeenCalledWith(
         expect.objectContaining({
           command: 'UNSTAR_EVENT',
           eventId: 'e1',

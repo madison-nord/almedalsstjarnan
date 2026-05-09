@@ -152,7 +152,7 @@ export function useStarredEvents(
   const unstarEvent = useCallback(
     (eventId: string): void => {
       pendingDeletionsRef.current.add(eventId);
-      // Find the event before removing it
+      // Find the event before removing it, keep in pendingDeletions for undo
       setEvents((prev) => {
         const event = prev.find((e) => e.id === eventId);
         if (event) {
@@ -160,8 +160,10 @@ export function useStarredEvents(
         }
         return prev.filter((e) => e.id !== eventId);
       });
+      // Send UNSTAR_EVENT immediately for instant cross-view sync
+      void adapter.sendMessage({ command: 'UNSTAR_EVENT', eventId });
     },
-    [],
+    [adapter],
   );
 
   const undoUnstar = useCallback(
@@ -174,7 +176,7 @@ export function useStarredEvents(
           setEvents((currentEvents) =>
             sortEvents([...currentEvents, event], sortOrderRef.current),
           );
-          // Re-star in storage
+          // Re-star in storage (reverses the immediate UNSTAR_EVENT)
           void adapter.sendMessage({ command: 'STAR_EVENT', event });
         }
         return prev.filter((e) => e.id !== eventId);
@@ -185,15 +187,12 @@ export function useStarredEvents(
 
   const confirmUnstar = useCallback(
     (eventId: string): void => {
-      // Keep eventId in pendingDeletionsRef — it will be cleaned up by fetchEvents
-      // once the background has actually removed the event from storage.
-      // This prevents the race condition where a storage change fires between
-      // confirmUnstar and the background processing UNSTAR_EVENT.
+      // Event was already removed from storage in unstarEvent.
+      // Keep ID in pendingDeletionsRef — fetchEvents will clean it up
+      // once it confirms the event is gone from storage.
       setPendingDeletions((prev) => prev.filter((e) => e.id !== eventId));
-      // Now actually send the UNSTAR_EVENT to background
-      void adapter.sendMessage({ command: 'UNSTAR_EVENT', eventId });
     },
-    [adapter],
+    [],
   );
 
   const exportEvents = useCallback((): void => {

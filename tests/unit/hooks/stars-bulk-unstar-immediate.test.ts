@@ -93,7 +93,7 @@ describe('Stars Page: unstarSelected sends UNSTAR_EVENT immediately', () => {
     unmount();
   });
 
-  it('single unstar still uses deferred deletion with undo toast', async () => {
+  it('single unstar sends UNSTAR_EVENT immediately for instant cross-view sync', async () => {
     const allEvents: StarredEvent[] = [
       makeEvent('event-1', 'Seminarium A'),
       makeEvent('event-2', 'Workshop B'),
@@ -125,15 +125,15 @@ describe('Stars Page: unstarSelected sends UNSTAR_EVENT immediately', () => {
       expect(result.current.loading).toBe(false);
     });
 
-    // Single unstar (NOT bulk)
+    // Single unstar
     act(() => {
       result.current.unstarEvent('event-1');
     });
 
-    // Should NOT send UNSTAR_EVENT immediately (deferred for undo)
-    expect(unstarredIds.length).toBe(0);
+    // UNSTAR_EVENT should be sent IMMEDIATELY (for instant popup sync)
+    expect(unstarredIds).toEqual(['event-1']);
 
-    // Should be in pendingDeletions (undo toast shown)
+    // Event should still be in pendingDeletions (undo toast shown)
     expect(result.current.pendingDeletions.length).toBe(1);
 
     unmount();
