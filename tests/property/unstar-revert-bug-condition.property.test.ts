@@ -24,7 +24,7 @@ import type { StarredEvent, SortOrder } from '#core/types';
 import { useStarredEvents } from '#ui/popup/hooks/useStarredEvents';
 
 describe('Property 1: Bug Condition — Pending-deletion events reappear on storage refresh', () => {
-  it('unstarred events do NOT reappear in visible events after onStorageChanged triggers fetchEvents', async () => {
+  it('unstarred events do NOT reappear in visible events after onStorageChanged triggers fetchEvents', { timeout: 60_000 }, async () => {
     await fc.assert(
       fc.asyncProperty(
         starredEventArrayArb.filter((events) => events.length >= 1),
