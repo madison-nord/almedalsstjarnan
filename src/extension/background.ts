@@ -21,40 +21,60 @@ import type {
 import { DEFAULT_SORT_ORDER } from '#core/types';
 import { createBrowserApiAdapter } from '#core/browser-api-adapter';
 
+// ─── Storage Mutex ────────────────────────────────────────────────
+
+/**
+ * Simple mutex to serialize storage write operations.
+ * Prevents read-modify-write race conditions when multiple messages
+ * arrive concurrently (e.g., bulk unstar sending multiple UNSTAR_EVENT).
+ */
+let storageMutexPromise: Promise<void> = Promise.resolve();
+
+function withStorageMutex<T>(fn: () => Promise<T>): Promise<T> {
+  const result = storageMutexPromise.then(fn);
+  // Chain the next operation after this one completes (success or failure)
+  storageMutexPromise = result.then(() => undefined, () => undefined);
+  return result;
+}
+
 // ─── Handler Functions ────────────────────────────────────────────
 
 async function addStarredEvent(
   adapter: IBrowserApiAdapter,
   event: NormalizedEvent,
 ): Promise<MessageResponse<void>> {
-  const result = await adapter.storageLocalGet(['starredEvents']);
-  const starredEvents = result.starredEvents ?? {};
+  return withStorageMutex(async () => {
+    const result = await adapter.storageLocalGet(['starredEvents']);
+    const starredEvents = result.starredEvents ?? {};
 
-  const starredEvent: StarredEvent = {
-    ...event,
-    starred: true,
-    starredAt: new Date().toISOString(),
-  };
+    const starredEvent: StarredEvent = {
+      ...event,
+      starred: true,
+      starredAt: new Date().toISOString(),
+    };
 
-  await adapter.storageLocalSet({
-    starredEvents: { ...starredEvents, [event.id]: starredEvent },
+    await adapter.storageLocalSet({
+      starredEvents: { ...starredEvents, [event.id]: starredEvent },
+    });
+
+    return { success: true, data: undefined };
   });
-
-  return { success: true, data: undefined };
 }
 
 async function removeStarredEvent(
   adapter: IBrowserApiAdapter,
   eventId: EventId,
 ): Promise<MessageResponse<void>> {
-  const result = await adapter.storageLocalGet(['starredEvents']);
-  const starredEvents = result.starredEvents ?? {};
+  return withStorageMutex(async () => {
+    const result = await adapter.storageLocalGet(['starredEvents']);
+    const starredEvents = result.starredEvents ?? {};
 
-  const { [eventId]: _removed, ...remaining } = starredEvents;
+    const { [eventId]: _removed, ...remaining } = starredEvents;
 
-  await adapter.storageLocalSet({ starredEvents: remaining });
+    await adapter.storageLocalSet({ starredEvents: remaining });
 
-  return { success: true, data: undefined };
+    return { success: true, data: undefined };
+  });
 }
 
 async function isEventStarred(
