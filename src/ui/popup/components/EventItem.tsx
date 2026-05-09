@@ -18,13 +18,32 @@ import type { IBrowserApiAdapter, StarredEvent } from '#core/types';
 import { formatEventDateTime } from '#core/date-formatter';
 
 /**
+ * Escapes special regex characters in a string so it can be used safely in a RegExp.
+ */
+function escapeRegExp(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
  * Strips the sourceUrl from a description string to avoid redundant display.
+ * Handles the Swedish "Länk till evenemanget:" label pattern as well as bare URLs.
  * Returns the description unchanged if sourceUrl is null or not found.
  */
 export function stripSourceUrl(description: string, sourceUrl: string | null): string {
   if (!sourceUrl || !description) return description;
   if (!description.includes(sourceUrl)) return description;
-  return description.replace(sourceUrl, '').trim();
+
+  // Step 1: Try to remove the full label+URL pattern (with optional preceding newline)
+  const escapedSourceUrl = escapeRegExp(sourceUrl);
+  const labelPattern = new RegExp(`\\n?Länk till evenemanget:\\s*${escapedSourceUrl}`);
+  let result = description.replace(labelPattern, '');
+
+  // Step 2: Fallback — if sourceUrl is still present, remove the bare URL
+  if (result.includes(sourceUrl)) {
+    result = result.replace(sourceUrl, '');
+  }
+
+  return result.trim();
 }
 
 export interface EventItemProps {
