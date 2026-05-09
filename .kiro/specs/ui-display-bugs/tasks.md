@@ -152,12 +152,12 @@
     - _Preservation: icon files still present in dist/icons/, locale files still in dist/_locales/_
     - _Requirements: 1.1, 2.1, 3.1_
 
-  - [-] 6.3 Verify icon test passes after fix
+  - [x] 6.3 Verify icon test passes after fix
     - Run: `pnpm vitest --run tests/unit/config/icon-path-resolution.test.ts`
     - **EXPECTED OUTCOME**: Test PASSES (confirms icon paths are valid)
     - _Requirements: 2.1, 3.1_
 
-- [~] 7. Checkpoint — Ensure all tests pass
+- [-] 7. Checkpoint — Ensure all tests pass
   - Run full test suite: `pnpm vitest --run`
   - Ensure all new tests pass (bug condition, preservation, unit tests)
   - Ensure all existing tests still pass (no regressions)
