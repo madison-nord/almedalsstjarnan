@@ -126,21 +126,21 @@
     - This ensures the sort label meets WCAG AA 4.5:1 contrast ratio against `bg-brand-secondary` (#1e3a5f)
     - _Requirements: 2.4_
 
-  - [-] 5.4 Verify unit test passes
+  - [x] 5.4 Verify unit test passes
     - Run: `pnpm vitest --run tests/unit/shared/sort-selector-label.test.ts`
     - **EXPECTED OUTCOME**: Test PASSES (confirms label contrast fix works)
     - _Requirements: 2.4, 3.4_
 
 - [ ] 6. Fix for extension icon not showing in browser toolbar
 
-  - [~] 6.1 Write integration test for icon path resolution (TDD — test first)
+  - [x] 6.1 Write integration test for icon path resolution (TDD — test first)
     - Test file: `tests/unit/config/icon-path-resolution.test.ts`
     - Test that the merged manifest's `icons` and `action.default_icon` paths reference files that exist in the `icons/` directory
     - Test that all referenced icon sizes (16, 32, 48, 128) have corresponding PNG files
     - Import `mergeManifest`, `baseManifest`, and `chromeOverride` and verify the output manifest icon paths
     - _Requirements: 1.1, 2.1_
 
-  - [~] 6.2 Implement the icon path fix in build config
+  - [x] 6.2 Implement the icon path fix in build config
     - File: `vite.config.ts`
     - Move icon handling so that `vite-plugin-web-extension` is aware of the icon files:
       - Option A: Set `publicDir: 'public'` and move icons to `public/icons/` so Vite copies them before the plugin processes the manifest
@@ -152,7 +152,7 @@
     - _Preservation: icon files still present in dist/icons/, locale files still in dist/_locales/_
     - _Requirements: 1.1, 2.1, 3.1_
 
-  - [~] 6.3 Verify icon test passes after fix
+  - [-] 6.3 Verify icon test passes after fix
     - Run: `pnpm vitest --run tests/unit/config/icon-path-resolution.test.ts`
     - **EXPECTED OUTCOME**: Test PASSES (confirms icon paths are valid)
     - _Requirements: 2.1, 3.1_

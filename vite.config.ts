@@ -8,16 +8,16 @@ import baseManifest from './src/extension/manifest/base.json';
 import chromeOverride from './src/extension/manifest/chrome.json';
 
 /**
- * Copies static extension assets (icons, _locales) to the dist directory
- * after the build completes. These are referenced by the manifest but not
- * processed by Vite's bundler.
+ * Copies static extension assets (_locales) to the dist directory
+ * after the build completes. Icons are handled via Vite's publicDir
+ * (public/icons/) so they are available before the web-extension plugin
+ * finalizes the manifest.
  */
 function copyExtensionAssets(): Plugin {
   return {
     name: 'copy-extension-assets',
     closeBundle() {
       const outDir = resolve(__dirname, 'dist');
-      cpSync(resolve(__dirname, 'icons'), resolve(outDir, 'icons'), { recursive: true });
       cpSync(resolve(__dirname, '_locales'), resolve(outDir, '_locales'), { recursive: true });
     },
   };
@@ -32,7 +32,7 @@ export default defineConfig(({ mode }) => ({
     }),
     copyExtensionAssets(),
   ],
-  publicDir: false,
+  publicDir: 'public',
   resolve: {
     alias: {
       '#core': resolve(__dirname, 'src/core'),
