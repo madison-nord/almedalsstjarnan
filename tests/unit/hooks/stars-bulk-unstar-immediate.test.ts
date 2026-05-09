@@ -1,12 +1,14 @@
 /**
- * Unit test: unstarSelected followed by all toasts expiring.
+ * Unit test: Bulk unstar should immediately remove from storage.
  *
- * Tests that when bulk unstar is used and all toasts expire,
- * ALL events are actually removed from storage (UNSTAR_EVENT sent for each).
+ * When the user uses the bulk "unstar selected" action on the Stars Page,
+ * events should be removed from storage immediately (no 5-second undo delay).
+ * The undo toast pattern is for single-event accidental click protection,
+ * not for explicit bulk actions.
  *
- * // Feature: unstar-revert-bug, Bulk unstar confirm
+ * // Feature: unstar-revert-bug, Immediate bulk unstar
  *
- * Validates: Requirements 1.3, 2.3
+ * Validates: Requirements 2.3
  */
 
 import { describe, it, expect } from 'vitest';
@@ -34,14 +36,12 @@ function makeEvent(id: string, title: string): StarredEvent {
   };
 }
 
-describe('Stars Page: unstarSelected → immediate UNSTAR_EVENT', () => {
-  it('sends UNSTAR_EVENT immediately for all selected events', async () => {
+describe('Stars Page: unstarSelected sends UNSTAR_EVENT immediately', () => {
+  it('sends UNSTAR_EVENT for all selected events immediately without waiting for toast', async () => {
     const allEvents: StarredEvent[] = [
       makeEvent('event-1', 'Seminarium A'),
       makeEvent('event-2', 'Workshop B'),
       makeEvent('event-3', 'Panel C'),
-      makeEvent('event-4', 'Debatt D'),
-      makeEvent('event-5', 'Föreläsning E'),
     ];
 
     const unstarredIds: string[] = [];
@@ -75,19 +75,17 @@ describe('Stars Page: unstarSelected → immediate UNSTAR_EVENT', () => {
       result.current.selectAll();
     });
 
-    expect(result.current.selectedIds.size).toBe(5);
-
     // Bulk unstar
     act(() => {
       result.current.unstarSelected();
     });
 
+    // CRITICAL: UNSTAR_EVENT should be sent IMMEDIATELY for all events
+    // (no waiting for 5-second toast timer)
+    expect(unstarredIds.sort()).toEqual(['event-1', 'event-2', 'event-3']);
+
     // Events should be gone from visible list
     expect(result.current.events.length).toBe(0);
-
-    // UNSTAR_EVENT sent immediately for all 5 events (no pending deletions)
-    expect(unstarredIds.length).toBe(5);
-    expect(unstarredIds.sort()).toEqual(['event-1', 'event-2', 'event-3', 'event-4', 'event-5']);
 
     // No pending deletions (bulk action skips undo toast)
     expect(result.current.pendingDeletions.length).toBe(0);
@@ -95,20 +93,25 @@ describe('Stars Page: unstarSelected → immediate UNSTAR_EVENT', () => {
     unmount();
   });
 
-  it('events are removed from visible list immediately when unstarSelected is called', async () => {
+  it('single unstar still uses deferred deletion with undo toast', async () => {
     const allEvents: StarredEvent[] = [
       makeEvent('event-1', 'Seminarium A'),
       makeEvent('event-2', 'Workshop B'),
-      makeEvent('event-3', 'Panel C'),
     ];
 
+    const unstarredIds: string[] = [];
+
     const sendMessageMock = mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>;
-    sendMessageMock.mockImplementation((message: { command: string }) => {
+    sendMessageMock.mockImplementation((message: { command: string; eventId?: string }) => {
       if (message.command === 'GET_ALL_STARRED_EVENTS') {
         return Promise.resolve({ success: true, data: [...allEvents] });
       }
       if (message.command === 'GET_SORT_ORDER') {
         return Promise.resolve({ success: true, data: 'chronological' as SortOrder });
+      }
+      if (message.command === 'UNSTAR_EVENT') {
+        unstarredIds.push(message.eventId!);
+        return Promise.resolve({ success: true, data: undefined });
       }
       return Promise.resolve({ success: true, data: undefined });
     });
@@ -122,20 +125,16 @@ describe('Stars Page: unstarSelected → immediate UNSTAR_EVENT', () => {
       expect(result.current.loading).toBe(false);
     });
 
-    // Select all
+    // Single unstar (NOT bulk)
     act(() => {
-      result.current.selectAll();
+      result.current.unstarEvent('event-1');
     });
 
-    // Bulk unstar
-    act(() => {
-      result.current.unstarSelected();
-    });
+    // Should NOT send UNSTAR_EVENT immediately (deferred for undo)
+    expect(unstarredIds.length).toBe(0);
 
-    // ALL events removed from visible list immediately
-    expect(result.current.events.length).toBe(0);
-    // No pending deletions
-    expect(result.current.pendingDeletions.length).toBe(0);
+    // Should be in pendingDeletions (undo toast shown)
+    expect(result.current.pendingDeletions.length).toBe(1);
 
     unmount();
   });

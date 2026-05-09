@@ -281,11 +281,15 @@ export function useStarredEvents(
   }, []);
 
   const unstarSelected = useCallback((): void => {
-    for (const eventId of selectedIds) {
-      unstarEvent(eventId);
+    // Bulk action: remove from local state AND send UNSTAR_EVENT immediately
+    // (no undo toast for explicit bulk actions — too slow for UX)
+    const idsToRemove = new Set(selectedIds);
+    setEvents((prev) => prev.filter((e) => !idsToRemove.has(e.id)));
+    for (const eventId of idsToRemove) {
+      void adapter.sendMessage({ command: 'UNSTAR_EVENT', eventId });
     }
     setSelectedIds(new Set());
-  }, [selectedIds, unstarEvent]);
+  }, [selectedIds, adapter]);
 
   const exportSelected = useCallback((): void => {
     const selectedEvents = events.filter((e) => selectedIds.has(e.id));
