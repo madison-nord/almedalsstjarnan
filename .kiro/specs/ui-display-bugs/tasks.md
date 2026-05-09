@@ -95,14 +95,14 @@
     - The `onLocaleChange` callback already notifies the parent — no other changes needed
     - _Requirements: 2.3_
 
-  - [-] 4.4 Verify unit test passes
+  - [x] 4.4 Verify unit test passes
     - Run: `pnpm vitest --run tests/unit/popup/language-toggle-no-reload.test.ts`
     - **EXPECTED OUTCOME**: Test PASSES (confirms locale change works without reload)
     - _Requirements: 2.3_
 
 - [ ] 5. Fix for sort label barely visible on dark header
 
-  - [~] 5.1 Write unit test for SortSelector labelClassName prop (TDD — test first)
+  - [x] 5.1 Write unit test for SortSelector labelClassName prop (TDD — test first)
     - Test file: `tests/unit/shared/sort-selector-label.test.ts`
     - Test that SortSelector accepts an optional `labelClassName` prop
     - Test that when `labelClassName="text-gray-200"` is passed, the label element has that class
@@ -110,7 +110,7 @@
     - Run test on UNFIXED code — expect FAILURE (prop doesn't exist yet)
     - _Requirements: 1.4, 2.4_
 
-  - [~] 5.2 Implement the SortSelector labelClassName prop
+  - [x] 5.2 Implement the SortSelector labelClassName prop
     - File: `src/ui/shared/SortSelector.tsx`
     - Add optional `labelClassName?: string` to `SortSelectorProps` interface
     - Default to `'text-gray-600'` when not provided (backward compatibility)
@@ -120,13 +120,13 @@
     - _Preservation: dropdown options and select element styling unchanged; default label color unchanged on light backgrounds_
     - _Requirements: 1.4, 2.4, 3.4_
 
-  - [~] 5.3 Pass labelClassName in popup App header
+  - [x] 5.3 Pass labelClassName in popup App header
     - File: `src/ui/popup/App.tsx`
     - Pass `labelClassName="text-gray-200"` to the `<SortSelector>` in the dark header
     - This ensures the sort label meets WCAG AA 4.5:1 contrast ratio against `bg-brand-secondary` (#1e3a5f)
     - _Requirements: 2.4_
 
-  - [~] 5.4 Verify unit test passes
+  - [-] 5.4 Verify unit test passes
     - Run: `pnpm vitest --run tests/unit/shared/sort-selector-label.test.ts`
     - **EXPECTED OUTCOME**: Test PASSES (confirms label contrast fix works)
     - _Requirements: 2.4, 3.4_

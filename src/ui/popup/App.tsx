@@ -148,6 +148,7 @@ export function App({ adapter }: AppProps): React.JSX.Element {
           currentOrder={sortOrder}
           onOrderChange={changeSortOrder}
           adapter={adapter}
+          labelClassName="text-gray-200"
         />
       </header>
 

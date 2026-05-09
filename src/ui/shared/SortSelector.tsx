@@ -16,6 +16,7 @@ export interface SortSelectorProps {
   readonly currentOrder: SortOrder;
   readonly onOrderChange: (order: SortOrder) => void;
   readonly adapter: IBrowserApiAdapter;
+  readonly labelClassName?: string;
 }
 
 const SORT_ORDER_I18N_KEYS: Record<SortOrder, string> = {
@@ -29,6 +30,7 @@ export function SortSelector({
   currentOrder,
   onOrderChange,
   adapter,
+  labelClassName = 'text-gray-600',
 }: SortSelectorProps): React.JSX.Element {
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
     onOrderChange(event.target.value as SortOrder);
@@ -36,7 +38,7 @@ export function SortSelector({
 
   return (
     <div className="flex items-center gap-1.5">
-      <label htmlFor="sort-selector" className="text-xs font-medium text-gray-600">
+      <label htmlFor="sort-selector" className={`text-xs font-medium ${labelClassName}`}>
         {adapter.getMessage('sortVisibleLabel')}
       </label>
       <select
