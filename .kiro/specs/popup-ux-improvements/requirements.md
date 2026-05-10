@@ -64,3 +64,15 @@ This feature addresses four UX issues in the Almedalsstjärnan browser extension
 4. WHEN the OnboardingView overlay is dismissed, THE Popup SHALL return to its previous state with the Event_List visible.
 5. WHEN the OnboardingView is shown on first run (not via Help_Link), THE OnboardingView SHALL also display as a modal overlay.
 6. THE OnboardingView overlay SHALL be keyboard-accessible, with focus trapped within the overlay while it is open.
+
+### Requirement 5: Star button style and position on programme page
+
+**User Story:** As a user, I want the star button on the Almedalsveckan programme page to match the visual style of stars used elsewhere in the extension and be positioned next to the event title, so that the interface feels cohesive and the star is easy to find.
+
+#### Acceptance Criteria
+
+1. WHEN the star button is in the starred (filled) state, THE star button SHALL use an amber fill (#f59e0b) with a navy stroke (#1e3a5f) matching the extension toolbar icon style.
+2. WHEN the star button is in the unstarred (empty) state, THE star button SHALL use a gray outline (#6b7280) with no fill, consistent with the current unstarred appearance.
+3. THE star button SHALL be positioned to the right of the event title within each event card on the programme page.
+4. THE star button SHALL maintain its minimum 32px clickable area and 16px icon size.
+5. THE star button SHALL remain within the Shadow DOM and use scoped CSS (no Tailwind in content script).

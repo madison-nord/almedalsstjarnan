@@ -159,3 +159,32 @@ Tests to implement:
 ### E2E Tests
 
 No new E2E tests needed — these are visual/layout changes that are best verified by unit and property tests. Existing E2E tests for star/unstar flow will continue to pass since no behavioral changes are made.
+
+## 5. Star Button Style and Position on Programme Page
+
+### Current State
+
+The star button is injected into each event card on the Almedalsveckan programme page via the content script (`src/extension/content-script.ts` and `src/extension/star-button.ts`). It renders inside a Shadow DOM with scoped CSS (`src/extension/star-button.css`). Currently:
+- The filled star uses a basic yellow color that doesn't match the extension's branded amber+navy style
+- The button is positioned in the top-right corner of the event card
+
+### Target State
+
+- **Filled (starred) state:** Amber fill `#f59e0b` with navy stroke `#1e3a5f` and `stroke-linejoin: round` — matching the toolbar icon
+- **Unfilled (unstarred) state:** Gray outline `#6b7280` with no fill (current behavior, preserved)
+- **Position:** Move from top-right corner to inline with the event title (right of the title text), making it more discoverable and consistent with common "favorite" button patterns
+- **Size:** Maintain 32px clickable area with 16px icon (unchanged)
+
+### Files to Modify
+
+- `src/extension/star-button.css` — Update the filled star SVG colors and positioning styles
+- `src/extension/star-button.ts` — Adjust where the button is inserted in the DOM (next to title element instead of card corner)
+- `src/extension/content-script.ts` — May need to adjust the insertion point for the star button within each event card
+
+### Correctness Property
+
+**Property 4: Star button filled state uses branded colors**
+
+*For any* event card in the starred state, the star button SVG SHALL have `fill: #f59e0b` and `stroke: #1e3a5f`. *For any* event card in the unstarred state, the star button SVG SHALL have `fill: none` and `stroke: #6b7280`.
+
+**Validates: Requirements 5.1, 5.2**

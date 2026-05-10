@@ -228,5 +228,9 @@
   "showLess": {
     "message": "Show less",
     "description": "Tooltip for collapse button on event items"
+  },
+  "conflictIndicator": {
+    "message": "Time conflict",
+    "description": "Label shown in tooltip for the conflict dot indicator on overlapping events"
   }
 }

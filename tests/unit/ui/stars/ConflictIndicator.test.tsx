@@ -21,6 +21,7 @@ import { EventRow } from '#ui/stars/components/EventRow';
 
 const messageMap: Record<string, string> = {
   unstarAction: 'Remove',
+  conflictIndicator: 'Tidskonflikt',
 };
 
 function setupAdapter(): IBrowserApiAdapter {
@@ -103,21 +104,21 @@ describe('Stars EventRow conflict indicator', () => {
     renderRow(makeEvent(), true, ['Demokrati i förändring']);
 
     const dot = screen.getByRole('img');
-    expect(dot).toHaveAttribute('title', 'Demokrati i förändring');
+    expect(dot).toHaveAttribute('title', 'Tidskonflikt: Demokrati i förändring');
   });
 
   it('shows tooltip with multiple conflicting event titles joined by comma', () => {
     renderRow(makeEvent(), true, ['Event A', 'Event B']);
 
     const dot = screen.getByRole('img');
-    expect(dot).toHaveAttribute('title', 'Event A, Event B');
+    expect(dot).toHaveAttribute('title', 'Tidskonflikt: Event A, Event B');
   });
 
   it('provides aria-label for accessibility', () => {
     renderRow(makeEvent(), true, ['Hållbar utveckling']);
 
     const dot = screen.getByRole('img');
-    expect(dot).toHaveAttribute('aria-label', 'Hållbar utveckling');
+    expect(dot).toHaveAttribute('aria-label', 'Tidskonflikt: Hållbar utveckling');
   });
 
   it('does not add left border accent to the time cell when conflicting (border removed)', () => {
@@ -138,10 +139,10 @@ describe('Stars EventRow conflict indicator', () => {
     expect(timeCell).not.toHaveClass('border-l-2');
   });
 
-  it('renders empty tooltip when conflictTitles is empty', () => {
+  it('renders tooltip with label when conflictTitles is empty', () => {
     renderRow(makeEvent(), true, []);
 
     const dot = screen.getByRole('img');
-    expect(dot).toHaveAttribute('title', '');
+    expect(dot).toHaveAttribute('title', 'Tidskonflikt');
   });
 });

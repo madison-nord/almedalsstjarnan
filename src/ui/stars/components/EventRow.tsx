@@ -36,9 +36,10 @@ export function EventRow({ event, onUnstar, adapter, isConflicting, conflictTitl
     onToggleSelection?.(event.id);
   };
 
+  const conflictLabel = adapter.getMessage('conflictIndicator') || 'Tidskonflikt';
   const tooltipText = conflictTitles && conflictTitles.length > 0
-    ? conflictTitles.join(', ')
-    : '';
+    ? `${conflictLabel}: ${conflictTitles.join(', ')}`
+    : conflictLabel;
 
   const rowClasses = isConflicting === true
     ? 'border-b border-gray-100 even:bg-brand-surface odd:bg-white hover:bg-amber-100'

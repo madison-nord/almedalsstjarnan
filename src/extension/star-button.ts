@@ -45,14 +45,14 @@ const STAR_BUTTON_CSS = `.star-btn {
   width: 16px;
   height: 16px;
 }
-.star-btn[aria-pressed="true"] svg {
+.star-btn[aria-pressed="true"] svg path {
   fill: #f59e0b;
   stroke: #1e3a5f;
   stroke-width: 1.5;
   stroke-linejoin: round;
   animation: star-pop 0.3s ease-out;
 }
-.star-btn[aria-pressed="false"] svg {
+.star-btn[aria-pressed="false"] svg path {
   fill: none;
   stroke: #6b7280;
   stroke-width: 1.5;

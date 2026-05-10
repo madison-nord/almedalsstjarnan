@@ -113,7 +113,7 @@ describe('EventRow border removal (Requirements 3.1, 3.2, 3.3)', () => {
         conflictTitles: ['Other Event'],
       });
 
-      const dot = screen.getByRole('img', { name: 'Other Event' });
+      const dot = screen.getByRole('img', { name: /Other Event/ });
       expect(dot).toBeInTheDocument();
       expect(dot).toHaveTextContent('●');
     });
