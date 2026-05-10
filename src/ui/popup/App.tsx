@@ -141,15 +141,15 @@ export function App({ adapter }: AppProps): React.JSX.Element {
 
   if (loading || !onboardingLoaded) {
     return (
-      <div className="w-[360px] min-h-[480px] flex items-center justify-center">
+      <div className="w-[360px] h-[560px] min-h-[560px] flex items-center justify-center">
         <span className="text-sm text-gray-400">…</span>
       </div>
     );
   }
 
   return (
-    <div key={locale ?? 'auto'} className="w-[360px] min-h-[480px] flex flex-col bg-white">
-      <header className="bg-brand-secondary px-4 pt-4 pb-2 border-b-[3px] border-brand-primary">
+    <div key={locale ?? 'auto'} className="w-[360px] h-[560px] min-h-[560px] flex flex-col overflow-hidden bg-white">
+      <header className="flex-shrink-0 bg-brand-secondary px-4 pt-4 pb-2 border-b-[3px] border-brand-primary">
         <div className="flex items-center gap-2 mb-2">
           <span className="text-brand-accent text-lg" aria-hidden="true">★</span>
           <h1 className="text-lg font-semibold text-white">
@@ -171,13 +171,15 @@ export function App({ adapter }: AppProps): React.JSX.Element {
         <OnboardingView adapter={localizedAdapter} onDismiss={handleDismissOnboarding} />
       )}
 
-      {events.length === 0 ? (
-        <EmptyState adapter={localizedAdapter} />
-      ) : (
-        <EventList events={events} onUnstar={unstarEvent} adapter={localizedAdapter} conflictingIds={conflictingIds} conflictTitlesMap={conflictTitlesMap} />
-      )}
+      <div className="flex-1 overflow-hidden">
+        {events.length === 0 ? (
+          <EmptyState adapter={localizedAdapter} />
+        ) : (
+          <EventList events={events} onUnstar={unstarEvent} adapter={localizedAdapter} conflictingIds={conflictingIds} conflictTitlesMap={conflictTitlesMap} />
+        )}
+      </div>
 
-      <footer className="px-4 py-3 border-t border-gray-200 flex flex-col gap-2">
+      <footer className="flex-shrink-0 px-4 py-3 border-t border-gray-200 flex flex-col gap-2">
         <ExportButton
           onExport={exportEvents}
           adapter={localizedAdapter}
