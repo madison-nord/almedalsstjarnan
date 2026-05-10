@@ -47,7 +47,9 @@ const STAR_BUTTON_CSS = `.star-btn {
 }
 .star-btn[aria-pressed="true"] svg {
   fill: #f59e0b;
-  stroke: #f59e0b;
+  stroke: #1e3a5f;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
   animation: star-pop 0.3s ease-out;
 }
 .star-btn[aria-pressed="false"] svg {

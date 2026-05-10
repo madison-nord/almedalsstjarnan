@@ -91,11 +91,28 @@ export async function processEventCard(
     const host = document.createElement('div');
     host.className = 'almedals-star-host';
     host.setAttribute('data-event-id', eventId);
+    // Inline styles for positioning next to the title (host is outside Shadow DOM)
+    host.style.display = 'inline-flex';
+    host.style.alignItems = 'center';
+    host.style.flexShrink = '0';
 
-    // Insert the host after the title h2 element
+    // Insert the host inline with the title using a flex wrapper
     const titleH2 = card.querySelector('a.title h2');
-    if (titleH2?.parentElement) {
-      titleH2.parentElement.insertAdjacentElement('afterend', host);
+    const titleLink = titleH2?.parentElement; // the <a class="title"> element
+    if (titleLink?.parentElement) {
+      // Create a flex wrapper to hold the title link and star button side by side
+      const titleRow = document.createElement('div');
+      titleRow.className = 'almedals-title-row';
+      titleRow.style.display = 'flex';
+      titleRow.style.alignItems = 'center';
+      titleRow.style.gap = '4px';
+
+      // Insert the wrapper where the title link currently is
+      titleLink.parentElement.insertBefore(titleRow, titleLink);
+      // Move the title link into the wrapper
+      titleRow.appendChild(titleLink);
+      // Add the star button host after the title link
+      titleRow.appendChild(host);
     } else {
       // Fallback: append to the event-information-inner div
       const inner = card.querySelector('.event-information-inner');
