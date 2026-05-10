@@ -6,42 +6,42 @@ Four targeted UX improvements to the Almedalsstjärnan browser extension popup a
 
 ## Tasks
 
-- [ ] 1. Remove inconsistent grid divider in EventRow
-  - [ ] 1.1 Write property test for EventRow border removal
+- [x] 1. Remove inconsistent grid divider in EventRow
+  - [x] 1.1 Write property test for EventRow border removal
     - Create `tests/property/event-row-no-border.property.test.ts`
     - **Property 3: EventRow date/time column has no conditional border styling**
     - Generate arbitrary events with `isConflicting` true/false using fast-check
     - Assert the date/time `<td>` never contains `border-l` class variants
     - **Validates: Requirements 3.1, 3.2, 3.3**
-  - [ ] 1.2 Write unit test for EventRow border removal
+  - [x] 1.2 Write unit test for EventRow border removal
     - Create `tests/unit/stars/event-row-border.test.tsx`
     - Test that conflicting events render date/time td without `border-l-2 border-l-slate-300`
     - Test that non-conflicting events render date/time td without `border-l` classes
     - Test that conflict dot indicator still renders for conflicting events
     - _Requirements: 3.1, 3.2, 3.3_
-  - [ ] 1.3 Remove conditional border-l from EventRow component
+  - [x] 1.3 Remove conditional border-l from EventRow component
     - In `src/ui/stars/components/EventRow.tsx`, remove the conditional `border-l-2 border-l-slate-300` from the date/time `<td>` className
     - Keep the conflict dot indicator and tooltip unchanged
     - _Requirements: 3.1, 3.2, 3.3_
-  - [ ] 1.4 Checkpoint — verify EventRow tests pass
+  - [x] 1.4 Checkpoint — verify EventRow tests pass
     - Run `pnpm vitest --run tests/property/event-row-no-border.property.test.ts tests/unit/stars/event-row-border.test.tsx`
     - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 2. Always-visible bulk actions in Stars Page
-  - [ ] 2.1 Write property test for BulkActions render and button state
+- [x] 2. Always-visible bulk actions in Stars Page
+  - [x] 2.1 Write property test for BulkActions render and button state
     - Create `tests/property/bulk-actions-always-visible.property.test.ts`
     - **Property 1: BulkActions always renders with correct button state**
     - Generate arbitrary `selectedCount` (0..totalCount) and `totalCount` (0..100)
     - Assert component always renders a non-null element
     - Assert "unstar selected" and "export selected" buttons are disabled iff `selectedCount === 0`
     - **Validates: Requirements 2.1, 2.2, 2.3**
-  - [ ] 2.2 Write property test for BulkActions count display
+  - [x] 2.2 Write property test for BulkActions count display
     - Add to `tests/property/bulk-actions-always-visible.property.test.ts`
     - **Property 2: BulkActions always displays counts**
     - Generate arbitrary `selectedCount` and `totalCount`
     - Assert both numbers appear as visible text in the rendered output
     - **Validates: Requirements 2.4, 2.5**
-  - [ ] 2.3 Write unit test for BulkActions disabled state
+  - [x] 2.3 Write unit test for BulkActions disabled state
     - Create `tests/unit/stars/bulk-actions-disabled.test.tsx`
     - Test that component renders when `selectedCount === 0` (no longer returns null)
     - Test buttons have `disabled` attribute and `opacity-50 cursor-not-allowed` when `selectedCount === 0`
@@ -49,7 +49,7 @@ Four targeted UX improvements to the Almedalsstjärnan browser extension popup a
     - Test "select all" button remains enabled when `selectedCount === 0`
     - Test count displays "0 / {totalCount}" when nothing selected
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
-  - [ ] 2.4 Implement always-visible BulkActions component
+  - [x] 2.4 Implement always-visible BulkActions component
     - In `src/ui/stars/components/BulkActions.tsx`:
     - Remove the `if (selectedCount === 0) return null;` early return
     - Add `disabled` attribute to "unstar selected" and "export selected" buttons when `selectedCount === 0`
@@ -57,12 +57,12 @@ Four targeted UX improvements to the Almedalsstjärnan browser extension popup a
     - Keep "select all / clear" button always enabled
     - Ensure count always displays `{selectedCount} / {totalCount}`
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
-  - [ ] 2.5 Checkpoint — verify BulkActions tests pass
+  - [x] 2.5 Checkpoint — verify BulkActions tests pass
     - Run `pnpm vitest --run tests/property/bulk-actions-always-visible.property.test.ts tests/unit/stars/bulk-actions-disabled.test.tsx`
     - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 3. Popup scroll containment and sticky footer
-  - [ ] 3.1 Write unit test for popup layout classes
+- [x] 3. Popup scroll containment and sticky footer
+  - [x] 3.1 Write unit test for popup layout classes
     - Create `tests/unit/popup/popup-layout.test.tsx`
     - Test root container has `h-[560px]`, `min-h-[560px]`, `overflow-hidden`, `flex flex-col`
     - Test footer has `flex-shrink-0` class
@@ -70,7 +70,7 @@ Four targeted UX improvements to the Almedalsstjärnan browser extension popup a
     - Test EventList area has `flex-1 overflow-hidden` wrapper
     - Test that loading state also uses `h-[560px]` and `min-h-[560px]`
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
-  - [ ] 3.2 Implement popup scroll containment
+  - [x] 3.2 Implement popup scroll containment
     - In `src/ui/popup/App.tsx`:
     - Change root container from `min-h-[480px]` to `h-[560px] min-h-[560px] overflow-hidden`
     - Add `flex-shrink-0` to the header element
@@ -78,12 +78,12 @@ Four targeted UX improvements to the Almedalsstjärnan browser extension popup a
     - Add `flex-shrink-0` to the footer element
     - Update loading state container to use `h-[560px] min-h-[560px]`
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
-  - [ ] 3.3 Checkpoint — verify popup layout tests pass
+  - [x] 3.3 Checkpoint — verify popup layout tests pass
     - Run `pnpm vitest --run tests/unit/popup/popup-layout.test.tsx`
     - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 4. Onboarding view as modal overlay
-  - [ ] 4.1 Write unit tests for OnboardingView modal overlay
+- [x] 4. Onboarding view as modal overlay
+  - [x] 4.1 Write unit tests for OnboardingView modal overlay
     - Create `tests/unit/popup/onboarding-modal.test.tsx`
     - Test overlay renders with `fixed inset-0 z-50` classes
     - Test overlay has `role="dialog"` and `aria-modal="true"` attributes
@@ -91,14 +91,14 @@ Four targeted UX improvements to the Almedalsstjärnan browser extension popup a
     - Test Escape key closes the overlay
     - Test overlay contains `aria-labelledby="onboarding-title"`
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
-  - [ ] 4.2 Write unit tests for focus trapping
+  - [x] 4.2 Write unit tests for focus trapping
     - Add to `tests/unit/popup/onboarding-modal.test.tsx`
     - Test that focus moves to first focusable element on mount
     - Test Tab at last focusable element cycles to first
     - Test Shift+Tab at first focusable element cycles to last
     - Test focus returns to trigger element on dismiss
     - _Requirements: 4.6_
-  - [ ] 4.3 Implement OnboardingView as modal overlay
+  - [x] 4.3 Implement OnboardingView as modal overlay
     - In `src/ui/popup/components/OnboardingView.tsx`:
     - Wrap content in a fixed overlay: `fixed inset-0 z-50 flex items-center justify-center bg-black/40`
     - Add `role="dialog"`, `aria-modal="true"`, `aria-labelledby="onboarding-title"` to overlay
@@ -108,17 +108,42 @@ Four targeted UX improvements to the Almedalsstjärnan browser extension popup a
       - On Escape → call `onDismiss`
     - Accept optional `triggerRef` prop to restore focus on dismiss
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
-  - [ ] 4.4 Update App.tsx to pass trigger ref to OnboardingView
+  - [x] 4.4 Update App.tsx to pass trigger ref to OnboardingView
     - In `src/ui/popup/App.tsx`:
     - Add a `useRef` for the Help_Link button
     - Pass the ref to `OnboardingView` so focus can be restored on dismiss
     - Ensure OnboardingView renders as overlay both on first run and via Help_Link
     - _Requirements: 4.4, 4.5, 4.6_
-  - [ ] 4.5 Checkpoint — verify onboarding modal tests pass
+  - [x] 4.5 Checkpoint — verify onboarding modal tests pass
     - Run `pnpm vitest --run tests/unit/popup/onboarding-modal.test.tsx`
     - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 5. Final checkpoint — run full test suite
+- [x] 5. Star button style and position on programme page
+  - [x] 5.1 Write unit test for star button filled state colors
+    - Create `tests/unit/content/star-button-style.test.ts`
+    - Test that starred (filled) state uses fill `#f59e0b` and stroke `#1e3a5f`
+    - Test that unstarred (empty) state uses fill `none` and stroke `#6b7280`
+    - Test that the star SVG path uses `stroke-linejoin: round`
+    - _Requirements: 5.1, 5.2_
+  - [x] 5.2 Update star button CSS for branded filled state
+    - In `src/extension/star-button.css`:
+    - Change the filled star fill color to `#f59e0b` (amber)
+    - Add stroke `#1e3a5f` (navy) with `stroke-width: 1.5` and `stroke-linejoin: round` to filled state
+    - Keep unstarred state as gray outline `#6b7280` with no fill
+    - _Requirements: 5.1, 5.2_
+  - [x] 5.3 Reposition star button next to event title
+    - In `src/extension/star-button.ts` and/or `src/extension/content-script.ts`:
+    - Change insertion point so the star button renders to the right of the event title
+    - Use flexbox or inline positioning within the title row
+    - Maintain 32px clickable area and 16px icon size
+    - Ensure the button stays within Shadow DOM with scoped CSS
+    - _Requirements: 5.3, 5.4, 5.5_
+  - [x] 5.4 Checkpoint — verify star button tests pass
+    - Run `pnpm vitest --run tests/unit/content/star-button-style.test.ts`
+    - Visually verify on the programme page that the star appears next to the title with correct colors
+    - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 6. Final checkpoint — run full test suite
   - Run `pnpm vitest --run` to verify all existing and new tests pass
   - Run `pnpm run lint` and `pnpm run typecheck` to verify no regressions
   - Ensure all tests pass, ask the user if questions arise.

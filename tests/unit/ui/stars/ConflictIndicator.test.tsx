@@ -1,9 +1,9 @@
 /**
  * Unit tests for conflict indicator rendering in the Stars Page.
  *
- * Validates that EventRow displays a subtle dot indicator and left border
- * accent on the time cell when isConflicting is true, with a tooltip
- * showing overlapping event titles.
+ * Validates that EventRow displays a subtle dot indicator when isConflicting
+ * is true, with a tooltip showing overlapping event titles.
+ * Note: The left border accent was removed per popup-ux-improvements spec.
  *
  * Requirements: 8.1, 8.2, 8.5
  */
@@ -120,12 +120,13 @@ describe('Stars EventRow conflict indicator', () => {
     expect(dot).toHaveAttribute('aria-label', 'Hållbar utveckling');
   });
 
-  it('adds left border accent to the time cell when conflicting', () => {
+  it('does not add left border accent to the time cell when conflicting (border removed)', () => {
     renderRow(makeEvent(), true, ['Other Event']);
 
     const dot = screen.getByRole('img');
     const timeCell = dot.closest('td');
-    expect(timeCell).toHaveClass('border-l-2', 'border-l-slate-300');
+    expect(timeCell).not.toHaveClass('border-l-2');
+    expect(timeCell).not.toHaveClass('border-l-slate-300');
   });
 
   it('does not add left border accent when not conflicting', () => {

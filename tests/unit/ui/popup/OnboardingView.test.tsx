@@ -89,9 +89,8 @@ describe('OnboardingView', () => {
     it('has aria-labelledby pointing to the title', () => {
       render(<OnboardingView adapter={adapter} onDismiss={vi.fn()} />);
 
-      const section = screen.getByRole('region', { hidden: false }) ??
-        document.querySelector('section[aria-labelledby="onboarding-title"]');
-      expect(section).not.toBeNull();
+      const dialog = screen.getByRole('dialog');
+      expect(dialog).toHaveAttribute('aria-labelledby', 'onboarding-title');
     });
   });
 

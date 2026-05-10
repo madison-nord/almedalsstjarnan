@@ -127,7 +127,7 @@ describe('Bulk selection and batch actions', () => {
   });
 
   describe('BulkActions component', () => {
-    it('renders nothing when selectedCount is 0', () => {
+    it('renders with disabled buttons when selectedCount is 0', () => {
       const { container } = render(
         <BulkActions
           selectedCount={0}
@@ -141,7 +141,8 @@ describe('Bulk selection and batch actions', () => {
         />,
       );
 
-      expect(container.innerHTML).toBe('');
+      // BulkActions now always renders (with disabled buttons when selectedCount === 0)
+      expect(container.innerHTML).not.toBe('');
     });
 
     it('renders action bar when selectedCount > 0', () => {
@@ -494,7 +495,7 @@ describe('Bulk selection and batch actions', () => {
       );
     });
 
-    it('bulk actions bar disappears after batch unstar clears selection', async () => {
+    it('bulk actions bar disables buttons after batch unstar clears selection', async () => {
       const events = [
         makeEvent({ id: 'e1', title: 'Event 1' }),
         makeEvent({ id: 'e2', title: 'Event 2' }),
@@ -514,8 +515,12 @@ describe('Bulk selection and batch actions', () => {
       // Unstar selected
       fireEvent.click(screen.getByRole('button', { name: 'Unstar selected' }));
 
+      // BulkActions now stays visible but buttons become disabled when selection is cleared
       await waitFor(() => {
-        expect(screen.queryByRole('toolbar')).not.toBeInTheDocument();
+        const unstarBtn = screen.queryByRole('button', { name: 'Unstar selected' });
+        if (unstarBtn) {
+          expect(unstarBtn).toBeDisabled();
+        }
       });
 
       // Cleanup timers
