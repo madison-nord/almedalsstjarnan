@@ -115,7 +115,7 @@ describe('Popup App — handleLocaleChange (no reload)', () => {
     await renderApp();
 
     // Find the language select and change it
-    const languageSelect = screen.getByRole('combobox', { name: 'Language' });
+    const languageSelect = screen.getByRole('combobox', { name: /språk|language/i });
     await user.selectOptions(languageSelect, 'en');
 
     // The bug: current code calls window.location.reload()
@@ -127,20 +127,8 @@ describe('Popup App — handleLocaleChange (no reload)', () => {
     // Track getMessage calls to verify re-render with new locale
     let currentLocale: 'sv' | 'en' | null = 'sv';
 
-    const svMessages: Record<string, string> = {
-      ...messageMap,
-      popupTitle: 'Stjärnmärkta evenemang',
-    };
-    const enMessages: Record<string, string> = {
-      ...messageMap,
-      popupTitle: 'Starred events',
-    };
-
     (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
-      (key: string) => {
-        const messages = currentLocale === 'en' ? enMessages : svMessages;
-        return messages[key] ?? '';
-      },
+      (key: string) => messageMap[key] ?? '',
     );
 
     (adapter.sendMessage as ReturnType<typeof vi.fn>).mockImplementation(
@@ -171,17 +159,17 @@ describe('Popup App — handleLocaleChange (no reload)', () => {
       expect(screen.queryByText('…')).not.toBeInTheDocument();
     });
 
-    // Verify initial render shows Swedish title
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Stjärnmärkta evenemang');
+    // Verify initial render shows Swedish empty state (from bundled locale data)
+    expect(screen.getByText('Inga stjärnmärkta evenemang')).toBeInTheDocument();
 
     // Change locale to English
-    const languageSelect = screen.getByRole('combobox', { name: 'Language' });
+    const languageSelect = screen.getByRole('combobox', { name: /språk|language/i });
     await user.selectOptions(languageSelect, 'en');
 
     // After fix: the component should re-render with English strings
     // without calling window.location.reload()
     await waitFor(() => {
-      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Starred events');
+      expect(screen.getByText('No starred events')).toBeInTheDocument();
     });
   });
 
@@ -189,11 +177,11 @@ describe('Popup App — handleLocaleChange (no reload)', () => {
     const user = userEvent.setup();
     await renderApp();
 
-    // Get the initial empty state message
-    expect(screen.getByText('No starred events')).toBeInTheDocument();
+    // Get the initial empty state message (Swedish because locale is 'sv')
+    expect(screen.getByText('Inga stjärnmärkta evenemang')).toBeInTheDocument();
 
     // Change locale — this should trigger a re-render (remount via key change)
-    const languageSelect = screen.getByRole('combobox', { name: 'Language' });
+    const languageSelect = screen.getByRole('combobox', { name: /språk|language/i });
     await user.selectOptions(languageSelect, 'en');
 
     // After fix: the component tree should be re-mounted with the new locale key

@@ -18,9 +18,10 @@
  * Requirements: 9.1–9.9, 7.1, 7.2, 7.3, 6.1, 6.2, 6.3, 6.4
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 import type { IBrowserApiAdapter } from '#core/types';
+import { getLocalizedMessage } from '#core/locale-messages';
 
 import { SortSelector } from '#ui/shared/SortSelector';
 import { UndoToast } from '#ui/shared/UndoToast';
@@ -120,6 +121,20 @@ export function App({ adapter }: AppProps): React.JSX.Element {
     setLocale(newLocale);
   }, []);
 
+  const localizedAdapter: IBrowserApiAdapter = useMemo(() => {
+    if (!locale) return adapter;
+    return {
+      storageLocalGet: adapter.storageLocalGet.bind(adapter),
+      storageLocalSet: adapter.storageLocalSet.bind(adapter),
+      sendMessage: adapter.sendMessage.bind(adapter),
+      download: adapter.download.bind(adapter),
+      createTab: adapter.createTab.bind(adapter),
+      onStorageChanged: adapter.onStorageChanged.bind(adapter),
+      getMessage: (key: string): string =>
+        getLocalizedMessage(key, locale) || adapter.getMessage(key),
+    };
+  }, [adapter, locale]);
+
   const handleOpenFullList = (): void => {
     void adapter.createTab({ url: 'src/ui/stars/stars.html' });
   };
@@ -138,7 +153,7 @@ export function App({ adapter }: AppProps): React.JSX.Element {
         <div className="flex items-center gap-2 mb-2">
           <span className="text-brand-accent text-lg" aria-hidden="true">★</span>
           <h1 className="text-lg font-semibold text-white">
-            {adapter.getMessage('popupTitle')}
+            {localizedAdapter.getMessage('popupTitle')}
             {events.length > 0 && (
               <span className="ml-1 font-normal text-sm text-gray-300">({events.length})</span>
             )}
@@ -147,25 +162,25 @@ export function App({ adapter }: AppProps): React.JSX.Element {
         <SortSelector
           currentOrder={sortOrder}
           onOrderChange={changeSortOrder}
-          adapter={adapter}
+          adapter={localizedAdapter}
           labelClassName="text-gray-200"
         />
       </header>
 
       {showOnboarding && (
-        <OnboardingView adapter={adapter} onDismiss={handleDismissOnboarding} />
+        <OnboardingView adapter={localizedAdapter} onDismiss={handleDismissOnboarding} />
       )}
 
       {events.length === 0 ? (
-        <EmptyState adapter={adapter} />
+        <EmptyState adapter={localizedAdapter} />
       ) : (
-        <EventList events={events} onUnstar={unstarEvent} adapter={adapter} conflictingIds={conflictingIds} conflictTitlesMap={conflictTitlesMap} />
+        <EventList events={events} onUnstar={unstarEvent} adapter={localizedAdapter} conflictingIds={conflictingIds} conflictTitlesMap={conflictTitlesMap} />
       )}
 
       <footer className="px-4 py-3 border-t border-gray-200 flex flex-col gap-2">
         <ExportButton
           onExport={exportEvents}
-          adapter={adapter}
+          adapter={localizedAdapter}
           disabled={events.length === 0}
         />
         <a
@@ -174,14 +189,14 @@ export function App({ adapter }: AppProps): React.JSX.Element {
           rel="noopener noreferrer"
           className="w-full py-2 px-4 text-sm font-medium text-center text-brand-primary bg-brand-surface rounded hover:bg-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
         >
-          {adapter.getMessage('goToProgramme')}
+          {localizedAdapter.getMessage('goToProgramme')}
         </a>
         <button
           type="button"
           onClick={handleOpenFullList}
           className="w-full py-2 px-4 text-sm font-medium text-blue-600 bg-blue-50 rounded hover:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
         >
-          {adapter.getMessage('openFullList')}
+          {localizedAdapter.getMessage('openFullList')}
         </button>
         <div className="flex items-center justify-between">
           <button
@@ -189,9 +204,9 @@ export function App({ adapter }: AppProps): React.JSX.Element {
             onClick={handleShowOnboarding}
             className="py-1 text-xs text-gray-500 hover:text-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
           >
-            {adapter.getMessage('helpLink')}
+            {localizedAdapter.getMessage('helpLink')}
           </button>
-          <LanguageToggle adapter={adapter} onLocaleChange={handleLocaleChange} />
+          <LanguageToggle adapter={localizedAdapter} onLocaleChange={handleLocaleChange} />
         </div>
       </footer>
 
@@ -203,7 +218,7 @@ export function App({ adapter }: AppProps): React.JSX.Element {
               eventTitle={event.title}
               onUndo={() => undoUnstar(event.id)}
               onExpire={() => confirmUnstar(event.id)}
-              adapter={adapter}
+              adapter={localizedAdapter}
             />
           ))}
         </div>

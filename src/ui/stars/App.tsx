@@ -16,7 +16,10 @@
  * Requirements: 10.1–10.10, 7.1, 7.2, 7.3
  */
 
+import { useState, useEffect, useMemo } from 'react';
+
 import type { IBrowserApiAdapter } from '#core/types';
+import { getLocalizedMessage } from '#core/locale-messages';
 
 import { SortSelector } from '#ui/shared/SortSelector';
 import { UndoToast } from '#ui/shared/UndoToast';
@@ -56,6 +59,44 @@ export function App({ adapter }: AppProps): React.JSX.Element {
     exportSelected,
   } = useStarredEvents(adapter);
 
+  const [locale, setLocale] = useState<'sv' | 'en' | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetchLanguagePreference(): Promise<void> {
+      const response = await adapter.sendMessage<'sv' | 'en' | null>({
+        command: 'GET_LANGUAGE_PREFERENCE',
+      });
+
+      if (cancelled) return;
+
+      if (response.success) {
+        setLocale(response.data);
+      }
+    }
+
+    void fetchLanguagePreference();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [adapter]);
+
+  const localizedAdapter: IBrowserApiAdapter = useMemo(() => {
+    if (!locale) return adapter;
+    return {
+      storageLocalGet: adapter.storageLocalGet.bind(adapter),
+      storageLocalSet: adapter.storageLocalSet.bind(adapter),
+      sendMessage: adapter.sendMessage.bind(adapter),
+      download: adapter.download.bind(adapter),
+      createTab: adapter.createTab.bind(adapter),
+      onStorageChanged: adapter.onStorageChanged.bind(adapter),
+      getMessage: (key: string): string =>
+        getLocalizedMessage(key, locale) || adapter.getMessage(key),
+    };
+  }, [adapter, locale]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
@@ -65,37 +106,38 @@ export function App({ adapter }: AppProps): React.JSX.Element {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-brand-surface">
+    <div key={locale ?? 'auto'} className="min-h-screen flex flex-col bg-brand-surface">
       <header className="bg-brand-secondary px-4 sm:px-6 lg:px-8 pt-4 pb-3 border-b-[3px] border-brand-primary">
         <div className="flex items-center gap-2 mb-3">
           <span className="text-brand-accent text-lg" aria-hidden="true">★</span>
           <h1 className="text-lg font-bold text-white">
-            {adapter.getMessage('extensionName')}
+            {localizedAdapter.getMessage('extensionName')}
           </h1>
         </div>
         <div className="flex flex-wrap items-center gap-4">
           <SortSelector
             currentOrder={sortOrder}
             onOrderChange={changeSortOrder}
-            adapter={adapter}
+            adapter={localizedAdapter}
+            labelClassName="text-gray-200"
           />
           <SearchFilter
             value={filterText}
             onChange={setFilterText}
-            adapter={adapter}
+            adapter={localizedAdapter}
           />
-          <ExportButton onExport={exportEvents} adapter={adapter} />
+          <ExportButton onExport={exportEvents} adapter={localizedAdapter} />
         </div>
       </header>
 
       <main className="flex-1 w-full px-4 sm:px-6 lg:px-8 pb-6">
         {filteredEvents.length === 0 ? (
-          <EmptyState adapter={adapter} />
+          <EmptyState adapter={localizedAdapter} />
         ) : (
           <EventGrid
             events={filteredEvents}
             onUnstar={unstarEvent}
-            adapter={adapter}
+            adapter={localizedAdapter}
             conflictingIds={conflictingIds}
             conflictTitlesMap={conflictTitlesMap}
             selectedIds={selectedIds}
@@ -114,7 +156,7 @@ export function App({ adapter }: AppProps): React.JSX.Element {
               eventTitle={event.title}
               onUndo={() => undoUnstar(event.id)}
               onExpire={() => confirmUnstar(event.id)}
-              adapter={adapter}
+              adapter={localizedAdapter}
             />
           ))}
         </div>
@@ -128,7 +170,7 @@ export function App({ adapter }: AppProps): React.JSX.Element {
         onUnstarSelected={unstarSelected}
         onExportSelected={exportSelected}
         allSelected={filteredEvents.length > 0 && selectedIds.size === filteredEvents.length}
-        adapter={adapter}
+        adapter={localizedAdapter}
       />
     </div>
   );
