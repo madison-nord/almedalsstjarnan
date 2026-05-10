@@ -30,8 +30,8 @@ export function BulkActions({
   onExportSelected,
   allSelected,
   adapter,
-}: BulkActionsProps): React.JSX.Element | null {
-  if (selectedCount === 0) return null;
+}: BulkActionsProps): React.JSX.Element {
+  const isDisabled = selectedCount === 0;
 
   return (
     <div
@@ -56,7 +56,8 @@ export function BulkActions({
       <button
         type="button"
         onClick={onUnstarSelected}
-        className="rounded bg-red-600 px-3 py-1.5 text-sm font-medium hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-white transition-colors"
+        disabled={isDisabled}
+        className={`rounded bg-red-600 px-3 py-1.5 text-sm font-medium hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-white transition-colors${isDisabled ? ' opacity-50 cursor-not-allowed' : ''}`}
       >
         {adapter.getMessage('unstarSelected')}
       </button>
@@ -64,7 +65,8 @@ export function BulkActions({
       <button
         type="button"
         onClick={onExportSelected}
-        className="rounded bg-blue-600 px-3 py-1.5 text-sm font-medium hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-white transition-colors"
+        disabled={isDisabled}
+        className={`rounded bg-blue-600 px-3 py-1.5 text-sm font-medium hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-white transition-colors${isDisabled ? ' opacity-50 cursor-not-allowed' : ''}`}
       >
         {adapter.getMessage('exportSelected')}
       </button>
