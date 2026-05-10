@@ -92,10 +92,13 @@ export async function processEventCard(
     host.className = 'almedals-star-host';
     host.setAttribute('data-event-id', eventId);
     // Inline styles for positioning next to the title (host is outside Shadow DOM)
+    // align-self: flex-start keeps it at the first line level
+    // height matches typical title line-height so the 32px button centers within it
     host.style.display = 'inline-flex';
     host.style.alignItems = 'center';
+    host.style.alignSelf = 'flex-start';
     host.style.flexShrink = '0';
-    host.style.marginTop = '2px';
+    host.style.height = '1.4em';
 
     // Insert the host inline with the title using a flex wrapper
     const titleH2 = card.querySelector('a.title h2');
