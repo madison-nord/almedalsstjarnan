@@ -18,7 +18,7 @@
  * Requirements: 9.1–9.9, 7.1, 7.2, 7.3, 6.1, 6.2, 6.3, 6.4
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 
 import type { IBrowserApiAdapter } from '#core/types';
 import { getLocalizedMessage } from '#core/locale-messages';
@@ -51,6 +51,8 @@ export function App({ adapter }: AppProps): React.JSX.Element {
     conflictingIds,
     conflictTitlesMap,
   } = useStarredEvents(adapter);
+
+  const helpLinkRef = useRef<HTMLButtonElement>(null);
 
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [onboardingLoaded, setOnboardingLoaded] = useState(false);
@@ -168,7 +170,7 @@ export function App({ adapter }: AppProps): React.JSX.Element {
       </header>
 
       {showOnboarding && (
-        <OnboardingView adapter={localizedAdapter} onDismiss={handleDismissOnboarding} />
+        <OnboardingView adapter={localizedAdapter} onDismiss={handleDismissOnboarding} triggerRef={helpLinkRef} />
       )}
 
       <div className="flex-1 overflow-hidden">
@@ -203,6 +205,7 @@ export function App({ adapter }: AppProps): React.JSX.Element {
         <div className="flex items-center justify-between">
           <button
             type="button"
+            ref={helpLinkRef}
             onClick={handleShowOnboarding}
             className="py-1 text-xs text-gray-500 hover:text-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
           >
