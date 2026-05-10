@@ -2,10 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
+html {
+  width: 360px;
+  height: 560px;
+}
+
+body {
   width: 360px;
   height: 560px;
   margin: 0;
   padding: 0;
+}
+
+#root {
+  width: 360px;
+  height: 560px;
   overflow: hidden;
 }

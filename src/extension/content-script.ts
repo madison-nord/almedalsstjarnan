@@ -109,10 +109,10 @@ export async function processEventCard(
 
       // Insert the wrapper where the title link currently is
       titleLink.parentElement.insertBefore(titleRow, titleLink);
-      // Move the title link into the wrapper
-      titleRow.appendChild(titleLink);
-      // Add the star button host after the title link
+      // Add the star button host before the title link
       titleRow.appendChild(host);
+      // Move the title link into the wrapper after the star
+      titleRow.appendChild(titleLink);
     } else {
       // Fallback: append to the event-information-inner div
       const inner = card.querySelector('.event-information-inner');

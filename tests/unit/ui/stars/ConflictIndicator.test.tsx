@@ -90,14 +90,15 @@ describe('Stars EventRow conflict indicator', () => {
 
     const dot = screen.getByRole('img');
     expect(dot).toBeInTheDocument();
-    expect(dot).toHaveTextContent('●');
+    expect(dot).toHaveTextContent('⚠');
   });
 
-  it('applies muted slate color class to the conflict dot', () => {
+  it('applies amber warning badge styling to the conflict indicator', () => {
     renderRow(makeEvent(), true, ['Other Event']);
 
     const dot = screen.getByRole('img');
-    expect(dot).toHaveClass('text-slate-400');
+    expect(dot).toHaveClass('text-amber-700');
+    expect(dot).toHaveClass('bg-amber-100');
   });
 
   it('shows tooltip with conflicting event title', () => {

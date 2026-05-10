@@ -78,12 +78,12 @@ export function EventRow({ event, onUnstar, adapter, isConflicting, conflictTitl
           {formatEventDateTime(event.startDateTime, event.endDateTime, 'sv')}
           {isConflicting === true && (
             <span
-              className="text-slate-400"
+              className="inline-flex items-center gap-0.5 ml-1 px-1.5 py-0.5 text-xs font-medium text-amber-700 bg-amber-100 rounded"
               title={tooltipText}
               aria-label={tooltipText}
               role="img"
             >
-              ●
+              ⚠
             </span>
           )}
         </span>
