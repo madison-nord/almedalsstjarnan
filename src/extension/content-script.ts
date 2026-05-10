@@ -95,6 +95,7 @@ export async function processEventCard(
     host.style.display = 'inline-flex';
     host.style.alignItems = 'center';
     host.style.flexShrink = '0';
+    host.style.marginTop = '2px';
 
     // Insert the host inline with the title using a flex wrapper
     const titleH2 = card.querySelector('a.title h2');
@@ -104,7 +105,7 @@ export async function processEventCard(
       const titleRow = document.createElement('div');
       titleRow.className = 'almedals-title-row';
       titleRow.style.display = 'flex';
-      titleRow.style.alignItems = 'center';
+      titleRow.style.alignItems = 'flex-start';
       titleRow.style.gap = '4px';
 
       // Insert the wrapper where the title link currently is

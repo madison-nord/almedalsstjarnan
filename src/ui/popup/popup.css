@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 html {
-  width: 360px;
   height: 560px;
+  overflow: hidden;
 }
 
 body {
@@ -12,10 +12,10 @@ body {
   height: 560px;
   margin: 0;
   padding: 0;
+  overflow: hidden;
 }
 
 #root {
-  width: 360px;
-  height: 560px;
+  height: 100%;
   overflow: hidden;
 }

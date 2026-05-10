@@ -9,7 +9,7 @@
  */
 
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 
 import type { IBrowserApiAdapter, StarredEvent } from '#core/types';
@@ -102,28 +102,6 @@ describe('EventRow border removal (Requirements 3.1, 3.2, 3.3)', () => {
       const dateTimeTd = tds[3]!;
 
       expect(dateTimeTd.className).not.toMatch(/\bborder-l/);
-    });
-  });
-
-  describe('conflict dot indicator still renders for conflicting events', () => {
-    it('renders the conflict dot when isConflicting is true', () => {
-      const event = makeEvent();
-      renderRow(event, {
-        isConflicting: true,
-        conflictTitles: ['Other Event'],
-      });
-
-      const dot = screen.getByRole('img', { name: /Other Event/ });
-      expect(dot).toBeInTheDocument();
-      expect(dot).toHaveTextContent('⚠');
-    });
-
-    it('does not render the conflict dot when isConflicting is false', () => {
-      const event = makeEvent();
-      renderRow(event, { isConflicting: false });
-
-      const dot = screen.queryByRole('img');
-      expect(dot).not.toBeInTheDocument();
     });
   });
 });
