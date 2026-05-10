@@ -72,7 +72,7 @@ export function EventRow({ event, onUnstar, adapter, isConflicting, conflictTitl
       <td className="truncate px-3 py-2 text-sm text-gray-600" title={event.organiser ?? ''}>
         {event.organiser ?? ''}
       </td>
-      <td className={`whitespace-nowrap px-3 py-2 text-sm text-gray-600${isConflicting === true ? ' border-l-2 border-l-slate-300' : ''}`}>
+      <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-600">
         <span className="flex items-center gap-1">
           {formatEventDateTime(event.startDateTime, event.endDateTime, 'sv')}
           {isConflicting === true && (
