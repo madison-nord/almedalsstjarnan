@@ -2,20 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  height: 560px;
-  overflow: hidden;
-}
-
 body {
   width: 360px;
-  height: 560px;
+  min-height: 560px;
   margin: 0;
   padding: 0;
-  overflow: hidden;
-}
-
-#root {
-  height: 100%;
-  overflow: hidden;
 }
