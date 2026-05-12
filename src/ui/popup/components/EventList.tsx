@@ -51,7 +51,7 @@ export function EventList({ events, onUnstar, adapter, conflictingIds, conflictT
           {countText}
         </div>
       )}
-      <ul className="overflow-y-auto max-h-[380px]" role="list">
+      <ul className="overflow-y-auto" role="list">
         {displayedEvents.map((event) => (
           <EventItem
             key={event.id}

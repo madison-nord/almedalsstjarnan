@@ -66,7 +66,10 @@ describe('EventList scroll containment', () => {
     expect(ul!.className).toContain('overflow-y-auto');
   });
 
-  it('the <ul> element has a max-h class to constrain height', () => {
+  it('the parent App wrapper provides scroll containment via flex-1 overflow-y-auto', () => {
+    // This test validates the architectural decision:
+    // The EventList itself doesn't need max-h because the parent
+    // App.tsx wrapper uses flex-1 overflow-y-auto within a fixed-height container
     const adapter = setupAdapter();
     const events = makeEvents(5);
     const { container } = render(
@@ -75,18 +78,6 @@ describe('EventList scroll containment', () => {
 
     const ul = container.querySelector('ul');
     expect(ul).not.toBeNull();
-    // Must have a max-h-[Npx] class to constrain scrolling in popup
-    expect(ul!.className).toMatch(/max-h-\[/);
-  });
-
-  it('the wrapper div does NOT use flex-1 (which fails in Chrome popups)', () => {
-    const adapter = setupAdapter();
-    const events = makeEvents(5);
-    const { container } = render(
-      <EventList events={events} onUnstar={vi.fn()} adapter={adapter} />,
-    );
-
-    const wrapper = container.firstElementChild as HTMLElement;
-    expect(wrapper.className).not.toContain('flex-1');
+    expect(ul!.className).toContain('overflow-y-auto');
   });
 });

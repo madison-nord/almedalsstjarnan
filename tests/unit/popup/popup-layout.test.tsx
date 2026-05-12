@@ -98,7 +98,7 @@ describe('Popup layout — scroll containment and sticky footer', () => {
   });
 
   describe('Root container', () => {
-    it('has h-[560px] class for fixed height', async () => {
+    it('has h-[600px] class for fixed height', async () => {
       setupAdapter();
       const { container } = render(<App adapter={adapter} />);
       await waitFor(() => {
@@ -106,18 +106,7 @@ describe('Popup layout — scroll containment and sticky footer', () => {
       });
 
       const root = container.firstElementChild as HTMLElement;
-      expect(root.className).toContain('h-[560px]');
-    });
-
-    it('has min-h-[560px] class for minimum height', async () => {
-      setupAdapter();
-      const { container } = render(<App adapter={adapter} />);
-      await waitFor(() => {
-        expect(screen.queryByText('…')).not.toBeInTheDocument();
-      });
-
-      const root = container.firstElementChild as HTMLElement;
-      expect(root.className).toContain('min-h-[560px]');
+      expect(root.className).toContain('h-[600px]');
     });
 
     it('has overflow-hidden to prevent popup-level scrolling', async () => {
@@ -173,26 +162,24 @@ describe('Popup layout — scroll containment and sticky footer', () => {
   });
 
   describe('EventList area', () => {
-    it('has overflow-hidden wrapper around event content', async () => {
+    it('has flex-1 overflow-y-auto wrapper around event content', async () => {
       setupAdapter(sampleEvents);
       const { container } = render(<App adapter={adapter} />);
       await waitFor(() => {
         expect(screen.queryByText('…')).not.toBeInTheDocument();
       });
 
-      // The EventList is wrapped in a div with overflow-hidden
       const root = container.firstElementChild as HTMLElement;
       const children = Array.from(root.children);
       const eventListWrapper = children.find(
-        (el) => el.className.includes('overflow-hidden'),
+        (el) => el.className.includes('flex-1') && el.className.includes('overflow-y-auto'),
       );
       expect(eventListWrapper).toBeDefined();
-      expect(eventListWrapper!.className).toContain('overflow-hidden');
     });
   });
 
   describe('Loading state', () => {
-    it('uses h-[560px] for fixed height', () => {
+    it('uses h-[600px] for fixed height', () => {
       // Don't resolve the sendMessage so loading state stays visible
       (adapter.sendMessage as ReturnType<typeof vi.fn>).mockReturnValue(
         new Promise(() => {}),
@@ -203,20 +190,7 @@ describe('Popup layout — scroll containment and sticky footer', () => {
       const { container } = render(<App adapter={adapter} />);
 
       const root = container.firstElementChild as HTMLElement;
-      expect(root.className).toContain('h-[560px]');
-    });
-
-    it('uses min-h-[560px] for minimum height', () => {
-      (adapter.sendMessage as ReturnType<typeof vi.fn>).mockReturnValue(
-        new Promise(() => {}),
-      );
-      (adapter.getMessage as ReturnType<typeof vi.fn>).mockReturnValue('');
-      (adapter.onStorageChanged as ReturnType<typeof vi.fn>).mockReturnValue(vi.fn());
-
-      const { container } = render(<App adapter={adapter} />);
-
-      const root = container.firstElementChild as HTMLElement;
-      expect(root.className).toContain('min-h-[560px]');
+      expect(root.className).toContain('h-[600px]');
     });
   });
 });

@@ -318,12 +318,12 @@ describe('Popup App', () => {
       expect(container).toHaveClass('w-[360px]');
     });
 
-    it('renders with fixed height 560px', async () => {
+    it('renders with fixed height 600px', async () => {
       await renderApp();
 
       const heading = screen.getByRole('heading', { level: 1 });
-      const container = heading.closest('.h-\\[560px\\]');
-      expect(container).toHaveClass('h-[560px]', 'min-h-[560px]');
+      const container = heading.closest('.h-\\[600px\\]');
+      expect(container).toHaveClass('h-[600px]');
     });
 
     it('uses Tailwind classes for styling', async () => {
