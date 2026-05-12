@@ -91,32 +91,15 @@ export async function processEventCard(
     const host = document.createElement('div');
     host.className = 'almedals-star-host';
     host.setAttribute('data-event-id', eventId);
-    // Inline styles for positioning next to the title (host is outside Shadow DOM)
-    // align-self: flex-start keeps it at the first line level
-    // height matches typical title line-height so the 32px button centers within it
-    host.style.display = 'inline-flex';
-    host.style.alignItems = 'center';
-    host.style.alignSelf = 'flex-start';
-    host.style.flexShrink = '0';
-    host.style.height = '1.4em';
+    // Use float:left so the star sits to the left of the title's first line
+    // without disrupting the page's block layout
+    host.style.cssText = 'float: left; margin-right: 4px; line-height: 1;';
 
-    // Insert the host inline with the title using a flex wrapper
+    // Insert the host just before the title link element
     const titleH2 = card.querySelector('a.title h2');
     const titleLink = titleH2?.parentElement; // the <a class="title"> element
     if (titleLink?.parentElement) {
-      // Create a flex wrapper to hold the title link and star button side by side
-      const titleRow = document.createElement('div');
-      titleRow.className = 'almedals-title-row';
-      titleRow.style.display = 'flex';
-      titleRow.style.alignItems = 'flex-start';
-      titleRow.style.gap = '4px';
-
-      // Insert the wrapper where the title link currently is
-      titleLink.parentElement.insertBefore(titleRow, titleLink);
-      // Add the star button host before the title link
-      titleRow.appendChild(host);
-      // Move the title link into the wrapper after the star
-      titleRow.appendChild(titleLink);
+      titleLink.parentElement.insertBefore(host, titleLink);
     } else {
       // Fallback: append to the event-information-inner div
       const inner = card.querySelector('.event-information-inner');
