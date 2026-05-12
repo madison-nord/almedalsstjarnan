@@ -45,13 +45,13 @@ export function EventList({ events, onUnstar, adapter, conflictingIds, conflictT
     : null;
 
   return (
-    <div className="flex flex-col flex-1 overflow-hidden">
+    <div className="flex flex-col overflow-hidden">
       {countText !== null && (
         <div className="px-4 py-1 text-xs text-gray-500" aria-live="polite">
           {countText}
         </div>
       )}
-      <ul className="overflow-y-auto flex-1" role="list">
+      <ul className="overflow-y-auto max-h-[320px]" role="list">
         {displayedEvents.map((event) => (
           <EventItem
             key={event.id}

@@ -173,22 +173,20 @@ describe('Popup layout — scroll containment and sticky footer', () => {
   });
 
   describe('EventList area', () => {
-    it('has flex-1 overflow-hidden wrapper around event content', async () => {
+    it('has overflow-hidden wrapper around event content', async () => {
       setupAdapter(sampleEvents);
       const { container } = render(<App adapter={adapter} />);
       await waitFor(() => {
         expect(screen.queryByText('…')).not.toBeInTheDocument();
       });
 
-      // The EventList is wrapped in a div with flex-1 overflow-hidden
-      // Find the wrapper div that is a direct child of the root and has flex-1
+      // The EventList is wrapped in a div with overflow-hidden
       const root = container.firstElementChild as HTMLElement;
       const children = Array.from(root.children);
       const eventListWrapper = children.find(
-        (el) => el.className.includes('flex-1') && el.className.includes('overflow-hidden'),
+        (el) => el.className.includes('overflow-hidden'),
       );
       expect(eventListWrapper).toBeDefined();
-      expect(eventListWrapper!.className).toContain('flex-1');
       expect(eventListWrapper!.className).toContain('overflow-hidden');
     });
   });

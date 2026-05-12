@@ -173,7 +173,7 @@ export function App({ adapter }: AppProps): React.JSX.Element {
         <OnboardingView adapter={localizedAdapter} onDismiss={handleDismissOnboarding} triggerRef={helpLinkRef} />
       )}
 
-      <div className="flex-1 overflow-hidden">
+      <div className="overflow-hidden">
         {events.length === 0 ? (
           <EmptyState adapter={localizedAdapter} />
         ) : (
