@@ -91,15 +91,15 @@ export async function processEventCard(
     const host = document.createElement('div');
     host.className = 'almedals-star-host';
     host.setAttribute('data-event-id', eventId);
-    // Use float:left so the star sits to the left of the title's first line
-    // without disrupting the page's block layout
-    host.style.cssText = 'float: left; margin-right: 4px; line-height: 1;';
+    // Use inline-flex + vertical-align:middle to sit inline with the title text,
+    // centered with the first line
+    host.style.cssText = 'display: inline-flex; vertical-align: middle; margin-right: 4px;';
 
-    // Insert the host just before the title link element
+    // Insert the host INSIDE the title link, before the h2
     const titleH2 = card.querySelector('a.title h2');
     const titleLink = titleH2?.parentElement; // the <a class="title"> element
-    if (titleLink?.parentElement) {
-      titleLink.parentElement.insertBefore(host, titleLink);
+    if (titleLink && titleH2) {
+      titleLink.insertBefore(host, titleH2);
     } else {
       // Fallback: append to the event-information-inner div
       const inner = card.querySelector('.event-information-inner');
