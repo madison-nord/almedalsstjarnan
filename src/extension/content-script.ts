@@ -88,18 +88,19 @@ export async function processEventCard(
     const initialStarred = response.success ? (response.data as boolean) : false;
 
     // Create host container for the star button
-    const host = document.createElement('div');
+    const host = document.createElement('span');
     host.className = 'almedals-star-host';
     host.setAttribute('data-event-id', eventId);
-    // Use inline-flex + vertical-align:middle to sit inline with the title text,
-    // centered with the first line
+    // Use inline-flex + vertical-align:middle inside the h2 so it sits
+    // on the same line as the title text, centered with the first line
     host.style.cssText = 'display: inline-flex; vertical-align: middle; margin-right: 4px;';
 
-    // Insert the host INSIDE the title link, before the h2
+    // Insert the host INSIDE the h2 element as the first child
+    // This ensures it's truly inline with the title text regardless of
+    // any flex/block layout on parent elements
     const titleH2 = card.querySelector('a.title h2');
-    const titleLink = titleH2?.parentElement; // the <a class="title"> element
-    if (titleLink && titleH2) {
-      titleLink.insertBefore(host, titleH2);
+    if (titleH2) {
+      titleH2.insertBefore(host, titleH2.firstChild);
     } else {
       // Fallback: append to the event-information-inner div
       const inner = card.querySelector('.event-information-inner');

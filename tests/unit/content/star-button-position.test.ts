@@ -34,39 +34,32 @@ describe('Star button position on programme page', () => {
     setupMocks();
   });
 
-  it('star host is inserted inside the title link element (a.title)', async () => {
+  it('star host is inserted inside the title h2 element', async () => {
     const card = createMockEventCard();
     document.body.appendChild(card);
 
     await processEventCard(card, mockBrowserApi);
 
-    const titleLink = card.querySelector('a.title');
-    expect(titleLink).not.toBeNull();
+    const titleH2 = card.querySelector('a.title h2');
+    expect(titleH2).not.toBeNull();
 
-    const starHost = titleLink!.querySelector('.almedals-star-host');
+    const starHost = titleH2!.querySelector('.almedals-star-host');
     expect(starHost).not.toBeNull();
 
     document.body.removeChild(card);
   });
 
-  it('star host is positioned before the h2 element', async () => {
+  it('star host is the first child of the h2 element', async () => {
     const card = createMockEventCard();
     document.body.appendChild(card);
 
     await processEventCard(card, mockBrowserApi);
 
-    const titleLink = card.querySelector('a.title');
-    const h2 = titleLink!.querySelector('h2');
-    const starHost = titleLink!.querySelector('.almedals-star-host');
+    const titleH2 = card.querySelector('a.title h2');
+    const starHost = titleH2!.querySelector('.almedals-star-host');
 
     expect(starHost).not.toBeNull();
-    expect(h2).not.toBeNull();
-
-    // Star host should come before h2 in the DOM
-    const children = Array.from(titleLink!.children);
-    const starIndex = children.indexOf(starHost as Element);
-    const h2Index = children.indexOf(h2 as Element);
-    expect(starIndex).toBeLessThan(h2Index);
+    expect(titleH2!.firstElementChild).toBe(starHost);
 
     document.body.removeChild(card);
   });
