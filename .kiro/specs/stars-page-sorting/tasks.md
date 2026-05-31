@@ -19,35 +19,35 @@ Decouple the Stars Page sort state from the shared persisted storage key and add
     - For any sort order, verify `isTimeBasedSort` returns true only for chronological and reverse-chronological
 
 - [ ] 2. Refactor Stars Page `useStarredEvents` hook to use local-only sort state
-  - [ ] 2.1 Remove `GET_SORT_ORDER` fetch from `init()` in `src/ui/stars/hooks/useStarredEvents.ts`
+  - [x] 2.1 Remove `GET_SORT_ORDER` fetch from `init()` in `src/ui/stars/hooks/useStarredEvents.ts`
     - Remove the `GET_SORT_ORDER` message send from the `Promise.all` in `init()`
     - Initialize `sortOrder` state directly to `DEFAULT_SORT_ORDER` (already the default, just remove the async override)
     - Remove `GetSortOrderResponse` import if unused
     - _Requirements: 1.1, 1.5_
-  - [ ] 2.2 Remove `SET_SORT_ORDER` persistence from `changeSortOrder`
+  - [x] 2.2 Remove `SET_SORT_ORDER` persistence from `changeSortOrder`
     - Remove `void adapter.sendMessage({ command: 'SET_SORT_ORDER', sortOrder: order })` from `changeSortOrder`
     - Keep the `setSortOrder(order)` and `setEvents` re-sort logic
     - _Requirements: 1.2_
-  - [ ] 2.3 Remove `sortOrder` handling from `onStorageChanged` listener
+  - [x] 2.3 Remove `sortOrder` handling from `onStorageChanged` listener
     - The listener currently only reacts to `'starredEvents'` changes, so verify no `sortOrder` handling exists
     - If the listener reacts to `sortOrder` changes, remove that branch
     - _Requirements: 1.4_
-  - [ ] 2.4 Write property test: Stars Page initializes to chronological
+  - [x] 2.4 Write property test: Stars Page initializes to chronological
     - **Property 1: Stars Page initializes to chronological**
     - **Validates: Requirements 1.1, 1.5**
     - File: `tests/property/stars-sort-init.property.test.ts`
     - For any stored sort order, verify the hook initializes to 'chronological'
-  - [ ] 2.5 Write property test: Stars Page sort change never persists
+  - [x] 2.5 Write property test: Stars Page sort change never persists
     - **Property 2: Stars Page sort change never persists**
     - **Validates: Requirements 1.2**
     - File: `tests/property/stars-sort-no-persist.property.test.ts`
     - For any sort order, verify changeSortOrder does not send SET_SORT_ORDER
-  - [ ] 2.6 Write property test: Stars Page ignores external sort order changes
+  - [x] 2.6 Write property test: Stars Page ignores external sort order changes
     - **Property 3: Stars Page ignores external sort order changes**
     - **Validates: Requirements 1.4**
     - File: `tests/property/stars-sort-ignore-storage.property.test.ts`
     - For any storage change to sortOrder key, verify hook sort state is unchanged
-  - [ ] 2.7 Write property test: Popup sort change always persists
+  - [x] 2.7 Write property test: Popup sort change always persists
     - **Property 4: Popup sort change always persists**
     - **Validates: Requirements 1.3, 4.3**
     - File: `tests/property/popup-sort-persists.property.test.ts`

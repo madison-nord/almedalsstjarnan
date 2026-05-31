@@ -2,10 +2,11 @@
  * Unit tests for Stars Page App component.
  *
  * Tests the main Stars Page component including:
- * - Sends GET_ALL_STARRED_EVENTS and GET_SORT_ORDER on mount
+ * - Sends GET_ALL_STARRED_EVENTS on mount (no GET_SORT_ORDER)
+ * - Initializes sort order to chronological (local in-memory state)
  * - Displays all starred events in 6-column grid
  * - Column headers use localized labels
- * - Renders SortSelector with current sort order
+ * - Renders SortSelector with default chronological sort order
  * - Changing sort order sends SET_SORT_ORDER and re-sorts
  * - Displays export button with localized "Export to calendar" label
  * - Clicking export triggers ICS generation and download
@@ -17,7 +18,7 @@
  * - Registers an onStorageChanged listener via adapter that re-fetches
  *   and re-renders the event list when starredEvents changes externally
  *
- * Requirements: 10.1–10.12, 14.6
+ * Requirements: 10.1–10.12, 14.6, 1.1, 1.5
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -160,21 +161,21 @@ describe('Stars Page App', () => {
       );
     });
 
-    it('sends GET_SORT_ORDER on mount', async () => {
+    it('does not send GET_SORT_ORDER on mount', async () => {
       await renderApp();
 
-      expect(adapter.sendMessage).toHaveBeenCalledWith(
+      expect(adapter.sendMessage).not.toHaveBeenCalledWith(
         expect.objectContaining({ command: 'GET_SORT_ORDER' }),
       );
     });
 
-    it('sends both messages concurrently on mount', async () => {
+    it('sends only GET_ALL_STARRED_EVENTS on mount (no GET_SORT_ORDER)', async () => {
       await renderApp();
 
       const calls = (adapter.sendMessage as ReturnType<typeof vi.fn>).mock.calls as [MessagePayload][];
       const commands = calls.map((call) => call[0].command);
       expect(commands).toContain('GET_ALL_STARRED_EVENTS');
-      expect(commands).toContain('GET_SORT_ORDER');
+      expect(commands).not.toContain('GET_SORT_ORDER');
     });
   });
 
@@ -276,24 +277,23 @@ describe('Stars Page App', () => {
   });
 
   describe('SortSelector', () => {
-    it('renders SortSelector with current sort order', async () => {
-      await renderApp(makeEvents(3), 'reverse-chronological');
+    it('renders SortSelector with default chronological sort order', async () => {
+      await renderApp(makeEvents(3));
 
       const select = screen.getByRole('combobox') as HTMLSelectElement;
-      expect(select.value).toBe('reverse-chronological');
+      expect(select.value).toBe('chronological');
     });
 
-    it('changing sort order sends SET_SORT_ORDER', async () => {
+    it('changing sort order does not send SET_SORT_ORDER (local-only state)', async () => {
       const user = userEvent.setup();
       await renderApp(makeEvents(3), 'chronological');
 
       const select = screen.getByRole('combobox');
       await user.selectOptions(select, 'alphabetical-by-title');
 
-      expect(adapter.sendMessage).toHaveBeenCalledWith(
+      expect(adapter.sendMessage).not.toHaveBeenCalledWith(
         expect.objectContaining({
           command: 'SET_SORT_ORDER',
-          sortOrder: 'alphabetical-by-title',
         }),
       );
     });

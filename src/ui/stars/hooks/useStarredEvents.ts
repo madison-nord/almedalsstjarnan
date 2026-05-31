@@ -3,9 +3,9 @@
  * undo, and live update logic for the Stars Page.
  *
  * - Fetches starred events via GET_ALL_STARRED_EVENTS on mount
- * - Fetches sort order via GET_SORT_ORDER on mount
+ * - Initializes sort order to DEFAULT_SORT_ORDER (local in-memory state only)
  * - Sorts events using sortEvents from #core/sorter
- * - Provides changeSortOrder that sends SET_SORT_ORDER and re-sorts
+ * - Provides changeSortOrder that re-sorts locally (no persistence)
  * - Provides unstarEvent with deferred deletion (undo support)
  * - Provides undoUnstar to restore a pending-deletion event
  * - Provides confirmUnstar to permanently remove a pending-deletion event
@@ -14,7 +14,7 @@
  * - Cleans up the storage listener on unmount
  * - No 20-item cap (shows all events)
  *
- * Requirements: 10.2, 10.3, 10.5, 10.7, 10.8, 10.9, 7.1, 7.2, 7.3
+ * Requirements: 10.2, 10.3, 10.5, 10.7, 10.8, 10.9, 7.1, 7.2, 7.3, 1.1, 1.5
  */
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
@@ -24,7 +24,6 @@ import type {
   StarredEvent,
   SortOrder,
   GetAllStarredEventsResponse,
-  GetSortOrderResponse,
 } from '#core/types';
 import { DEFAULT_SORT_ORDER } from '#core/types';
 import { sortEvents } from '#core/sorter';
@@ -108,26 +107,15 @@ export function useStarredEvents(
     let cancelled = false;
 
     async function init(): Promise<void> {
-      const [eventsResponse, sortResponse] = await Promise.all([
-        adapter.sendMessage<StarredEvent[]>({
+      const eventsResponse =
+        await adapter.sendMessage<StarredEvent[]>({
           command: 'GET_ALL_STARRED_EVENTS',
-        }) as Promise<GetAllStarredEventsResponse>,
-        adapter.sendMessage<SortOrder>({
-          command: 'GET_SORT_ORDER',
-        }) as Promise<GetSortOrderResponse>,
-      ]);
+        }) as GetAllStarredEventsResponse;
 
       if (cancelled) return;
 
-      const order = sortResponse.success
-        ? sortResponse.data
-        : DEFAULT_SORT_ORDER;
-
-      setSortOrder(order);
-      sortOrderRef.current = order;
-
       if (eventsResponse.success) {
-        const sorted = sortEvents(eventsResponse.data, order);
+        const sorted = sortEvents(eventsResponse.data, DEFAULT_SORT_ORDER);
         setEvents(sorted);
       }
 
@@ -156,11 +144,9 @@ export function useStarredEvents(
       setSortOrder(order);
       sortOrderRef.current = order;
 
-      void adapter.sendMessage({ command: 'SET_SORT_ORDER', sortOrder: order });
-
       setEvents((prev) => sortEvents([...prev], order));
     },
-    [adapter],
+    [],
   );
 
   const unstarEvent = useCallback(
