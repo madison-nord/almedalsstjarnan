@@ -11,13 +11,15 @@
 
 import { Fragment } from 'react';
 
-import type { IBrowserApiAdapter, StarredEvent } from '#core/types';
+import type { IBrowserApiAdapter, SortOrder, StarredEvent } from '#core/types';
+import { isTimeBasedSort } from '#core/sorter';
 
 import { EventRow } from './EventRow';
 import { SectionHeader } from './SectionHeader';
 
 export interface EventGridProps {
   readonly events: readonly StarredEvent[];
+  readonly sortOrder: SortOrder;
   readonly onUnstar: (eventId: string) => void;
   readonly adapter: IBrowserApiAdapter;
   readonly conflictingIds?: ReadonlySet<string>;
@@ -107,8 +109,9 @@ export function groupEventsByDate(events: readonly StarredEvent[]): readonly Dat
   }));
 }
 
-export function EventGrid({ events, onUnstar, adapter, conflictingIds, conflictTitlesMap, selectedIds, onToggleSelection, onSelectAll, allSelected }: EventGridProps): React.JSX.Element {
-  const groups = groupEventsByDate(events);
+export function EventGrid({ events, sortOrder, onUnstar, adapter, conflictingIds, conflictTitlesMap, selectedIds, onToggleSelection, onSelectAll, allSelected }: EventGridProps): React.JSX.Element {
+  const timeBased = isTimeBasedSort(sortOrder);
+  const groups = timeBased ? groupEventsByDate(events) : [];
 
   return (
     <table className="w-full border-collapse table-fixed">
@@ -144,10 +147,25 @@ export function EventGrid({ events, onUnstar, adapter, conflictingIds, conflictT
         </tr>
       </thead>
       <tbody>
-        {groups.map((group) => (
-          <Fragment key={group.dateKey}>
-            <SectionHeader label={group.label} columnCount={COLUMN_COUNT} />
-            {group.events.map((event) => (
+        {timeBased
+          ? groups.map((group) => (
+              <Fragment key={group.dateKey}>
+                <SectionHeader label={group.label} columnCount={COLUMN_COUNT} />
+                {group.events.map((event) => (
+                  <EventRow
+                    key={event.id}
+                    event={event}
+                    onUnstar={onUnstar}
+                    adapter={adapter}
+                    isConflicting={conflictingIds?.has(event.id)}
+                    conflictTitles={conflictTitlesMap?.get(event.id)}
+                    isSelected={selectedIds?.has(event.id)}
+                    onToggleSelection={onToggleSelection}
+                  />
+                ))}
+              </Fragment>
+            ))
+          : events.map((event) => (
               <EventRow
                 key={event.id}
                 event={event}
@@ -159,8 +177,6 @@ export function EventGrid({ events, onUnstar, adapter, conflictingIds, conflictT
                 onToggleSelection={onToggleSelection}
               />
             ))}
-          </Fragment>
-        ))}
       </tbody>
     </table>
   );

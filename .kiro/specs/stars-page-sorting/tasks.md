@@ -53,33 +53,33 @@ Decouple the Stars Page sort state from the shared persisted storage key and add
     - File: `tests/property/popup-sort-persists.property.test.ts`
     - For any sort order, verify popup changeSortOrder sends SET_SORT_ORDER
 
-- [ ] 3. Checkpoint
+- [x] 3. Checkpoint
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 4. Update EventGrid for conditional day-grouping
-  - [ ] 4.1 Add `sortOrder` prop to `EventGridProps` in `src/ui/stars/components/EventGrid.tsx`
+  - [x] 4.1 Add `sortOrder` prop to `EventGridProps` in `src/ui/stars/components/EventGrid.tsx`
     - Add `readonly sortOrder: SortOrder` to the interface
     - Import `SortOrder` and `isTimeBasedSort` from `#core/sorter`
     - _Requirements: 2.1, 2.2_
-  - [ ] 4.2 Implement conditional rendering logic in EventGrid
+  - [x] 4.2 Implement conditional rendering logic in EventGrid
     - When `isTimeBasedSort(sortOrder)` is true: use existing grouped rendering with `groupEventsByDate`
     - When false: render events directly as `EventRow` elements without `SectionHeader` wrappers
     - Always render `<thead>` with column headers regardless of sort order
     - _Requirements: 2.1, 2.2, 2.5_
-  - [ ] 4.3 Pass `sortOrder` prop from `App.tsx` to `EventGrid`
+  - [x] 4.3 Pass `sortOrder` prop from `App.tsx` to `EventGrid`
     - Update the `<EventGrid>` usage in `src/ui/stars/App.tsx` to include `sortOrder={sortOrder}`
     - _Requirements: 2.1, 2.2_
-  - [ ] 4.4 Write property test: Time-based sort produces correctly ordered day-groups
+  - [x] 4.4 Write property test: Time-based sort produces correctly ordered day-groups
     - **Property 5: Time-based sort produces correctly ordered day-groups**
     - **Validates: Requirements 2.1, 3.1, 3.2**
     - File: `tests/property/day-group-ordering.property.test.ts`
     - For any event array and time-based sort, verify groups are in correct date order
-  - [ ] 4.5 Write property test: Within-group events ordered by start time ascending
+  - [x] 4.5 Write property test: Within-group events ordered by start time ascending
     - **Property 7: Within-group events ordered by start time ascending with id tiebreaker**
     - **Validates: Requirements 3.3, 3.4**
     - File: `tests/property/within-group-ordering.property.test.ts`
     - For any event array and time-based sort, verify within-group ordering
-  - [ ] 4.6 Write unit tests for EventGrid conditional rendering
+  - [x] 4.6 Write unit tests for EventGrid conditional rendering
     - File: `tests/unit/stars-event-grid.test.tsx`
     - Test: chronological sort renders SectionHeader elements
     - Test: alphabetical sort renders no SectionHeader elements

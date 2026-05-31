@@ -316,11 +316,11 @@ describe('Stars Page App', () => {
       const select = screen.getByRole('combobox');
       await user.selectOptions(select, 'alphabetical-by-title');
 
-      // After alphabetical sort: Alpha (June 29) first, then Zebra (June 28)
-      // Row layout: [0] thead, [1] section header (June 29), [2] Alpha, [3] section header (June 28), [4] Zebra
+      // After alphabetical sort: flat list (no section headers)
+      // Row layout: [0] thead, [1] Alpha, [2] Zebra
       rows = screen.getAllByRole('row');
-      expect(rows[2]).toHaveTextContent('Alpha event');
-      expect(rows[4]).toHaveTextContent('Zebra event');
+      expect(rows[1]).toHaveTextContent('Alpha event');
+      expect(rows[2]).toHaveTextContent('Zebra event');
     });
   });
 

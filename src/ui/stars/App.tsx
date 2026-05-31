@@ -136,6 +136,7 @@ export function App({ adapter }: AppProps): React.JSX.Element {
         ) : (
           <EventGrid
             events={filteredEvents}
+            sortOrder={sortOrder}
             onUnstar={unstarEvent}
             adapter={localizedAdapter}
             conflictingIds={conflictingIds}
