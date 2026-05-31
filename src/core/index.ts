@@ -39,7 +39,7 @@ export { normalizeEvent, deriveEventId, parseDateTime } from './event-normalizer
 
 export { DAY_TO_DATE, SWEDISH_DAYS, STOCKHOLM_SUMMER_OFFSET } from './date-config';
 
-export { sortEvents } from './sorter';
+export { sortEvents, isTimeBasedSort } from './sorter';
 
 export { generateICS, foldLine, escapeICSText, generateExportFilename } from './ics-generator';
 

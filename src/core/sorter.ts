@@ -1,6 +1,14 @@
 import type { StarredEvent, SortOrder } from './types';
 
 /**
+ * Returns true if the given sort order is time-based (chronological or reverse-chronological).
+ * Time-based sorts produce meaningful day-group headers.
+ */
+export function isTimeBasedSort(order: SortOrder): boolean {
+  return order === 'chronological' || order === 'reverse-chronological';
+}
+
+/**
  * Returns a new array of events sorted by the specified order.
  * Does NOT mutate the input array.
  *
