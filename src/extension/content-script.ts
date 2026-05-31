@@ -93,7 +93,7 @@ export async function processEventCard(
     host.setAttribute('data-event-id', eventId);
     // Use inline-flex + vertical-align:middle inside the h2 so it sits
     // on the same line as the title text, centered with the first line
-    host.style.cssText = 'display: inline-flex; vertical-align: middle; margin-right: 2px;';
+    host.style.cssText = 'display: inline-flex; vertical-align: text-top; margin-right: 2px;';
 
     // Insert the host INSIDE the h2 element as the first child
     // This ensures it's truly inline with the title text regardless of

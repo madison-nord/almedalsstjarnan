@@ -25,8 +25,8 @@ const STAR_BUTTON_CSS = `.star-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   padding: 0;
   border: none;
   background: transparent;
