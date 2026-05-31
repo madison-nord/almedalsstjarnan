@@ -77,7 +77,7 @@ describe('Star button position on programme page', () => {
     document.body.removeChild(card);
   });
 
-  it('star host uses vertical-align:-2px to center with first line of text', async () => {
+  it('star host uses vertical-align:-1px to center with first line of text', async () => {
     const card = createMockEventCard();
     document.body.appendChild(card);
 
@@ -85,7 +85,7 @@ describe('Star button position on programme page', () => {
 
     const starHost = card.querySelector('.almedals-star-host') as HTMLElement;
     expect(starHost).not.toBeNull();
-    expect(starHost.style.verticalAlign).toBe('-2px');
+    expect(starHost.style.verticalAlign).toBe('-1px');
 
     document.body.removeChild(card);
   });

@@ -25,8 +25,8 @@ const STAR_BUTTON_CSS = `.star-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   padding: 0;
   border: none;
   background: transparent;
@@ -42,8 +42,8 @@ const STAR_BUTTON_CSS = `.star-btn {
   outline-offset: 2px;
 }
 .star-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
 }
 .star-btn[aria-pressed="true"] svg path {
   fill: #f59e0b;
