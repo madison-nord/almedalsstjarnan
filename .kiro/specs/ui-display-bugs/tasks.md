@@ -37,7 +37,7 @@
   - Mark task complete when tests are written, run, and passing on unfixed code
   - _Requirements: 3.2_
 
-- [ ] 3. Fix for empty "Länk till evenemanget:" label residual
+- [x] 3. Fix for empty "Länk till evenemanget:" label residual
 
   - [x] 3.1 Implement the stripSourceUrl regex fix
     - File: `src/ui/popup/components/EventItem.tsx`, function `stripSourceUrl`
@@ -67,7 +67,7 @@
     - Confirm all preservation tests still pass after fix
     - _Requirements: 3.2_
 
-- [ ] 4. Fix for language toggle closing popup on reload
+- [x] 4. Fix for language toggle closing popup on reload
 
   - [x] 4.1 Write unit test for handleLocaleChange (TDD — test first)
     - Test file: `tests/unit/popup/language-toggle-no-reload.test.ts`
@@ -100,7 +100,7 @@
     - **EXPECTED OUTCOME**: Test PASSES (confirms locale change works without reload)
     - _Requirements: 2.3_
 
-- [ ] 5. Fix for sort label barely visible on dark header
+- [x] 5. Fix for sort label barely visible on dark header
 
   - [x] 5.1 Write unit test for SortSelector labelClassName prop (TDD — test first)
     - Test file: `tests/unit/shared/sort-selector-label.test.ts`
@@ -131,7 +131,7 @@
     - **EXPECTED OUTCOME**: Test PASSES (confirms label contrast fix works)
     - _Requirements: 2.4, 3.4_
 
-- [ ] 6. Fix for extension icon not showing in browser toolbar
+- [x] 6. Fix for extension icon not showing in browser toolbar
 
   - [x] 6.1 Write integration test for icon path resolution (TDD — test first)
     - Test file: `tests/unit/config/icon-path-resolution.test.ts`
