@@ -16,7 +16,7 @@ All user-facing strings are defined in `_locales/{locale}/messages.json`. No har
 | `exportToCalendar` | Exportera till kalender | Export to calendar | Stars Page |
 | `sortChronological` | Kronologisk | Chronological | Popup UI, Stars Page |
 | `sortReverseChronological` | Omvänd kronologisk | Reverse chronological | Popup UI, Stars Page |
-| `sortAlphabeticalTitle` | Titel A–Ö | Title A–Z | Popup UI, Stars Page |
+| `sortAlphabeticalTitle` | Titel A–Ö | Title A–Ö | Popup UI, Stars Page |
 | `sortStarredDesc` | Senast stjärnmärkta | Recently starred | Popup UI, Stars Page |
 | `sortLabel` | Sortera efter | Sort by | Popup UI, Stars Page |
 | `emptyStateTitle` | Inga stjärnmärkta evenemang | No starred events | Popup UI, Stars Page |
@@ -191,7 +191,7 @@ All user-facing strings are defined in `_locales/{locale}/messages.json`. No har
     "description": "Sort order: latest first"
   },
   "sortAlphabeticalTitle": {
-    "message": "Title A–Z",
+    "message": "Title A–Ö",
     "description": "Sort order: alphabetical by title"
   },
   "sortStarredDesc": {
