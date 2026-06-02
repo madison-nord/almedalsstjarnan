@@ -87,7 +87,7 @@ Decouple the Stars Page sort state from the shared persisted storage key and add
     - Test: switching sort order dynamically updates rendering
     - _Requirements: 2.3, 2.4, 2.5_
 
-- [ ] 5. Final checkpoint
+- [x] 5. Final checkpoint
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Task Dependency Graph
