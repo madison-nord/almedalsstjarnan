@@ -33,7 +33,7 @@ Harden the Almedalsstjärnan extension for public release through code correctne
 - [x] 2. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 3. Storage validator module (TDD)
+- [x] 3. Storage validator module (TDD)
   - [x] 3.1 Create `src/core/storage-validator.ts` with `validateStarredEvents` and `isValidStarredEntry`
     - Implement `isValidStarredEntry(key, entry)` — checks non-null object, id matches key, non-empty title, non-empty startDateTime, starred === true, non-empty starredAt
     - Implement `validateStarredEvents(raw)` — checks top-level is non-null non-array object, iterates entries, returns `StorageValidationResult` with valid entries and invalidKeys
@@ -55,21 +55,21 @@ Harden the Almedalsstjärnan extension for public release through code correctne
     - Assert `validateStarredEvents` returns `{ valid: {}, invalidKeys: [] }`
     - **Validates: Requirements 3.1, 3.2**
 
-  - [~] 3.4 Write property test: entry filtering + round-trip in `tests/property/storage-validator-entries.property.test.ts`
+  - [x] 3.4 Write property test: entry filtering + round-trip in `tests/property/storage-validator-entries.property.test.ts`
     - **Property 3: Storage validator filters malformed entries and preserves valid entries unchanged**
     - Add `malformedEntryArb`, `mixedStorageRecordArb`, `invalidTopLevelArb` generators to `tests/helpers/event-generators.ts`
     - Assert: valid subset returned equals expected valid entries (round-trip preservation)
     - Assert: malformed entries are excluded
     - **Validates: Requirements 3.3, 3.4, 3.5, 3.6**
 
-  - [~] 3.5 Integrate storage validator into `src/extension/background.ts`
+  - [x] 3.5 Integrate storage validator into `src/extension/background.ts`
     - Import `validateStarredEvents` from `#core/storage-validator`
     - After reading `starredEvents` from storage, call `validateStarredEvents(raw)`
     - Log `console.warn` for top-level corruption and for each invalid key
     - Use only valid entries for all downstream logic
     - _Requirements: 3.2, 3.4_
 
-- [ ] 4. Year-awareness in date configuration (TDD)
+- [x] 4. Year-awareness in date configuration (TDD)
   - [x] 4.1 Add `YEAR` constant and `checkYearMismatch` to `src/core/date-config.ts`
     - Export `YEAR = 2026 as const`
     - Export `YearMismatchResult` interface with `mismatch`, `expected`, `actual` fields
@@ -82,7 +82,7 @@ Harden the Almedalsstjärnan extension for public release through code correctne
     - Test mismatch scenario (mock Date to 2025): returns `{ mismatch: true, expected: 2026, actual: 2025 }`
     - _Requirements: 6.3, 6.4_
 
-  - [~] 4.3 Integrate `checkYearMismatch` into `src/extension/background.ts`
+  - [x] 4.3 Integrate `checkYearMismatch` into `src/extension/background.ts`
     - Import `checkYearMismatch` from `#core/date-config`
     - Call `checkYearMismatch()` once at top-level module evaluation
     - If `mismatch` is true, log `console.warn` with expected and actual year
@@ -95,14 +95,14 @@ Harden the Almedalsstjärnan extension for public release through code correctne
     - Update `generateICS` to pass `sourceUrl` and the `locale` parameter (rename `_locale` to `locale`) to `buildDescription`
     - _Requirements: 7.1, 7.2, 7.5_
 
-  - [~] 5.2 Write unit tests for ICS locale threading in `tests/unit/core/ics-generator.test.ts`
+  - [x] 5.2 Write unit tests for ICS locale threading in `tests/unit/core/ics-generator.test.ts`
     - Test: locale `'sv'` with sourceUrl produces DESCRIPTION containing `"Källa:"` followed by URL
     - Test: locale `'en'` with sourceUrl produces DESCRIPTION containing `"Source:"` followed by URL
     - Test: null sourceUrl produces no source label in DESCRIPTION
     - Test: null description with sourceUrl still produces DESCRIPTION with source label
     - _Requirements: 7.1, 7.2_
 
-  - [~] 5.3 Write property test: ICS locale-aware source label in `tests/property/ics-locale-label.property.test.ts`
+  - [x] 5.3 Write property test: ICS locale-aware source label in `tests/property/ics-locale-label.property.test.ts`
     - **Property 4: ICS locale-aware source label**
     - Generate arbitrary starred events with non-null sourceUrl and arbitrary locale
     - Assert DESCRIPTION contains locale-appropriate label followed by sourceUrl

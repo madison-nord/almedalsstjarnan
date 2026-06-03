@@ -22,7 +22,18 @@ import type {
 } from '#core/types';
 import { DEFAULT_SORT_ORDER } from '#core/types';
 import { createBrowserApiAdapter } from '#core/browser-api-adapter';
+import { validateStarredEvents } from '#core/storage-validator';
 import type { MutableFields } from '#core/event-field-comparator';
+import { checkYearMismatch } from '#core/date-config';
+
+// ─── Year Mismatch Check ─────────────────────────────────────────
+
+const yearCheck = checkYearMismatch();
+if (yearCheck.mismatch) {
+  console.warn(
+    `[Almedalsstjärnan] Year mismatch: expected ${yearCheck.expected}, actual ${yearCheck.actual}`,
+  );
+}
 
 // ─── Storage Mutex ────────────────────────────────────────────────
 
@@ -40,6 +51,54 @@ function withStorageMutex<T>(fn: () => Promise<T>): Promise<T> {
   return result;
 }
 
+// ─── Validated Storage Read ───────────────────────────────────────
+
+/**
+ * Reads starredEvents from storage and validates the result.
+ * Logs warnings for top-level corruption and individual invalid keys.
+ * Returns only valid entries for downstream logic.
+ *
+ * Exported for direct testing.
+ */
+export async function getValidatedStarredEvents(
+  adapter: IBrowserApiAdapter,
+): Promise<Record<EventId, StarredEvent>> {
+  const result = await adapter.storageLocalGet(['starredEvents']);
+  const raw = result.starredEvents;
+
+  // If key is missing from storage, treat as empty (no validation needed)
+  if (raw === undefined || raw === null) {
+    return {};
+  }
+
+  const validation = validateStarredEvents(raw);
+
+  // Top-level corruption: raw was not a valid object
+  if (
+    Object.keys(validation.valid).length === 0 &&
+    validation.invalidKeys.length === 0 &&
+    typeof raw === 'object' &&
+    raw !== null &&
+    !Array.isArray(raw) &&
+    Object.keys(raw as object).length === 0
+  ) {
+    // Empty object — no corruption, just no entries
+  } else if (
+    Object.keys(validation.valid).length === 0 &&
+    validation.invalidKeys.length === 0
+  ) {
+    // Top-level value was invalid (not an object/array/primitive)
+    console.warn('[Almedalsstjärnan] Storage corruption detected: starredEvents is not a valid object');
+  }
+
+  // Log each invalid key
+  for (const key of validation.invalidKeys) {
+    console.warn(`[Almedalsstjärnan] Invalid starredEvents entry removed: "${key}"`);
+  }
+
+  return validation.valid as Record<EventId, StarredEvent>;
+}
+
 // ─── Handler Functions ────────────────────────────────────────────
 
 async function addStarredEvent(
@@ -47,8 +106,7 @@ async function addStarredEvent(
   event: NormalizedEvent,
 ): Promise<MessageResponse<void>> {
   return withStorageMutex(async () => {
-    const result = await adapter.storageLocalGet(['starredEvents']);
-    const starredEvents = result.starredEvents ?? {};
+    const starredEvents = await getValidatedStarredEvents(adapter);
 
     const starredEvent: StarredEvent = {
       ...event,
@@ -69,8 +127,7 @@ async function removeStarredEvent(
   eventId: EventId,
 ): Promise<MessageResponse<void>> {
   return withStorageMutex(async () => {
-    const result = await adapter.storageLocalGet(['starredEvents']);
-    const starredEvents = result.starredEvents ?? {};
+    const starredEvents = await getValidatedStarredEvents(adapter);
 
     const { [eventId]: _removed, ...remaining } = starredEvents;
 
@@ -84,8 +141,7 @@ async function isEventStarred(
   adapter: IBrowserApiAdapter,
   eventId: EventId,
 ): Promise<MessageResponse<GetStarStateData>> {
-  const result = await adapter.storageLocalGet(['starredEvents']);
-  const starredEvents = result.starredEvents ?? {};
+  const starredEvents = await getValidatedStarredEvents(adapter);
 
   const existing = starredEvents[eventId];
   if (!existing) {
@@ -110,8 +166,7 @@ async function isEventStarred(
 async function getAllStarredEvents(
   adapter: IBrowserApiAdapter,
 ): Promise<MessageResponse<StarredEvent[]>> {
-  const result = await adapter.storageLocalGet(['starredEvents']);
-  const starredEvents = result.starredEvents ?? {};
+  const starredEvents = await getValidatedStarredEvents(adapter);
 
   return { success: true, data: Object.values(starredEvents) };
 }
@@ -175,8 +230,7 @@ async function updateStarredEvent(
   payload: UpdateStarredEventPayload,
 ): Promise<MessageResponse<void>> {
   return withStorageMutex(async () => {
-    const result = await adapter.storageLocalGet(['starredEvents']);
-    const starredEvents = result.starredEvents ?? {};
+    const starredEvents = await getValidatedStarredEvents(adapter);
 
     const existing = starredEvents[payload.eventId];
     if (!existing) {

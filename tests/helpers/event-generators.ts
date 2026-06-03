@@ -187,3 +187,108 @@ export const mutableFieldsArb: fc.Arbitrary<MutableFields> = normalizedEventArb.
   return fields as MutableFields;
 });
 
+// ─── Storage Validator Generators ─────────────────────────────────
+
+/**
+ * Generates an object that fails one or more StarredEvent validation checks.
+ * Each malformed entry is keyed by a known id but violates at least one rule
+ * (missing id, wrong starred value, empty title, non-string startDateTime, etc.)
+ */
+export const malformedEntryArb: fc.Arbitrary<Record<string, unknown>> = fc.oneof(
+  // Missing id entirely
+  fc.record({
+    title: nonEmptyTrimmedStringArb,
+    startDateTime: isoDateTimeArb,
+    starred: fc.constant(true),
+    starredAt: isoUtcTimestampArb,
+  }),
+  // starred is false instead of true
+  fc.record({
+    id: hexStringArb(16),
+    title: nonEmptyTrimmedStringArb,
+    startDateTime: isoDateTimeArb,
+    starred: fc.constant(false),
+    starredAt: isoUtcTimestampArb,
+  }),
+  // Empty title
+  fc.record({
+    id: hexStringArb(16),
+    title: fc.constant(''),
+    startDateTime: isoDateTimeArb,
+    starred: fc.constant(true),
+    starredAt: isoUtcTimestampArb,
+  }),
+  // startDateTime is a number instead of string
+  fc.record({
+    id: hexStringArb(16),
+    title: nonEmptyTrimmedStringArb,
+    startDateTime: fc.integer(),
+    starred: fc.constant(true),
+    starredAt: isoUtcTimestampArb,
+  }),
+  // starredAt is missing (empty object with just id/title/startDateTime/starred)
+  fc.record({
+    id: hexStringArb(16),
+    title: nonEmptyTrimmedStringArb,
+    startDateTime: isoDateTimeArb,
+    starred: fc.constant(true),
+  }),
+  // Entry is a primitive (not an object)
+  fc.oneof(fc.string(), fc.integer(), fc.boolean(), fc.constant(null)).map((v) => v as unknown as Record<string, unknown>),
+);
+
+/**
+ * Generates a Record<string, unknown> containing a mix of valid StarredEvent
+ * entries and malformed entries. Returns the record along with metadata about
+ * which keys are valid and which are malformed.
+ */
+export const mixedStorageRecordArb: fc.Arbitrary<{
+  readonly record: Record<string, unknown>;
+  readonly validKeys: readonly string[];
+  readonly malformedKeys: readonly string[];
+}> = fc
+  .record({
+    validEvents: fc.array(starredEventArb, { minLength: 0, maxLength: 10 }),
+    malformedEntries: fc.array(
+      fc.tuple(hexStringArb(16), malformedEntryArb),
+      { minLength: 0, maxLength: 10 },
+    ),
+  })
+  .map(({ validEvents, malformedEntries }) => {
+    const record: Record<string, unknown> = {};
+    const validKeys: string[] = [];
+    const malformedKeys: string[] = [];
+    const usedKeys = new Set<string>();
+
+    // Add valid events keyed by their id
+    for (const event of validEvents) {
+      if (usedKeys.has(event.id)) continue;
+      usedKeys.add(event.id);
+      record[event.id] = { ...event };
+      validKeys.push(event.id);
+    }
+
+    // Add malformed entries with unique keys that don't collide with valid ones
+    for (const [key, entry] of malformedEntries) {
+      if (usedKeys.has(key)) continue;
+      usedKeys.add(key);
+      record[key] = entry;
+      malformedKeys.push(key);
+    }
+
+    return { record, validKeys, malformedKeys } as const;
+  });
+
+/**
+ * Generates values that are NOT valid storage objects (null, arrays, strings,
+ * numbers, booleans). Used for top-level rejection tests.
+ */
+export const invalidTopLevelArb: fc.Arbitrary<unknown> = fc.oneof(
+  fc.constant(null),
+  fc.array(fc.anything()),
+  fc.string(),
+  fc.integer(),
+  fc.double(),
+  fc.boolean(),
+);
+
