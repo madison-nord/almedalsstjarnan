@@ -89,6 +89,7 @@ const messageMap: Record<string, string> = {
   columnLocation: 'Location',
   columnTopic: 'Topic',
   columnActions: 'Actions',
+  helpModalTitle: 'Help',
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────
@@ -631,6 +632,12 @@ describe('Stars Page App', () => {
       const user = userEvent.setup();
       await renderApp(makeEvents(1));
 
+      // Tab to help trigger button (in header)
+      await user.tab();
+      const header = screen.getByRole('banner');
+      const helpButton = header.querySelectorAll('button')[0];
+      expect(helpButton).toHaveFocus();
+
       // Tab to sort selector
       await user.tab();
       const select = screen.getByRole('combobox');
@@ -651,7 +658,8 @@ describe('Stars Page App', () => {
       const user = userEvent.setup();
       await renderApp(makeEvents(1));
 
-      // Tab forward three times (sort → filter → export)
+      // Tab forward four times (help → sort → filter → export)
+      await user.tab();
       await user.tab();
       await user.tab();
       await user.tab();
@@ -667,6 +675,12 @@ describe('Stars Page App', () => {
       await user.tab({ shift: true });
       const select = screen.getByRole('combobox');
       expect(select).toHaveFocus();
+
+      // Shift+Tab back to help trigger
+      await user.tab({ shift: true });
+      const header = screen.getByRole('banner');
+      const helpButton = header.querySelectorAll('button')[0];
+      expect(helpButton).toHaveFocus();
     });
 
     it('Enter activates the export button', async () => {

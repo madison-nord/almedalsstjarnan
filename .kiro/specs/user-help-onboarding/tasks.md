@@ -82,7 +82,7 @@ Replace the existing minimal `OnboardingView` modal with a comprehensive, data-d
     - Verify no remaining imports reference `OnboardingView`
     - _Requirements: (cleanup — replaced by HelpModal)_
 
-- [~] 7. Checkpoint - Ensure all tests pass
+- [x] 7. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 8. Write unit tests for HelpModal and integrations
