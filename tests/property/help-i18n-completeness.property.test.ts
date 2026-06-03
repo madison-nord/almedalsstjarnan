@@ -55,6 +55,7 @@ describe('Property 1: i18n Completeness', () => {
           const entry = catalog[key];
 
           expect(entry).toBeDefined();
+          if (!entry) return;
           expect(entry.message).toBeDefined();
           expect(entry.message.length).toBeGreaterThan(0);
           expect(entry.description).toBeDefined();

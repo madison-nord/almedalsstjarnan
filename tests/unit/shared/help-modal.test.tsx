@@ -43,7 +43,7 @@ const messageMap: Record<string, string> = {
 
 describe('HelpModal', () => {
   let adapter: IBrowserApiAdapter;
-  let onDismiss: ReturnType<typeof vi.fn>;
+  let onDismiss: ReturnType<typeof vi.fn> & (() => void);
 
   beforeEach(() => {
     resetMocks();
@@ -51,7 +51,7 @@ describe('HelpModal', () => {
     (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
       (key: string) => messageMap[key] ?? '',
     );
-    onDismiss = vi.fn();
+    onDismiss = vi.fn() as ReturnType<typeof vi.fn> & (() => void);
   });
 
   describe('feature group rendering', () => {

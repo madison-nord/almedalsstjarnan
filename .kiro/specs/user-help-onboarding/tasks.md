@@ -140,7 +140,7 @@ Replace the existing minimal `OnboardingView` modal with a comprehensive, data-d
     - Render HelpModal and query all SVG elements
     - **Validates: Requirements 8.2**
 
-- [~] 10. Final checkpoint - Ensure all tests pass
+- [x] 10. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes
