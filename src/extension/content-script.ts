@@ -14,6 +14,8 @@
 
 import type { IBrowserApiAdapter, EventId, NormalizedEvent, StarredEvent, GetStarStateData } from '#core/types';
 import { normalizeEvent } from '#core/event-normalizer';
+import { compareEventFields } from '#core/event-field-comparator';
+import type { MutableFields } from '#core/event-field-comparator';
 import { createStarButton } from '#extension/star-button';
 import { createBrowserApiAdapter } from '#core/browser-api-adapter';
 
@@ -255,6 +257,39 @@ function updateAllButtonsForEvent(eventId: string, starred: boolean): void {
   if (!buttons) return;
   for (const button of buttons) {
     button.update(starred);
+  }
+}
+
+/**
+ * Compares fresh DOM data against stored fields and sends an update if changes are detected.
+ * Fire-and-forget helper — never throws, logs warnings on failure.
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- wired in task 7.4
+async function refreshStarredEventData(
+  freshEvent: NormalizedEvent,
+  storedFields: MutableFields,
+  eventId: EventId,
+  adapter: IBrowserApiAdapter,
+): Promise<void> {
+  try {
+    const comparison = compareEventFields(freshEvent, storedFields);
+    if (!comparison.hasChanges) return;
+
+    await adapter.sendMessage({
+      command: 'UPDATE_STARRED_EVENT',
+      eventId,
+      title: freshEvent.title,
+      organiser: freshEvent.organiser,
+      startDateTime: freshEvent.startDateTime,
+      endDateTime: freshEvent.endDateTime,
+      location: freshEvent.location,
+      description: freshEvent.description,
+      topic: freshEvent.topic,
+      sourceUrl: freshEvent.sourceUrl,
+      icsDataUri: freshEvent.icsDataUri,
+    });
+  } catch {
+    console.warn('[Almedalsstjärnan] Refresh comparison failed for event:', eventId);
   }
 }
 
