@@ -31,6 +31,36 @@ pnpm install
 | `pnpm test` | Run all Vitest tests (unit + property) |
 | `pnpm package` | Build and package extension as .zip |
 
+## Development
+
+### Getting Started
+
+1. Install dependencies:
+
+   ```bash
+   pnpm install
+   ```
+
+2. Build the extension:
+
+   ```bash
+   pnpm run build
+   ```
+
+3. Load the extension in Chrome:
+   - Navigate to `chrome://extensions`
+   - Enable **Developer mode** (toggle in the top-right corner)
+   - Click **Load unpacked**
+   - Select the `dist/` directory in this project
+
+4. For active development with hot reload:
+
+   ```bash
+   pnpm run dev
+   ```
+
+   This starts a development build that watches for file changes and rebuilds automatically. After each rebuild, click the refresh icon on the extension card in `chrome://extensions` to pick up changes.
+
 ## Architecture Overview
 
 The extension follows a message-passing architecture with six main modules:
