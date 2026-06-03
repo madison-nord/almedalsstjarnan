@@ -173,6 +173,11 @@ export async function processEventCard(
 
     // Mark card as initialized
     card.setAttribute('data-almedals-planner-initialized', '1');
+
+    // --- Refresh logic (non-blocking, fire-and-forget) ---
+    if (starStateData.starred && starStateData.storedFields) {
+      void refreshStarredEventData(event, starStateData.storedFields, eventId, adapter);
+    }
   } catch (error: unknown) {
     // Never throw from content script
      
@@ -264,7 +269,6 @@ function updateAllButtonsForEvent(eventId: string, starred: boolean): void {
  * Compares fresh DOM data against stored fields and sends an update if changes are detected.
  * Fire-and-forget helper — never throws, logs warnings on failure.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- wired in task 7.4
 async function refreshStarredEventData(
   freshEvent: NormalizedEvent,
   storedFields: MutableFields,
