@@ -7,6 +7,8 @@
 
 import fc from 'fast-check';
 
+import type { MutableFields } from '#core/event-field-comparator';
+import { MUTABLE_FIELDS } from '#core/event-field-comparator';
 import type { NormalizedEvent, StarredEvent, SortOrder } from '#core/types';
 import { SORT_ORDERS } from '#core/types';
 
@@ -172,3 +174,16 @@ export const starredEventArrayArb: fc.Arbitrary<readonly StarredEvent[]> = fc
       return true;
     });
   });
+
+/**
+ * Generates a valid MutableFields object by picking only the 9 mutable fields
+ * from a generated NormalizedEvent.
+ */
+export const mutableFieldsArb: fc.Arbitrary<MutableFields> = normalizedEventArb.map((event) => {
+  const fields = {} as Record<string, unknown>;
+  for (const field of MUTABLE_FIELDS) {
+    fields[field] = event[field];
+  }
+  return fields as MutableFields;
+});
+
