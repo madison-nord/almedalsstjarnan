@@ -85,8 +85,8 @@ Replace the existing minimal `OnboardingView` modal with a comprehensive, data-d
 - [x] 7. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 8. Write unit tests for HelpModal and integrations
-  - [~] 8.1 Write unit tests for HelpModal component in `tests/unit/shared/help-modal.test.tsx`
+- [x] 8. Write unit tests for HelpModal and integrations
+  - [x] 8.1 Write unit tests for HelpModal component in `tests/unit/shared/help-modal.test.tsx`
     - Test all 9 feature groups render with icon, heading, and description
     - Test accessibility attributes: `role="dialog"`, `aria-modal="true"`, `aria-labelledby`
     - Test initial focus on dismiss button
@@ -99,7 +99,7 @@ Replace the existing minimal `OnboardingView` modal with a comprehensive, data-d
     - Test focus return to triggerRef on close
     - _Requirements: 1.1, 1.2, 1.3, 5.1, 5.2, 5.3, 5.5, 5.6, 6.1, 6.2, 9.5, 9.6_
 
-  - [~] 8.2 Write unit tests for popup App integration in `tests/unit/popup/app-help-modal.test.tsx`
+  - [x] 8.2 Write unit tests for popup App integration in `tests/unit/popup/app-help-modal.test.tsx`
     - Test onboarding shows on first run (GET_ONBOARDING_STATE returns false/not dismissed)
     - Test onboarding does NOT show when already dismissed
     - Test GET_ONBOARDING_STATE failure defaults to showing modal
@@ -108,7 +108,7 @@ Replace the existing minimal `OnboardingView` modal with a comprehensive, data-d
     - Test help link re-opens modal without altering persisted state
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6_
 
-  - [~] 8.3 Write unit tests for stars App integration in `tests/unit/stars/app-help-modal.test.tsx`
+  - [x] 8.3 Write unit tests for stars App integration in `tests/unit/stars/app-help-modal.test.tsx`
     - Test help trigger button is visible in header
     - Test clicking help trigger opens HelpModal
     - Test dismissing HelpModal closes it and returns focus to trigger
