@@ -115,26 +115,26 @@ Replace the existing minimal `OnboardingView` modal with a comprehensive, data-d
     - Test help trigger displays localized text
     - _Requirements: 4.1, 4.2, 4.3, 4.4_
 
-- [ ] 9. Write property-based tests for correctness properties
-  - [~] 9.1 Write property test for i18n completeness in `tests/property/help-i18n-completeness.property.test.ts`
+- [x] 9. Write property-based tests for correctness properties
+  - [x] 9.1 Write property test for i18n completeness in `tests/property/help-i18n-completeness.property.test.ts`
     - **Property 1: i18n Completeness**
     - For all 20 Help_Modal message keys × 2 locales, assert non-empty `message` and non-empty `description` in catalog
     - Import locale JSON files directly and verify each key exists with non-empty fields
     - **Validates: Requirements 7.1, 7.2, 7.3**
 
-  - [~] 9.2 Write property test for heading length constraint in `tests/property/help-heading-length.property.test.ts`
+  - [x] 9.2 Write property test for heading length constraint in `tests/property/help-heading-length.property.test.ts`
     - **Property 2: Heading Length Constraint**
     - For each feature group in `HELP_FEATURE_GROUPS` × each locale (`sv`, `en`), assert resolved heading ≤ 40 characters
     - Use `getLocalizedMessage` to resolve headings
     - **Validates: Requirements 1.3**
 
-  - [~] 9.3 Write property test for focus trapping in `tests/property/help-focus-trapping.property.test.ts`
+  - [x] 9.3 Write property test for focus trapping in `tests/property/help-focus-trapping.property.test.ts`
     - **Property 3: Focus Trapping Invariant**
     - For random number of Tab presses (1–100), assert `document.activeElement` stays within modal container
     - Render HelpModal with Testing Library, simulate Tab key sequences
     - **Validates: Requirements 5.1**
 
-  - [~] 9.4 Write property test for icon accessibility in `tests/property/help-icon-accessibility.property.test.ts`
+  - [x] 9.4 Write property test for icon accessibility in `tests/property/help-icon-accessibility.property.test.ts`
     - **Property 4: Decorative Icon Accessibility**
     - For each SVG icon rendered within HelpModal, assert `aria-hidden="true"` attribute present
     - Render HelpModal and query all SVG elements
