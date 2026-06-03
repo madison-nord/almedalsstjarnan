@@ -30,7 +30,9 @@ export interface ComparisonResult {
  * - Converts empty or whitespace-only strings to null
  */
 export function normalizeFieldValue(value: string | null): string | null {
-  return null;
+  if (value === null) return null;
+  const trimmed = value.trim();
+  return trimmed === '' ? null : trimmed;
 }
 
 /**
