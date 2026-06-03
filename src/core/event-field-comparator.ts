@@ -46,5 +46,15 @@ export function compareEventFields(
   fresh: MutableFields,
   stored: MutableFields,
 ): ComparisonResult {
-  return { hasChanges: false, changedFields: [] };
+  const changedFields: MutableFieldName[] = [];
+
+  for (const field of MUTABLE_FIELDS) {
+    const freshValue = normalizeFieldValue(fresh[field]);
+    const storedValue = normalizeFieldValue(stored[field]);
+    if (freshValue !== storedValue) {
+      changedFields.push(field);
+    }
+  }
+
+  return { hasChanges: changedFields.length > 0, changedFields };
 }
