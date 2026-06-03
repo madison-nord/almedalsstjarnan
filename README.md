@@ -137,4 +137,4 @@ tests/
 
 ## License
 
-MIT
+GPL-3.0
