@@ -16,11 +16,12 @@
  * Requirements: 10.1–10.10, 7.1, 7.2, 7.3
  */
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 
 import type { IBrowserApiAdapter } from '#core/types';
 import { getLocalizedMessage } from '#core/locale-messages';
 
+import { HelpModal } from '#ui/shared/HelpModal';
 import { SortSelector } from '#ui/shared/SortSelector';
 import { UndoToast } from '#ui/shared/UndoToast';
 
@@ -60,6 +61,8 @@ export function App({ adapter }: AppProps): React.JSX.Element {
   } = useStarredEvents(adapter);
 
   const [locale, setLocale] = useState<'sv' | 'en' | null>(null);
+  const [showHelp, setShowHelp] = useState(false);
+  const helpTriggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -113,6 +116,14 @@ export function App({ adapter }: AppProps): React.JSX.Element {
           <h1 className="text-lg font-bold text-white">
             {localizedAdapter.getMessage('extensionName')}
           </h1>
+          <button
+            ref={helpTriggerRef}
+            type="button"
+            onClick={() => setShowHelp(true)}
+            className="ml-auto text-sm text-gray-200 hover:text-white px-2 py-1 rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          >
+            {localizedAdapter.getMessage('helpModalTitle')}
+          </button>
         </div>
         <div className="flex flex-wrap items-center gap-4">
           <SortSelector
@@ -173,6 +184,15 @@ export function App({ adapter }: AppProps): React.JSX.Element {
         allSelected={filteredEvents.length > 0 && selectedIds.size === filteredEvents.length}
         adapter={localizedAdapter}
       />
+
+      {showHelp && (
+        <HelpModal
+          adapter={localizedAdapter}
+          onDismiss={() => setShowHelp(false)}
+          triggerRef={helpTriggerRef}
+          layoutMode="page"
+        />
+      )}
     </div>
   );
 }
