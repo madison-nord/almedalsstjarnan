@@ -15,6 +15,14 @@ import fc from 'fast-check';
 
 import { stripSourceUrl } from '#ui/popup/components/EventItem';
 
+const hasHost = (value: string, expectedHost: string): boolean => {
+  try {
+    return new URL(value).hostname === expectedHost;
+  } catch {
+    return false;
+  }
+};
+
 // ─── Custom Arbitraries ───────────────────────────────────────────
 
 /** Generates a realistic URL string. */
@@ -61,7 +69,7 @@ describe('Property 3: description URL stripping removes sourceUrl', () => {
   it('returns description unchanged when sourceUrl is not found in description', () => {
     fc.assert(
       fc.property(
-        fc.stringMatching(/^[A-Za-z0-9 ]{1,100}$/).filter((s) => !s.includes('https://almedalsveckan.info')),
+        fc.stringMatching(/^[A-Za-z0-9 ]{1,100}$/).filter((s) => !hasHost(s, 'almedalsveckan.info')),
         urlArb,
         (description, sourceUrl) => {
           // Ensure description does not contain the sourceUrl
