@@ -121,7 +121,7 @@ Harden the Almedalsstjärnan extension for public release through code correctne
     - Assert output is a deterministic hex string
     - **Validates: Requirements 1.3**
 
-- [~] 6. Checkpoint — Ensure all tests pass
+- [x] 6. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 7. Coverage thresholds and script cleanup
