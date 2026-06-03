@@ -33,7 +33,18 @@ const FIXTURE_DIR = path.resolve(__dirname, '../../fixtures');
  */
 async function startFixtureServer(): Promise<{ server: http.Server; port: number }> {
   const server = http.createServer((req, res) => {
-    const filePath = path.join(FIXTURE_DIR, req.url === '/' ? 'almedalsveckan-program-2026.html' : req.url!);
+    const requestPath = new URL(req.url ?? '/', 'http://127.0.0.1').pathname;
+    const relativePath = requestPath === '/' ? 'almedalsveckan-program-2026.html' : requestPath.replace(/^\/+/, '');
+    const filePath = path.resolve(FIXTURE_DIR, relativePath);
+    const relativeToFixtureDir = path.relative(FIXTURE_DIR, filePath);
+
+    if (relativeToFixtureDir.startsWith('..') || path.isAbsolute(relativeToFixtureDir)) {
+      // Return empty 200 for invalid traversal attempts to preserve test-server behavior
+      res.writeHead(200, { 'Content-Type': 'text/plain' });
+      res.end('');
+      return;
+    }
+
     try {
       const content = fs.readFileSync(filePath, 'utf-8');
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
