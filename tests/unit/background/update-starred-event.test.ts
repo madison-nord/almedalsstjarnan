@@ -10,6 +10,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
+import type { Mock } from 'vitest';
 
 import type { StarredEvent } from '#core/types';
 
@@ -38,7 +39,7 @@ const starredEvent: StarredEvent = {
 
 describe('handleMessage — UPDATE_STARRED_EVENT', () => {
   it('overwrites mutable fields while preserving id, starred, and starredAt', async () => {
-    (mockBrowserApi.storageLocalGet as ReturnType<typeof vi.fn>).mockResolvedValue({
+    (mockBrowserApi.storageLocalGet as Mock).mockResolvedValue({
       starredEvents: { 'event-1': starredEvent },
     });
 
@@ -81,7 +82,7 @@ describe('handleMessage — UPDATE_STARRED_EVENT', () => {
   // ─── UPDATE_STARRED_EVENT — Non-Existent Event ───────────────────
 
   it('returns success with no storage modification when event is not starred', async () => {
-    (mockBrowserApi.storageLocalGet as ReturnType<typeof vi.fn>).mockResolvedValue({
+    (mockBrowserApi.storageLocalGet as Mock).mockResolvedValue({
       starredEvents: { 'event-1': starredEvent },
     });
 
@@ -104,7 +105,7 @@ describe('handleMessage — UPDATE_STARRED_EVENT', () => {
   });
 
   it('returns success with no storage modification when starredEvents is empty', async () => {
-    (mockBrowserApi.storageLocalGet as ReturnType<typeof vi.fn>).mockResolvedValue({
+    (mockBrowserApi.storageLocalGet as Mock).mockResolvedValue({
       starredEvents: {},
     });
 
@@ -129,7 +130,7 @@ describe('handleMessage — UPDATE_STARRED_EVENT', () => {
   // ─── UPDATE_STARRED_EVENT — Storage Error ────────────────────────
 
   it('returns MessageResponseError when storageLocalGet throws', async () => {
-    (mockBrowserApi.storageLocalGet as ReturnType<typeof vi.fn>).mockRejectedValue(
+    (mockBrowserApi.storageLocalGet as Mock).mockRejectedValue(
       new Error('Storage quota exceeded'),
     );
 
@@ -151,10 +152,10 @@ describe('handleMessage — UPDATE_STARRED_EVENT', () => {
   });
 
   it('returns MessageResponseError when storageLocalSet throws', async () => {
-    (mockBrowserApi.storageLocalGet as ReturnType<typeof vi.fn>).mockResolvedValue({
+    (mockBrowserApi.storageLocalGet as Mock).mockResolvedValue({
       starredEvents: { 'event-1': starredEvent },
     });
-    (mockBrowserApi.storageLocalSet as ReturnType<typeof vi.fn>).mockRejectedValue(
+    (mockBrowserApi.storageLocalSet as Mock).mockRejectedValue(
       new Error('Write failed'),
     );
 
@@ -178,7 +179,7 @@ describe('handleMessage — UPDATE_STARRED_EVENT', () => {
   // ─── UPDATE_STARRED_EVENT — Response Shape ───────────────────────
 
   it('response shape is exactly { success: true, data: undefined } on success', async () => {
-    (mockBrowserApi.storageLocalGet as ReturnType<typeof vi.fn>).mockResolvedValue({
+    (mockBrowserApi.storageLocalGet as Mock).mockResolvedValue({
       starredEvents: { 'event-1': starredEvent },
     });
 
