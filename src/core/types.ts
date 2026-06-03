@@ -76,6 +76,7 @@ export const MESSAGE_COMMANDS = [
   'SET_ONBOARDING_STATE',
   'GET_LANGUAGE_PREFERENCE',
   'SET_LANGUAGE_PREFERENCE',
+  'UPDATE_STARRED_EVENT',
 ] as const;
 
 export type MessageCommand = (typeof MESSAGE_COMMANDS)[number];
@@ -126,6 +127,20 @@ export interface SetLanguagePreferencePayload {
   readonly locale: 'sv' | 'en' | null;
 }
 
+export interface UpdateStarredEventPayload {
+  readonly command: 'UPDATE_STARRED_EVENT';
+  readonly eventId: EventId;
+  readonly title: string;
+  readonly organiser: string | null;
+  readonly startDateTime: string;
+  readonly endDateTime: string | null;
+  readonly location: string | null;
+  readonly description: string | null;
+  readonly topic: string | null;
+  readonly sourceUrl: string | null;
+  readonly icsDataUri: string | null;
+}
+
 export type MessagePayload =
   | StarEventPayload
   | UnstarEventPayload
@@ -136,7 +151,8 @@ export type MessagePayload =
   | GetOnboardingStatePayload
   | SetOnboardingStatePayload
   | GetLanguagePreferencePayload
-  | SetLanguagePreferencePayload;
+  | SetLanguagePreferencePayload
+  | UpdateStarredEventPayload;
 
 // ─── Message Responses ────────────────────────────────────────────
 
@@ -156,9 +172,25 @@ export type MessageResponse<T = unknown> =
 
 // ─── Response type map per command ────────────────────────────────
 
+export interface GetStarStateData {
+  readonly starred: boolean;
+  readonly storedFields: Pick<
+    NormalizedEvent,
+    | 'title'
+    | 'organiser'
+    | 'startDateTime'
+    | 'endDateTime'
+    | 'location'
+    | 'description'
+    | 'topic'
+    | 'sourceUrl'
+    | 'icsDataUri'
+  > | null;
+}
+
 export type StarEventResponse = MessageResponse<void>;
 export type UnstarEventResponse = MessageResponse<void>;
-export type GetStarStateResponse = MessageResponse<boolean>;
+export type GetStarStateResponse = MessageResponse<GetStarStateData>;
 export type GetAllStarredEventsResponse = MessageResponse<StarredEvent[]>;
 export type GetSortOrderResponse = MessageResponse<SortOrder>;
 export type SetSortOrderResponse = MessageResponse<void>;

@@ -51,5 +51,16 @@ export { detectConflicts, getConflictingEventIds } from './conflict-detector';
 
 export { filterEvents } from './event-filter';
 
+export type {
+  MutableFieldName,
+  MutableFields,
+  ComparisonResult,
+} from './event-field-comparator';
+export {
+  MUTABLE_FIELDS,
+  normalizeFieldValue,
+  compareEventFields,
+} from './event-field-comparator';
+
 export type { SupportedLocale } from './locale-messages';
 export { getLocalizedMessage } from './locale-messages';
