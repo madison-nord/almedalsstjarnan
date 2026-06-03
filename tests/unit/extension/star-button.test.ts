@@ -334,10 +334,10 @@ describe('Star Button', () => {
       const btn = getButton(hostElement);
       expect(btn.classList.contains('star-btn')).toBe(true);
 
-      // Verify the CSS defines 32px dimensions
+      // Verify the CSS defines 18px dimensions
       const style = hostElement.shadowRoot!.querySelector('style');
-      expect(style!.textContent).toContain('width: 32px');
-      expect(style!.textContent).toContain('height: 32px');
+      expect(style!.textContent).toContain('width: 18px');
+      expect(style!.textContent).toContain('height: 18px');
     });
 
     it('SVG icon has 16px viewBox', () => {
@@ -364,8 +364,8 @@ describe('Star Button', () => {
 
       const style = hostElement.shadowRoot!.querySelector('style');
       const css = style!.textContent!;
-      // CSS should define svg width and height as 16px
-      expect(css).toContain('16px');
+      // CSS should define svg width and height as 14px
+      expect(css).toContain('14px');
     });
 
     it('CSS defines focus-visible outline', () => {
