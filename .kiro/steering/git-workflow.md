@@ -48,18 +48,21 @@ inclusion: always
 
 ## Pre-Commit Verification — MANDATORY
 
-**CRITICAL: You MUST run lint and typecheck before every commit. Do NOT commit code that fails these checks.**
+**CRITICAL: You MUST run lint, typecheck, AND tests before every commit. Do NOT commit code that fails any of these checks.**
 
 Before staging and committing, run:
 1. `pnpm run lint` — fix all ESLint errors (unused imports, unused vars, type-only imports, etc.)
 2. `pnpm run typecheck` — fix all TypeScript errors
+3. `pnpm vitest run` — fix all test failures
 
-If either command fails, fix the issues before committing. Do NOT use `--no-verify` or skip these steps.
+If any command fails, fix the issues before committing. Do NOT use `--no-verify` or skip these steps. Do NOT commit with known test failures, even if they appear pre-existing or unrelated to your changes — fix them first or confirm with the user before proceeding.
 
 Common issues to watch for:
 - Unused imports (remove them or prefix with `_`)
 - Imports used only as types (use `import type` syntax)
 - Unused variables (remove or prefix with `_`)
+- Tests broken by interface/response shape changes (update mocks to match new shapes)
+- Property tests with incorrect assertions (verify the property matches actual implementation behavior)
 
 ## Git Workflow — MANDATORY
 

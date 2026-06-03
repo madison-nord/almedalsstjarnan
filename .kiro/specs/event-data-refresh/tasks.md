@@ -24,7 +24,7 @@ Implement a silent background refresh mechanism that detects when starred event 
     - Export `compareEventFields(fresh: MutableFields, stored: MutableFields): ComparisonResult` stub
     - _Requirements: 5.1, 5.2, 5.3, 5.4_
 
-- [ ] 2. Implement comparison logic with TDD
+- [x] 2. Implement comparison logic with TDD
   - [x] 2.1 Implement `normalizeFieldValue` in `src/core/event-field-comparator.ts`
     - Return `null` for `null` input
     - Trim leading/trailing whitespace from string input
@@ -73,7 +73,7 @@ Implement a silent background refresh mechanism that detects when starred event 
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 4. Implement enhanced GET_STAR_STATE handler
-  - [ ] 4.1 Update `isEventStarred` in `src/extension/background.ts` to return `GetStarStateData`
+  - [x] 4.1 Update `isEventStarred` in `src/extension/background.ts` to return `GetStarStateData`
     - Read the full `StarredEvent` from storage when starred
     - Extract the 9 mutable fields into a `MutableFields` object as `storedFields`
     - Return `{ starred: true, storedFields }` when event exists
@@ -81,7 +81,7 @@ Implement a silent background refresh mechanism that detects when starred event 
     - Import `MutableFields`, `MUTABLE_FIELDS`, and `GetStarStateData` from `#core/event-field-comparator`
     - _Requirements: 4.1, 4.2, 4.3_
 
-  - [ ] 4.2 Write property test for GET_STAR_STATE stored fields
+  - [x] 4.2 Write property test for GET_STAR_STATE stored fields
     - **Property 5: GET_STAR_STATE returns stored mutable fields for starred events**
     - Create `tests/property/get-star-state-fields.property.test.ts`
     - Star an event via `handleMessage`, then send `GET_STAR_STATE`
@@ -89,14 +89,14 @@ Implement a silent background refresh mechanism that detects when starred event 
     - Use in-memory adapter pattern from existing property tests
     - **Validates: Requirements 4.1**
 
-  - [ ] 4.3 Write unit tests for enhanced GET_STAR_STATE
+  - [x] 4.3 Write unit tests for enhanced GET_STAR_STATE
     - Add tests in `tests/unit/background/get-star-state.test.ts`
     - Test: starred event returns `{ starred: true, storedFields: {...} }` with correct field values
     - Test: non-starred event returns `{ starred: false, storedFields: null }`
     - _Requirements: 4.1, 4.2_
 
 - [ ] 5. Implement UPDATE_STARRED_EVENT handler
-  - [ ] 5.1 Add `updateStarredEvent` handler in `src/extension/background.ts`
+  - [x] 5.1 Add `updateStarredEvent` handler in `src/extension/background.ts`
     - Import `UpdateStarredEventPayload` type
     - Wrap logic in `withStorageMutex` for serialized access
     - Read `starredEvents` from storage
@@ -106,12 +106,12 @@ Implement a silent background refresh mechanism that detects when starred event 
     - Return `{ success: true, data: undefined }`
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 3.3, 3.4, 3.5_
 
-  - [ ] 5.2 Add `'UPDATE_STARRED_EVENT'` case to the switch in `handleMessage`
+  - [x] 5.2 Add `'UPDATE_STARRED_EVENT'` case to the switch in `handleMessage`
     - Wire to the new `updateStarredEvent(adapter, message)` handler
     - Ensure error handling follows existing pattern (caught by outer try/catch)
     - _Requirements: 3.1_
 
-  - [ ] 5.3 Write property test for update preserving immutable fields
+  - [x] 5.3 Write property test for update preserving immutable fields
     - **Property 4: Update preserves immutable fields**
     - Create `tests/property/update-preserves-immutable.property.test.ts`
     - Star an event, then send `UPDATE_STARRED_EVENT` with random mutable field values
@@ -119,7 +119,7 @@ Implement a silent background refresh mechanism that detects when starred event 
     - Use in-memory adapter pattern
     - **Validates: Requirements 2.1, 2.2, 2.3**
 
-  - [ ] 5.4 Write property test for no update on non-starred events
+  - [x] 5.4 Write property test for no update on non-starred events
     - **Property 6: No update message for non-starred events**
     - Create `tests/property/no-update-non-starred.property.test.ts`
     - Send `UPDATE_STARRED_EVENT` for an event id not in storage
@@ -127,7 +127,7 @@ Implement a silent background refresh mechanism that detects when starred event 
     - Assert storage is unchanged (no new keys)
     - **Validates: Requirements 6.4**
 
-  - [ ] 5.5 Write property test for concurrent mutex writes
+  - [x] 5.5 Write property test for concurrent mutex writes
     - **Property 7: Concurrent updates via mutex preserve all writes**
     - Create `tests/property/mutex-concurrent-writes.property.test.ts`
     - Star multiple events, then fire concurrent `UPDATE_STARRED_EVENT` messages for different event ids
@@ -135,7 +135,7 @@ Implement a silent background refresh mechanism that detects when starred event 
     - Assert no writes are lost
     - **Validates: Requirements 3.3**
 
-  - [ ] 5.6 Write unit tests for UPDATE_STARRED_EVENT handler
+  - [x] 5.6 Write unit tests for UPDATE_STARRED_EVENT handler
     - Create `tests/unit/background/update-starred-event.test.ts`
     - Test: successful update overwrites mutable fields
     - Test: non-existent event returns success with no storage modification
@@ -143,23 +143,23 @@ Implement a silent background refresh mechanism that detects when starred event 
     - Test: response shape is `{ success: true, data: undefined }`
     - _Requirements: 2.1, 2.4, 2.5, 3.4, 3.5_
 
-- [ ] 6. Checkpoint - Ensure background handler tests pass
+- [x] 6. Checkpoint - Ensure background handler tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 7. Update content script and consumers for new GET_STAR_STATE response shape
-  - [ ] 7.1 Update `processEventCard` in `src/extension/content-script.ts` for new response shape
+  - [x] 7.1 Update `processEventCard` in `src/extension/content-script.ts` for new response shape
     - Change `adapter.sendMessage<boolean>` to `adapter.sendMessage<GetStarStateData>` for GET_STAR_STATE
     - Read `starred` from `response.data.starred` instead of directly from `response.data`
     - Store `storedFields` from `response.data.storedFields` for use in refresh logic
     - Update fallback: if response fails, use `{ starred: false, storedFields: null }` as default
     - _Requirements: 4.3, 4.4_
 
-  - [ ] 7.2 Update `star-button.ts` and any UI consumers that call GET_STAR_STATE
+  - [x] 7.2 Update `star-button.ts` and any UI consumers that call GET_STAR_STATE
     - Update any direct consumers of GET_STAR_STATE to read `.starred` from the new `GetStarStateData` shape
     - Ensure initial star state is correctly extracted from the new response format
     - _Requirements: 4.1, 4.2_
 
-  - [ ] 7.3 Add `refreshStarredEventData` helper to `src/extension/content-script.ts`
+  - [x] 7.3 Add `refreshStarredEventData` helper to `src/extension/content-script.ts`
     - Import `compareEventFields` from `#core/event-field-comparator`
     - Import `MutableFields` type from `#core/event-field-comparator`
     - Implement async helper: accepts `freshEvent`, `storedFields`, `eventId`, `adapter`
@@ -169,14 +169,14 @@ Implement a silent background refresh mechanism that detects when starred event 
     - Wrap in try/catch — log warning on failure, never throw
     - _Requirements: 1.3, 1.4, 1.5, 6.2_
 
-  - [ ] 7.4 Integrate refresh call into `processEventCard` flow
+  - [x] 7.4 Integrate refresh call into `processEventCard` flow
     - After star button injection and `data-almedals-planner-initialized` marking
     - Fire-and-forget: `void refreshStarredEventData(event, storedFields, eventId, adapter)`
     - Only call when `starred === true` and `storedFields !== null`
     - Ensure refresh runs after star button is visually ready (non-interference)
     - _Requirements: 1.1, 1.4, 6.1, 6.3, 6.4_
 
-  - [ ] 7.5 Write unit tests for content script refresh integration
+  - [x] 7.5 Write unit tests for content script refresh integration
     - Create or extend `tests/unit/content/content-script-refresh.test.ts`
     - Test: refresh is called only for starred events
     - Test: refresh skipped when `storedFields` is null
@@ -186,7 +186,7 @@ Implement a silent background refresh mechanism that detects when starred event 
     - Test: normalization failure logs warning and skips refresh
     - _Requirements: 1.1, 1.2, 1.4, 1.5, 6.2, 6.4_
 
-- [ ] 8. Final checkpoint - Ensure all tests pass
+- [x] 8. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

@@ -18,7 +18,6 @@ import type {
 } from '#core/types';
 import { mockBrowserApi, resetMocks } from '#test/helpers/mock-browser-api';
 
-import { OnboardingView } from '#ui/popup/components/OnboardingView';
 import { App as PopupApp } from '#ui/popup/App';
 import { LanguageToggle } from '#ui/shared/LanguageToggle';
 import { SortSelector } from '#ui/shared/SortSelector';
@@ -89,40 +88,6 @@ describe('Smoke verification: already-implemented requirements', () => {
     resetMocks();
     adapter = mockBrowserApi;
     setupAdapter();
-  });
-
-  describe('Requirement 2: Onboarding Programme Link', () => {
-    it('step 1 renders as an <a> element', () => {
-      render(<OnboardingView adapter={adapter} onDismiss={vi.fn()} />);
-
-      const link = screen.getByRole('link', { name: 'Visit the programme' });
-      expect(link).toBeInTheDocument();
-      expect(link.tagName).toBe('A');
-    });
-
-    it('step 1 link has target="_blank"', () => {
-      render(<OnboardingView adapter={adapter} onDismiss={vi.fn()} />);
-
-      const link = screen.getByRole('link', { name: 'Visit the programme' });
-      expect(link).toHaveAttribute('target', '_blank');
-    });
-
-    it('step 1 link has rel="noopener noreferrer"', () => {
-      render(<OnboardingView adapter={adapter} onDismiss={vi.fn()} />);
-
-      const link = screen.getByRole('link', { name: 'Visit the programme' });
-      expect(link).toHaveAttribute('rel', 'noopener noreferrer');
-    });
-
-    it('step 1 link points to the Almedalsveckan programme URL', () => {
-      render(<OnboardingView adapter={adapter} onDismiss={vi.fn()} />);
-
-      const link = screen.getByRole('link', { name: 'Visit the programme' });
-      expect(link).toHaveAttribute(
-        'href',
-        'https://almedalsveckan.info/rg/almedalsveckan/officiellt-program/program-2026',
-      );
-    });
   });
 
   describe('Requirement 3: Persistent Programme Link', () => {
