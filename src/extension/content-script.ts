@@ -12,7 +12,7 @@
  *              20.1, 20.2, 20.3, 20.4
  */
 
-import type { IBrowserApiAdapter, EventId, NormalizedEvent, StarredEvent } from '#core/types';
+import type { IBrowserApiAdapter, EventId, NormalizedEvent, StarredEvent, GetStarStateData } from '#core/types';
 import { normalizeEvent } from '#core/event-normalizer';
 import { createStarButton } from '#extension/star-button';
 import { createBrowserApiAdapter } from '#core/browser-api-adapter';
@@ -79,13 +79,16 @@ export async function processEventCard(
     const event: NormalizedEvent = result.event;
     const eventId: EventId = event.id;
 
-    // Determine initial star state
-    const response = await adapter.sendMessage<boolean>({
+    // Determine initial star state and get stored fields for refresh comparison
+    const response = await adapter.sendMessage<GetStarStateData>({
       command: 'GET_STAR_STATE',
       eventId,
     });
 
-    const initialStarred = response.success ? (response.data as boolean) : false;
+    const starStateData = response.success
+      ? (response.data as GetStarStateData)
+      : { starred: false, storedFields: null };
+    const initialStarred = starStateData.starred;
 
     // Create host container for the star button
     const host = document.createElement('span');

@@ -9,7 +9,7 @@
  * Requirements: 2.1, 2.4, 2.5, 3.4, 3.5
  */
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
 import type { StarredEvent } from '#core/types';
 

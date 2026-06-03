@@ -7,7 +7,8 @@
  * Requirements: 4.1, 4.2
  */
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
+import type { Mock } from 'vitest';
 
 import type { StarredEvent } from '#core/types';
 
@@ -36,7 +37,7 @@ const starredEvent: StarredEvent = {
 
 describe('handleMessage — GET_STAR_STATE (enhanced)', () => {
   it('returns starred: true with storedFields containing all 9 mutable field values for a starred event', async () => {
-    (mockBrowserApi.storageLocalGet as ReturnType<typeof vi.fn>).mockResolvedValue({
+    (mockBrowserApi.storageLocalGet as Mock).mockResolvedValue({
       starredEvents: { 'event-1': starredEvent },
     });
 
@@ -65,7 +66,7 @@ describe('handleMessage — GET_STAR_STATE (enhanced)', () => {
   });
 
   it('returns storedFields that exclude immutable fields (id, starred, starredAt)', async () => {
-    (mockBrowserApi.storageLocalGet as ReturnType<typeof vi.fn>).mockResolvedValue({
+    (mockBrowserApi.storageLocalGet as Mock).mockResolvedValue({
       starredEvents: { 'event-1': starredEvent },
     });
 
@@ -84,7 +85,7 @@ describe('handleMessage — GET_STAR_STATE (enhanced)', () => {
   // ─── GET_STAR_STATE — Non-Starred Event ──────────────────────────
 
   it('returns starred: false with storedFields: null for a non-starred event', async () => {
-    (mockBrowserApi.storageLocalGet as ReturnType<typeof vi.fn>).mockResolvedValue({
+    (mockBrowserApi.storageLocalGet as Mock).mockResolvedValue({
       starredEvents: { 'event-1': starredEvent },
     });
 
@@ -100,7 +101,7 @@ describe('handleMessage — GET_STAR_STATE (enhanced)', () => {
   });
 
   it('returns starred: false with storedFields: null when starredEvents is empty', async () => {
-    (mockBrowserApi.storageLocalGet as ReturnType<typeof vi.fn>).mockResolvedValue({
+    (mockBrowserApi.storageLocalGet as Mock).mockResolvedValue({
       starredEvents: {},
     });
 
@@ -116,7 +117,7 @@ describe('handleMessage — GET_STAR_STATE (enhanced)', () => {
   });
 
   it('returns starred: false with storedFields: null when starredEvents key is missing from storage', async () => {
-    (mockBrowserApi.storageLocalGet as ReturnType<typeof vi.fn>).mockResolvedValue({});
+    (mockBrowserApi.storageLocalGet as Mock).mockResolvedValue({});
 
     const result = await handleMessage(mockBrowserApi, {
       command: 'GET_STAR_STATE',
@@ -147,7 +148,7 @@ describe('handleMessage — GET_STAR_STATE (enhanced)', () => {
       starredAt: '2026-06-21T08:00:00.000Z',
     };
 
-    (mockBrowserApi.storageLocalGet as ReturnType<typeof vi.fn>).mockResolvedValue({
+    (mockBrowserApi.storageLocalGet as Mock).mockResolvedValue({
       starredEvents: { 'event-2': eventWithNulls },
     });
 
