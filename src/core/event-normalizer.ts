@@ -226,7 +226,7 @@ export function parseDateTime(timeText: string): string | null {
  * Priority:
  * 1. ICS URL path segment (last numeric segment)
  * 2. Detail-page URL path segment (last numeric segment)
- * 3. SHA-256 hash fallback: sha256(title + "|" + startDateTime) truncated to 16 hex chars
+ * 3. FNV-1a hash fallback: fnv1aHex(title + "|" + startDateTime) truncated to 16 hex chars
  */
 export function deriveEventId(
   icsUrl: string | null,
@@ -246,8 +246,8 @@ export function deriveEventId(
     if (numericSegment) return numericSegment;
   }
 
-  // SHA-256 hash fallback
-  return sha256Hex(`${title}|${startDateTime}`).slice(0, 16);
+  // FNV-1a hash fallback
+  return fnv1aHex(`${title}|${startDateTime}`).slice(0, 16);
 }
 
 /**
@@ -267,10 +267,10 @@ function extractLastNumericSegment(url: string): string | null {
 }
 
 /**
- * Synchronous SHA-256 hash using the Web Crypto API polyfill approach.
- * Since jsdom doesn't support crypto.subtle, we use a simple hash implementation.
+ * Implements FNV-1a with multi-round expansion to produce a 32-char hex string.
+ * This is NOT cryptographically secure — it is used only for deterministic ID generation.
  */
-function sha256Hex(input: string): string {
+function fnv1aHex(input: string): string {
   // Simple deterministic hash for environments without crypto.subtle
   // This produces a 64-char hex string that's consistent for the same input
   let hash = 0x811c9dc5; // FNV offset basis
