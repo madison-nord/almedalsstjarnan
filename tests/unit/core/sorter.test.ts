@@ -121,11 +121,7 @@ describe('sortEvents', () => {
       const result = sortEvents(events, 'alphabetical-by-title');
 
       // In Swedish locale, Ä and Ö come after Z
-      expect(result.map((e) => e.title)).toEqual([
-        'Avslutning',
-        'Ärende',
-        'Öppning',
-      ]);
+      expect(result.map((e) => e.title)).toEqual(['Avslutning', 'Ärende', 'Öppning']);
     });
   });
 
@@ -186,10 +182,7 @@ describe('sortEvents', () => {
     });
 
     it('returns a new array instance', () => {
-      const events: readonly StarredEvent[] = [
-        makeEvent({ id: 'a' }),
-        makeEvent({ id: 'b' }),
-      ];
+      const events: readonly StarredEvent[] = [makeEvent({ id: 'a' }), makeEvent({ id: 'b' })];
 
       const result = sortEvents(events, 'chronological');
 

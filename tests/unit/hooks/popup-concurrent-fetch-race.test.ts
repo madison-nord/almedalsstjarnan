@@ -47,7 +47,11 @@ describe('Concurrent fetchEvents race — stale responses overwrite newer state'
       makeEvent('event-3', 'Panel C'),
     ];
 
-    let storageChangedCallback: ((changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => void) | null = null;
+    let storageChangedCallback:
+      | ((
+          changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
+        ) => void)
+      | null = null;
 
     // Track fetch call order and simulate delayed responses
     let fetchCallCount = 0;
@@ -73,9 +77,10 @@ describe('Concurrent fetchEvents race — stale responses overwrite newer state'
             resolve({ success: true, data });
           } else {
             // Subsequent fetches — we'll resolve manually to control order
-            data = fetchCallCount === 2
-              ? allEvents.slice(1) // event-1 removed
-              : allEvents.slice(2); // event-1 and event-2 removed
+            data =
+              fetchCallCount === 2
+                ? allEvents.slice(1) // event-1 removed
+                : allEvents.slice(2); // event-1 and event-2 removed
             pendingResponses.push({ resolve, data });
           }
         });
@@ -88,9 +93,15 @@ describe('Concurrent fetchEvents race — stale responses overwrite newer state'
 
     const onStorageChangedMock = mockBrowserApi.onStorageChanged as ReturnType<typeof vi.fn>;
     onStorageChangedMock.mockImplementation(
-      (cb: (changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => void) => {
+      (
+        cb: (
+          changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
+        ) => void,
+      ) => {
         storageChangedCallback = cb;
-        return () => { storageChangedCallback = null; };
+        return () => {
+          storageChangedCallback = null;
+        };
       },
     );
 

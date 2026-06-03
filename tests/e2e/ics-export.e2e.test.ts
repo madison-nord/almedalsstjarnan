@@ -40,7 +40,8 @@ async function startFixtureServer(): Promise<{ server: http.Server; port: number
   const server = http.createServer((req, res) => {
     const requestUrl = req.url ?? '/';
     const pathname = new URL(requestUrl, 'http://127.0.0.1').pathname;
-    const requestedPath = pathname === '/' ? 'almedalsveckan-program-2026.html' : pathname.replace(/^\/+/, '');
+    const requestedPath =
+      pathname === '/' ? 'almedalsveckan-program-2026.html' : pathname.replace(/^\/+/, '');
     const filePath = path.resolve(FIXTURE_DIR, requestedPath);
     const fixtureRoot = FIXTURE_DIR.endsWith(path.sep) ? FIXTURE_DIR : `${FIXTURE_DIR}${path.sep}`;
 

@@ -40,6 +40,7 @@ fileMatchPattern: '**/*.tsx'
 ## Manifest References
 
 The manifest uses Chrome's built-in i18n:
+
 - `"name": "__MSG_extensionName__"`
 - `"description": "__MSG_extensionDescription__"`
 

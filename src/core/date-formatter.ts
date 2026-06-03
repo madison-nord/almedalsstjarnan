@@ -21,14 +21,34 @@ const EN_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as const;
 
 /** Full Swedish month names indexed by month (0 = January, 11 = December) */
 const SV_MONTHS = [
-  'januari', 'februari', 'mars', 'april', 'maj', 'juni',
-  'juli', 'augusti', 'september', 'oktober', 'november', 'december',
+  'januari',
+  'februari',
+  'mars',
+  'april',
+  'maj',
+  'juni',
+  'juli',
+  'augusti',
+  'september',
+  'oktober',
+  'november',
+  'december',
 ] as const;
 
 /** Abbreviated English month names indexed by month (0 = January, 11 = December) */
 const EN_MONTHS = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
 ] as const;
 
 // ─── Internal Helpers ─────────────────────────────────────────────
@@ -92,7 +112,14 @@ function dayOfWeek(year: number, month: number, day: number): number {
   const t = [0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4] as const;
   let y = year;
   if (month < 3) y -= 1;
-  const dow = (y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) + (t[month - 1] ?? 0) + day) % 7;
+  const dow =
+    (y +
+      Math.floor(y / 4) -
+      Math.floor(y / 100) +
+      Math.floor(y / 400) +
+      (t[month - 1] ?? 0) +
+      day) %
+    7;
   // Convert from 0=Sunday to 0=Monday
   return (dow + 6) % 7;
 }

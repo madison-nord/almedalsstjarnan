@@ -43,7 +43,11 @@ describe('confirmUnstar race condition — event reappears after toast expires',
 
     const allEvents: StarredEvent[] = [testEvent];
 
-    let storageChangedCallback: ((changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => void) | null = null;
+    let storageChangedCallback:
+      | ((
+          changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
+        ) => void)
+      | null = null;
 
     const sendMessageMock = mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>;
     sendMessageMock.mockImplementation((message: { command: string }) => {
@@ -59,9 +63,15 @@ describe('confirmUnstar race condition — event reappears after toast expires',
 
     const onStorageChangedMock = mockBrowserApi.onStorageChanged as ReturnType<typeof vi.fn>;
     onStorageChangedMock.mockImplementation(
-      (cb: (changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => void) => {
+      (
+        cb: (
+          changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
+        ) => void,
+      ) => {
         storageChangedCallback = cb;
-        return () => { storageChangedCallback = null; };
+        return () => {
+          storageChangedCallback = null;
+        };
       },
     );
 
@@ -128,7 +138,11 @@ describe('confirmUnstar race condition — event reappears after toast expires',
       starredAt: '2026-06-01T10:00:00.000Z',
     };
 
-    let storageChangedCallback: ((changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => void) | null = null;
+    let storageChangedCallback:
+      | ((
+          changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
+        ) => void)
+      | null = null;
     let storageContents: StarredEvent[] = [testEvent];
 
     const sendMessageMock = mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>;
@@ -149,9 +163,15 @@ describe('confirmUnstar race condition — event reappears after toast expires',
 
     const onStorageChangedMock = mockBrowserApi.onStorageChanged as ReturnType<typeof vi.fn>;
     onStorageChangedMock.mockImplementation(
-      (cb: (changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => void) => {
+      (
+        cb: (
+          changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
+        ) => void,
+      ) => {
         storageChangedCallback = cb;
-        return () => { storageChangedCallback = null; };
+        return () => {
+          storageChangedCallback = null;
+        };
       },
     );
 

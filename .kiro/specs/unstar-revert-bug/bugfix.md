@@ -46,7 +46,7 @@ When a user unstars an event, the removal does not persist. The event reappears 
 FUNCTION isBugCondition(X)
   INPUT: X of type UnstarAction { eventId: string, undoClicked: boolean }
   OUTPUT: boolean
-  
+
   // The bug triggers when an event is unstarred and the user does NOT click undo.
   // During the pending-deletion window, any storage re-fetch restores the event.
   RETURN X.undoClicked = false

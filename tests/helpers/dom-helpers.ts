@@ -53,7 +53,8 @@ const DEFAULTS: Required<MockEventCardOverrides> = {
   secondaryTopic: 'Ekonomi',
   organiser: 'Den gröna tankesmedjan Cogito',
   location: 'Holmen 1',
-  description: 'Efter en kort inledning bjuder vi in till ett samtal ombord på båten Vagabonde. Varmt välkommen!',
+  description:
+    'Efter en kort inledning bjuder vi in till ett samtal ombord på båten Vagabonde. Varmt välkommen!',
   eventId: '8363',
   icsDataUri: buildDefaultIcsDataUri(),
   detailUrl: '/rg/almedalsveckan/evenemang-almedalsveckan/2026/8363',

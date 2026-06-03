@@ -36,13 +36,14 @@ describe('Property 3: Focus Trapping Invariant', () => {
    * while the HelpModal is open, the currently focused element SHALL remain
    * within the modal container's DOM subtree.
    */
-  it('focus remains within modal container for any number of Tab presses', { timeout: 30_000 }, () => {
-    const adapter = setupAdapter();
+  it(
+    'focus remains within modal container for any number of Tab presses',
+    { timeout: 30_000 },
+    () => {
+      const adapter = setupAdapter();
 
-    fc.assert(
-      fc.property(
-        fc.integer({ min: 1, max: 100 }),
-        (tabCount: number) => {
+      fc.assert(
+        fc.property(fc.integer({ min: 1, max: 100 }), (tabCount: number) => {
           const { container } = render(
             React.createElement(HelpModal, {
               adapter,
@@ -69,9 +70,9 @@ describe('Property 3: Focus Trapping Invariant', () => {
           expect(modalContainer!.contains(activeElement)).toBe(true);
 
           cleanup();
-        },
-      ),
-      { numRuns: 100 },
-    );
-  });
+        }),
+        { numRuns: 100 },
+      );
+    },
+  );
 });

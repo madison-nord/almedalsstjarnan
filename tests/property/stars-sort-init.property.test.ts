@@ -26,73 +26,20 @@ describe('Property 1: Stars Page initializes to chronological', () => {
    * For any stored sort order, the hook initializes to 'chronological'
    * and never sends GET_SORT_ORDER.
    */
-  it('hook initializes sortOrder to chronological regardless of stored value', { timeout: 60_000 }, async () => {
-    await fc.assert(
-      fc.asyncProperty(sortOrderArb, async (storedSortOrder) => {
-        // Setup mock: even if GET_SORT_ORDER were called, it would return the stored value
-        const sendMessageMock = mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>;
-        sendMessageMock.mockImplementation((message: { command: string }) => {
-          if (message.command === 'GET_ALL_STARRED_EVENTS') {
-            return Promise.resolve({ success: true, data: [] });
-          }
-          if (message.command === 'GET_SORT_ORDER') {
-            return Promise.resolve({ success: true, data: storedSortOrder });
-          }
-          return Promise.resolve({ success: true, data: undefined });
-        });
-
-        const onStorageChangedMock = mockBrowserApi.onStorageChanged as ReturnType<typeof vi.fn>;
-        onStorageChangedMock.mockImplementation(() => () => {});
-
-        // Render the hook
-        const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
-
-        // Wait for initial load to complete
-        await waitFor(() => {
-          expect(result.current.loading).toBe(false);
-        });
-
-        // The sort order must always be 'chronological' regardless of stored value
-        expect(result.current.sortOrder).toBe('chronological');
-
-        // GET_SORT_ORDER should never have been called
-        const sendMessageCalls = sendMessageMock.mock.calls as Array<[{ command: string }]>;
-        const getSortOrderCalls = sendMessageCalls.filter(
-          ([msg]) => msg.command === 'GET_SORT_ORDER',
-        );
-        expect(getSortOrderCalls).toHaveLength(0);
-
-        unmount();
-      }),
-      { numRuns: 100 },
-    );
-  });
-
-  /**
-   * Validates: Requirements 1.1, 1.5
-   *
-   * Even with invalid/absent stored values, the hook initializes to 'chronological'.
-   */
-  it('hook initializes to chronological even with invalid stored sort order values', { timeout: 60_000 }, async () => {
-    await fc.assert(
-      fc.asyncProperty(
-        fc.oneof(
-          fc.constant(undefined),
-          fc.constant(null),
-          fc.constant(''),
-          fc.constant('invalid-sort'),
-          fc.string(),
-          fc.integer(),
-        ),
-        async (invalidStoredValue) => {
-          // Setup mock: GET_SORT_ORDER returns an invalid value
+  it(
+    'hook initializes sortOrder to chronological regardless of stored value',
+    { timeout: 60_000 },
+    async () => {
+      await fc.assert(
+        fc.asyncProperty(sortOrderArb, async (storedSortOrder) => {
+          // Setup mock: even if GET_SORT_ORDER were called, it would return the stored value
           const sendMessageMock = mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>;
           sendMessageMock.mockImplementation((message: { command: string }) => {
             if (message.command === 'GET_ALL_STARRED_EVENTS') {
               return Promise.resolve({ success: true, data: [] });
             }
             if (message.command === 'GET_SORT_ORDER') {
-              return Promise.resolve({ success: true, data: invalidStoredValue });
+              return Promise.resolve({ success: true, data: storedSortOrder });
             }
             return Promise.resolve({ success: true, data: undefined });
           });
@@ -108,7 +55,7 @@ describe('Property 1: Stars Page initializes to chronological', () => {
             expect(result.current.loading).toBe(false);
           });
 
-          // The sort order must always be 'chronological'
+          // The sort order must always be 'chronological' regardless of stored value
           expect(result.current.sortOrder).toBe('chronological');
 
           // GET_SORT_ORDER should never have been called
@@ -119,9 +66,72 @@ describe('Property 1: Stars Page initializes to chronological', () => {
           expect(getSortOrderCalls).toHaveLength(0);
 
           unmount();
-        },
-      ),
-      { numRuns: 100 },
-    );
-  });
+        }),
+        { numRuns: 100 },
+      );
+    },
+  );
+
+  /**
+   * Validates: Requirements 1.1, 1.5
+   *
+   * Even with invalid/absent stored values, the hook initializes to 'chronological'.
+   */
+  it(
+    'hook initializes to chronological even with invalid stored sort order values',
+    { timeout: 60_000 },
+    async () => {
+      await fc.assert(
+        fc.asyncProperty(
+          fc.oneof(
+            fc.constant(undefined),
+            fc.constant(null),
+            fc.constant(''),
+            fc.constant('invalid-sort'),
+            fc.string(),
+            fc.integer(),
+          ),
+          async (invalidStoredValue) => {
+            // Setup mock: GET_SORT_ORDER returns an invalid value
+            const sendMessageMock = mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>;
+            sendMessageMock.mockImplementation((message: { command: string }) => {
+              if (message.command === 'GET_ALL_STARRED_EVENTS') {
+                return Promise.resolve({ success: true, data: [] });
+              }
+              if (message.command === 'GET_SORT_ORDER') {
+                return Promise.resolve({ success: true, data: invalidStoredValue });
+              }
+              return Promise.resolve({ success: true, data: undefined });
+            });
+
+            const onStorageChangedMock = mockBrowserApi.onStorageChanged as ReturnType<
+              typeof vi.fn
+            >;
+            onStorageChangedMock.mockImplementation(() => () => {});
+
+            // Render the hook
+            const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
+
+            // Wait for initial load to complete
+            await waitFor(() => {
+              expect(result.current.loading).toBe(false);
+            });
+
+            // The sort order must always be 'chronological'
+            expect(result.current.sortOrder).toBe('chronological');
+
+            // GET_SORT_ORDER should never have been called
+            const sendMessageCalls = sendMessageMock.mock.calls as Array<[{ command: string }]>;
+            const getSortOrderCalls = sendMessageCalls.filter(
+              ([msg]) => msg.command === 'GET_SORT_ORDER',
+            );
+            expect(getSortOrderCalls).toHaveLength(0);
+
+            unmount();
+          },
+        ),
+        { numRuns: 100 },
+      );
+    },
+  );
 });

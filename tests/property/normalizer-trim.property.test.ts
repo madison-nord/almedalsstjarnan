@@ -22,11 +22,7 @@ describe('Property 6: Normalizer whitespace trimming', () => {
 
   /** Generates a non-empty string with leading/trailing whitespace. */
   const paddedStringArb: fc.Arbitrary<string> = fc
-    .tuple(
-      whitespaceArb,
-      fc.stringMatching(/^[A-Za-z0-9]{1,40}$/),
-      whitespaceArb,
-    )
+    .tuple(whitespaceArb, fc.stringMatching(/^[A-Za-z0-9]{1,40}$/), whitespaceArb)
     .map(([leading, core, trailing]) => `${leading}${core}${trailing}`);
 
   it('trims all string fields in the normalized event', () => {

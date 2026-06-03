@@ -8,14 +8,14 @@ The core idea is a **data-driven modal**: a single `HelpModal` React component r
 
 ### Design Decisions
 
-| Decision | Rationale |
-|----------|-----------|
-| Single shared component in `src/ui/shared/HelpModal.tsx` | Avoids duplication; both popup and stars page import the same component. |
-| Feature groups as a static data array (not fetched) | Content is static, compile-time data — no runtime cost, no network. |
-| Inline SVG via React component functions | Avoids external image requests; decorative icons marked `aria-hidden="true"`. |
-| Tailwind-only styling with responsive breakpoints | Matches project convention; `md:grid-cols-2` for stars page context. |
-| `layoutMode` prop (`'popup' | 'page'`) | Lets the parent choose column layout without the modal needing viewport detection. |
-| Reuse existing `onboardingDismissed` storage key and messages | No new storage schema or background message commands needed. |
+| Decision                                                      | Rationale                                                                        |
+| ------------------------------------------------------------- | -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Single shared component in `src/ui/shared/HelpModal.tsx`      | Avoids duplication; both popup and stars page import the same component.         |
+| Feature groups as a static data array (not fetched)           | Content is static, compile-time data — no runtime cost, no network.              |
+| Inline SVG via React component functions                      | Avoids external image requests; decorative icons marked `aria-hidden="true"`.    |
+| Tailwind-only styling with responsive breakpoints             | Matches project convention; `md:grid-cols-2` for stars page context.             |
+| `layoutMode` prop (`'popup'                                   | 'page'`)                                                                         | Lets the parent choose column layout without the modal needing viewport detection. |
+| Reuse existing `onboardingDismissed` storage key and messages | No new storage schema or background message commands needed.                     |
 | Focus trapping logic extracted from existing `OnboardingView` | Pattern already proven; refactor into shared utility or inline in new component. |
 
 ## Architecture
@@ -42,6 +42,7 @@ graph TD
 ```
 
 The `HelpModal` receives:
+
 - `adapter` — for i18n string retrieval
 - `onDismiss` — callback to close
 - `triggerRef` — ref to the trigger element for focus return
@@ -67,6 +68,7 @@ export function HelpModal(props: HelpModalProps): React.JSX.Element;
 ```
 
 **Responsibilities:**
+
 - Renders a full-screen backdrop with centered modal content
 - Iterates over `HELP_FEATURE_GROUPS` array
 - Resolves heading/description text via `adapter.getMessage()`
@@ -95,6 +97,7 @@ export const HELP_FEATURE_GROUPS: readonly HelpFeatureGroup[];
 ```
 
 The 9 groups in fixed display order:
+
 1. **Star Events** — starring events on the programme page
 2. **Popup View** — viewing starred events in the popup
 3. **Stars Page** — dedicated full list view
@@ -108,6 +111,7 @@ The 9 groups in fixed display order:
 ### Icon Components
 
 Each icon is a small functional component rendering an inline SVG with:
+
 - `aria-hidden="true"` (decorative)
 - Fixed `24×24` viewBox, rendered at `w-6 h-6` via Tailwind
 - `currentColor` fill for theme flexibility
@@ -116,11 +120,13 @@ Each icon is a small functional component rendering an inline SVG with:
 ### Integration Points
 
 **Popup `App.tsx`:**
+
 - Replace `<OnboardingView>` usage with `<HelpModal layoutMode="popup">`
 - Keep existing `showOnboarding` state, `handleDismissOnboarding`, `handleShowOnboarding` logic
 - Keep existing `helpLinkRef` for focus return
 
 **Stars `App.tsx`:**
+
 - Add `showHelp` state, `helpTriggerRef`
 - Add help trigger button in header (icon + localized text)
 - Render `<HelpModal layoutMode="page">` conditionally
@@ -132,28 +138,28 @@ Each icon is a small functional component rendering an inline SVG with:
 
 The following keys are added to both `_locales/sv/messages.json` and `_locales/en/messages.json`:
 
-| Key | Purpose |
-|-----|---------|
-| `helpModalTitle` | Modal title heading |
-| `helpModalDismiss` | Dismiss button label |
-| `helpGroupStarEventsHeading` | Feature group 1 heading |
-| `helpGroupStarEventsDesc` | Feature group 1 description |
-| `helpGroupPopupViewHeading` | Feature group 2 heading |
-| `helpGroupPopupViewDesc` | Feature group 2 description |
-| `helpGroupStarsPageHeading` | Feature group 3 heading |
-| `helpGroupStarsPageDesc` | Feature group 3 description |
-| `helpGroupSortingHeading` | Feature group 4 heading |
-| `helpGroupSortingDesc` | Feature group 4 description |
-| `helpGroupConflictHeading` | Feature group 5 heading |
-| `helpGroupConflictDesc` | Feature group 5 description |
-| `helpGroupSearchFilterHeading` | Feature group 6 heading |
-| `helpGroupSearchFilterDesc` | Feature group 6 description |
-| `helpGroupBulkActionsHeading` | Feature group 7 heading |
-| `helpGroupBulkActionsDesc` | Feature group 7 description |
-| `helpGroupIcsExportHeading` | Feature group 8 heading |
-| `helpGroupIcsExportDesc` | Feature group 8 description |
-| `helpGroupLanguageHeading` | Feature group 9 heading |
-| `helpGroupLanguageDesc` | Feature group 9 description |
+| Key                            | Purpose                     |
+| ------------------------------ | --------------------------- |
+| `helpModalTitle`               | Modal title heading         |
+| `helpModalDismiss`             | Dismiss button label        |
+| `helpGroupStarEventsHeading`   | Feature group 1 heading     |
+| `helpGroupStarEventsDesc`      | Feature group 1 description |
+| `helpGroupPopupViewHeading`    | Feature group 2 heading     |
+| `helpGroupPopupViewDesc`       | Feature group 2 description |
+| `helpGroupStarsPageHeading`    | Feature group 3 heading     |
+| `helpGroupStarsPageDesc`       | Feature group 3 description |
+| `helpGroupSortingHeading`      | Feature group 4 heading     |
+| `helpGroupSortingDesc`         | Feature group 4 description |
+| `helpGroupConflictHeading`     | Feature group 5 heading     |
+| `helpGroupConflictDesc`        | Feature group 5 description |
+| `helpGroupSearchFilterHeading` | Feature group 6 heading     |
+| `helpGroupSearchFilterDesc`    | Feature group 6 description |
+| `helpGroupBulkActionsHeading`  | Feature group 7 heading     |
+| `helpGroupBulkActionsDesc`     | Feature group 7 description |
+| `helpGroupIcsExportHeading`    | Feature group 8 heading     |
+| `helpGroupIcsExportDesc`       | Feature group 8 description |
+| `helpGroupLanguageHeading`     | Feature group 9 heading     |
+| `helpGroupLanguageDesc`        | Feature group 9 description |
 
 Total: 20 new message keys (1 title + 1 dismiss + 9×2 group keys).
 
@@ -167,40 +173,40 @@ The `HelpModal` is purely a UI component. It reads i18n strings synchronously vi
 
 ## Correctness Properties
 
-*A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
+_A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees._
 
 ### Property 1: i18n Completeness
 
-*For any* Help_Modal message key (modal title, dismiss label, and all 9 feature group heading/description keys) and *for any* supported locale (`sv`, `en`), the locale message catalog SHALL contain an entry with a non-empty `message` field and a non-empty `description` field.
+_For any_ Help*Modal message key (modal title, dismiss label, and all 9 feature group heading/description keys) and \_for any* supported locale (`sv`, `en`), the locale message catalog SHALL contain an entry with a non-empty `message` field and a non-empty `description` field.
 
 **Validates: Requirements 7.1, 7.2, 7.3**
 
 ### Property 2: Heading Length Constraint
 
-*For any* feature group in `HELP_FEATURE_GROUPS` and *for any* supported locale (`sv`, `en`), the resolved heading string SHALL have a length of at most 40 characters.
+_For any_ feature group in `HELP_FEATURE_GROUPS` and _for any_ supported locale (`sv`, `en`), the resolved heading string SHALL have a length of at most 40 characters.
 
 **Validates: Requirements 1.3**
 
 ### Property 3: Focus Trapping Invariant
 
-*For any* sequence of N Tab key presses (where N ranges from 1 to 100) while the Help_Modal is open, the currently focused element SHALL remain within the modal container's DOM subtree.
+_For any_ sequence of N Tab key presses (where N ranges from 1 to 100) while the Help_Modal is open, the currently focused element SHALL remain within the modal container's DOM subtree.
 
 **Validates: Requirements 5.1**
 
 ### Property 4: Decorative Icon Accessibility
 
-*For any* SVG icon element rendered within the Help_Modal's feature group list, the element SHALL have the attribute `aria-hidden="true"`.
+_For any_ SVG icon element rendered within the Help_Modal's feature group list, the element SHALL have the attribute `aria-hidden="true"`.
 
 **Validates: Requirements 8.2**
 
 ## Error Handling
 
-| Scenario | Behaviour |
-|----------|-----------|
-| `GET_ONBOARDING_STATE` returns error response | Popup defaults to showing the Help_Modal (fail-open for discoverability). |
-| `SET_ONBOARDING_STATE` returns error after dismiss | Modal hides for the current session; may reappear next popup open. No error shown to user. |
-| `adapter.getMessage(key)` returns empty string | The `getLocalizedMessage` utility already falls back: if the active locale has no entry, it returns `''`, and the `localizedAdapter` pattern in both App components falls through to `adapter.getMessage(key)` which uses browser i18n. If both fail, text is empty — this is prevented by Property 1 ensuring all keys exist. |
-| Feature group data array is malformed | Compile-time TypeScript validation prevents this — `HELP_FEATURE_GROUPS` is typed as `readonly HelpFeatureGroup[]`. |
+| Scenario                                           | Behaviour                                                                                                                                                                                                                                                                                                                      |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `GET_ONBOARDING_STATE` returns error response      | Popup defaults to showing the Help_Modal (fail-open for discoverability).                                                                                                                                                                                                                                                      |
+| `SET_ONBOARDING_STATE` returns error after dismiss | Modal hides for the current session; may reappear next popup open. No error shown to user.                                                                                                                                                                                                                                     |
+| `adapter.getMessage(key)` returns empty string     | The `getLocalizedMessage` utility already falls back: if the active locale has no entry, it returns `''`, and the `localizedAdapter` pattern in both App components falls through to `adapter.getMessage(key)` which uses browser i18n. If both fail, text is empty — this is prevented by Property 1 ensuring all keys exist. |
+| Feature group data array is malformed              | Compile-time TypeScript validation prevents this — `HELP_FEATURE_GROUPS` is typed as `readonly HelpFeatureGroup[]`.                                                                                                                                                                                                            |
 
 No user-facing error states are needed because the modal content is entirely static/local. No network requests are involved.
 
@@ -227,6 +233,7 @@ Property-based testing applies to this feature for validating i18n completeness,
 - **Tag format**: `// Feature: user-help-onboarding, Property {N}: {title}`
 
 Properties to implement:
+
 1. **i18n Completeness** — generate combinations of all 20 Help_Modal keys × 2 locales, assert non-empty message and description in catalog
 2. **Heading Length** — for each feature group × each locale, assert heading ≤ 40 chars
 3. **Focus Trapping** — for random number of Tab presses (1–100), assert activeElement stays in modal
@@ -238,4 +245,3 @@ Properties to implement:
 - Backdrop opacity / styling — visual design, not a computable property
 - WCAG contrast ratios — require manual audit with tooling
 - Focus indicator styling — CSS/visual concern
-

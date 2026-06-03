@@ -181,9 +181,7 @@ describe('Popup layout — scroll containment and sticky footer', () => {
   describe('Loading state', () => {
     it('uses h-[600px] for fixed height', () => {
       // Don't resolve the sendMessage so loading state stays visible
-      (adapter.sendMessage as ReturnType<typeof vi.fn>).mockReturnValue(
-        new Promise(() => {}),
-      );
+      (adapter.sendMessage as ReturnType<typeof vi.fn>).mockReturnValue(new Promise(() => {}));
       (adapter.getMessage as ReturnType<typeof vi.fn>).mockReturnValue('');
       (adapter.onStorageChanged as ReturnType<typeof vi.fn>).mockReturnValue(vi.fn());
 

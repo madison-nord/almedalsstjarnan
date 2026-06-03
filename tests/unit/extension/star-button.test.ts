@@ -10,11 +10,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 import type { IBrowserApiAdapter } from '#core/types';
-import {
-  createStarButton,
-  STAR_OUTLINED_SVG,
-  STAR_FILLED_SVG,
-} from '#extension/star-button';
+import { createStarButton, STAR_OUTLINED_SVG, STAR_FILLED_SVG } from '#extension/star-button';
 import { mockBrowserApi } from '#test/helpers/mock-browser-api';
 
 function getButton(host: HTMLElement): HTMLButtonElement {
@@ -41,13 +37,11 @@ describe('Star Button', () => {
     hostElement = document.createElement('div');
     document.body.appendChild(hostElement);
     adapter = mockBrowserApi;
-    (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
-      (key: string) => {
-        if (key === 'starEvent') return 'Star event';
-        if (key === 'unstarEvent') return 'Unstar event';
-        return '';
-      },
-    );
+    (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation((key: string) => {
+      if (key === 'starEvent') return 'Star event';
+      if (key === 'unstarEvent') return 'Unstar event';
+      return '';
+    });
   });
 
   afterEach(() => {

@@ -5,6 +5,7 @@
 This design covers eight areas of UX improvement to the Almedalsstjärnan browser extension, transforming it from a functional prototype into a polished, user-friendly tool. The enhancements are designed as independent, modular units that can be implemented and shipped incrementally without breaking existing functionality.
 
 **Key design principles:**
+
 - **Modularity**: Each requirement group is independently implementable.
 - **Backward compatibility**: Existing storage schema (`starredEvents`, `sortOrder`) is preserved. New keys are additive.
 - **Pure core logic**: Date formatting, conflict detection, and configuration are pure functions/constants in `src/core/`, testable without browser APIs.
@@ -64,30 +65,30 @@ graph TD
 
 ### New Modules
 
-| Module | Location | Type | Purpose |
-|--------|----------|------|---------|
-| `date-config.ts` | `src/core/` | Constants | Year-specific date mappings, extracted from event-normalizer |
-| `date-formatter.ts` | `src/core/` | Pure function | ISO 8601 → human-readable locale-aware formatting |
-| `conflict-detector.ts` | `src/core/` | Pure function | Computes overlapping event pairs from an events array |
-| `OnboardingView` | `src/ui/popup/components/` | React component | First-run guidance, dismissible |
-| `UndoToast` | `src/ui/shared/` | React component | Timer-based undo notification |
-| `SearchFilter` | `src/ui/stars/components/` | React component | Text filter input |
-| `BulkActions` | `src/ui/stars/components/` | React component | Checkbox selection + batch controls |
-| `LanguageToggle` | `src/ui/shared/` | React component | Manual language override |
+| Module                 | Location                   | Type            | Purpose                                                      |
+| ---------------------- | -------------------------- | --------------- | ------------------------------------------------------------ |
+| `date-config.ts`       | `src/core/`                | Constants       | Year-specific date mappings, extracted from event-normalizer |
+| `date-formatter.ts`    | `src/core/`                | Pure function   | ISO 8601 → human-readable locale-aware formatting            |
+| `conflict-detector.ts` | `src/core/`                | Pure function   | Computes overlapping event pairs from an events array        |
+| `OnboardingView`       | `src/ui/popup/components/` | React component | First-run guidance, dismissible                              |
+| `UndoToast`            | `src/ui/shared/`           | React component | Timer-based undo notification                                |
+| `SearchFilter`         | `src/ui/stars/components/` | React component | Text filter input                                            |
+| `BulkActions`          | `src/ui/stars/components/` | React component | Checkbox selection + batch controls                          |
+| `LanguageToggle`       | `src/ui/shared/`           | React component | Manual language override                                     |
 
 ### Modified Modules
 
-| Module | Changes |
-|--------|---------|
-| `types.ts` | Add `StorageSchema` keys: `languagePreference`, `onboardingDismissed` |
-| `event-normalizer.ts` | Import `DAY_TO_DATE` from `date-config.ts` instead of inline |
-| `background.ts` | Add badge update logic, undo-delay pattern, new message commands |
-| `EventItem.tsx` | Add expand/collapse, star toggle, source link, date formatting |
-| `EventList.tsx` | Add count indicator, pagination/load-more |
-| `EventRow.tsx` | Add date formatting, conflict indicator, checkbox |
-| `EventGrid.tsx` | Add zebra striping, date grouping, section headers |
-| `star-button.ts` | Add scale/color animation on star transition |
-| `tailwind.config.ts` | Extend with custom color palette (after approval) |
+| Module                | Changes                                                               |
+| --------------------- | --------------------------------------------------------------------- |
+| `types.ts`            | Add `StorageSchema` keys: `languagePreference`, `onboardingDismissed` |
+| `event-normalizer.ts` | Import `DAY_TO_DATE` from `date-config.ts` instead of inline          |
+| `background.ts`       | Add badge update logic, undo-delay pattern, new message commands      |
+| `EventItem.tsx`       | Add expand/collapse, star toggle, source link, date formatting        |
+| `EventList.tsx`       | Add count indicator, pagination/load-more                             |
+| `EventRow.tsx`        | Add date formatting, conflict indicator, checkbox                     |
+| `EventGrid.tsx`       | Add zebra striping, date grouping, section headers                    |
+| `star-button.ts`      | Add scale/color animation on star transition                          |
+| `tailwind.config.ts`  | Extend with custom color palette (after approval)                     |
 
 ## Components and Interfaces
 
@@ -104,7 +105,13 @@ export const STOCKHOLM_SUMMER_OFFSET = '+02:00' as const;
 
 /** Swedish day names used in DOM time text */
 export const SWEDISH_DAYS = [
-  'Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag', 'Söndag',
+  'Måndag',
+  'Tisdag',
+  'Onsdag',
+  'Torsdag',
+  'Fredag',
+  'Lördag',
+  'Söndag',
 ] as const;
 
 /**
@@ -150,6 +157,7 @@ export function formatEventDateTime(
 ```
 
 **Formatting rules:**
+
 - Swedish: `"Mån 22 juni 07:30–08:30"` — abbreviated day, day number, full month name, time range
 - English: `"Mon 22 Jun 07:30–08:30"` — abbreviated day, day number, abbreviated month name, time range
 - When `endDateTime` is null or on a different day: show only start time
@@ -288,11 +296,17 @@ Add a CSS `@keyframes` animation to the star button's scoped CSS:
 
 ```css
 @keyframes star-pop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.3); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
-.star-btn[aria-pressed="true"] svg {
+.star-btn[aria-pressed='true'] svg {
   animation: star-pop 0.3s ease-out;
 }
 ```
@@ -302,6 +316,7 @@ The animation triggers when `aria-pressed` changes to `"true"`. This is purely C
 ### 10. Error Resilience for Star Button
 
 When the `onStar`/`onUnstar` callback fails (background service worker unavailable):
+
 - The star button reverts to its previous visual state
 - A brief red flash animation plays (CSS class added/removed via JS)
 - The error is logged to console
@@ -348,12 +363,12 @@ export interface StorageSchema {
 
 The existing 6 message commands remain unchanged. New commands needed:
 
-| Command | Payload | Response | Purpose |
-|---------|---------|----------|---------|
-| `GET_LANGUAGE_PREFERENCE` | `{}` | `'sv' \| 'en' \| null` | Read language override |
-| `SET_LANGUAGE_PREFERENCE` | `{ locale: 'sv' \| 'en' \| null }` | `void` | Persist language override |
-| `GET_ONBOARDING_STATE` | `{}` | `boolean` | Check if onboarding dismissed |
-| `SET_ONBOARDING_STATE` | `{ dismissed: boolean }` | `void` | Persist onboarding dismissal |
+| Command                   | Payload                            | Response               | Purpose                       |
+| ------------------------- | ---------------------------------- | ---------------------- | ----------------------------- |
+| `GET_LANGUAGE_PREFERENCE` | `{}`                               | `'sv' \| 'en' \| null` | Read language override        |
+| `SET_LANGUAGE_PREFERENCE` | `{ locale: 'sv' \| 'en' \| null }` | `void`                 | Persist language override     |
+| `GET_ONBOARDING_STATE`    | `{}`                               | `boolean`              | Check if onboarding dismissed |
+| `SET_ONBOARDING_STATE`    | `{ dismissed: boolean }`           | `void`                 | Persist onboarding dismissal  |
 
 These follow the same pattern as existing commands: dispatched in `handleMessage`, routed by `command` string, using `adapter.storageLocalGet`/`Set`.
 
@@ -365,57 +380,55 @@ StarredEvent[] → detectConflicts() → ConflictPair[] → Set<EventId> → UI 
 
 The conflict detector operates on the already-fetched events array in the UI hooks. No new storage or message commands needed. Conflicts are recomputed whenever the events array changes (star, unstar, storage change).
 
-
-
 ## Correctness Properties
 
-*A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
+_A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees._
 
 ### Property 1: Filter returns only matching events
 
-*For any* array of starred events and *for any* non-empty filter string, applying the text filter SHALL return only events where the title, organiser, or topic contains the filter string (case-insensitive). Additionally, no event that matches the filter SHALL be excluded from the results.
+_For any_ array of starred events and _for any_ non-empty filter string, applying the text filter SHALL return only events where the title, organiser, or topic contains the filter string (case-insensitive). Additionally, no event that matches the filter SHALL be excluded from the results.
 
 **Validates: Requirements 2.1, 2.2**
 
 ### Property 2: Date grouping and within-group ordering
 
-*For any* array of starred events sorted chronologically, grouping by date SHALL produce groups where: (a) every event in a group has the same date component in its `startDateTime`, (b) within each group events are ordered by `startDateTime` ascending, and (c) the groups themselves are ordered by date ascending.
+_For any_ array of starred events sorted chronologically, grouping by date SHALL produce groups where: (a) every event in a group has the same date component in its `startDateTime`, (b) within each group events are ordered by `startDateTime` ascending, and (c) the groups themselves are ordered by date ascending.
 
 **Validates: Requirements 2.3, 2.4**
 
 ### Property 3: Date formatting round-trip consistency
 
-*For any* valid ISO 8601 date-time string with timezone offset (e.g., `YYYY-MM-DDTHH:MM:SS+02:00`) and *for any* supported locale (`sv` or `en`), formatting the string and then extracting the numeric day, hour, and minute components from the formatted output SHALL produce values equal to the corresponding components in the original ISO string.
+_For any_ valid ISO 8601 date-time string with timezone offset (e.g., `YYYY-MM-DDTHH:MM:SS+02:00`) and _for any_ supported locale (`sv` or `en`), formatting the string and then extracting the numeric day, hour, and minute components from the formatted output SHALL produce values equal to the corresponding components in the original ISO string.
 
 **Validates: Requirements 4.1, 4.8**
 
 ### Property 4: Range formatting correctness
 
-*For any* valid ISO 8601 start date-time string and *for any* end date-time string on the same calendar day, the formatted output SHALL contain an en-dash (`–`) separating two time values. Conversely, *for any* start date-time with a null end date-time, the formatted output SHALL NOT contain an en-dash.
+_For any_ valid ISO 8601 start date-time string and _for any_ end date-time string on the same calendar day, the formatted output SHALL contain an en-dash (`–`) separating two time values. Conversely, _for any_ start date-time with a null end date-time, the formatted output SHALL NOT contain an en-dash.
 
 **Validates: Requirements 4.4, 4.5**
 
 ### Property 5: Undo restores original event data
 
-*For any* starred event, if the event is unstarred and then the undo action is triggered before the toast expires, the restored event SHALL be deeply equal to the original starred event (same id, title, organiser, startDateTime, endDateTime, location, description, topic, sourceUrl, icsDataUri, starredAt).
+_For any_ starred event, if the event is unstarred and then the undo action is triggered before the toast expires, the restored event SHALL be deeply equal to the original starred event (same id, title, organiser, startDateTime, endDateTime, location, description, topic, sourceUrl, icsDataUri, starredAt).
 
 **Validates: Requirements 7.2**
 
 ### Property 6: Badge count matches starred event count
 
-*For any* record of starred events (including the empty record), the badge text SHALL equal the string representation of the number of entries when the count is greater than zero, and SHALL be the empty string when the count is zero.
+_For any_ record of starred events (including the empty record), the badge text SHALL equal the string representation of the number of entries when the count is greater than zero, and SHALL be the empty string when the count is zero.
 
 **Validates: Requirements 7.4, 7.6**
 
 ### Property 7: Conflict detection correctness
 
-*For any* array of events with `startDateTime` and optional `endDateTime`, the `detectConflicts` function SHALL return a pair `(A, B)` if and only if `A.start < B.effectiveEnd AND A.effectiveEnd > B.start` (where `effectiveEnd = endDateTime ?? startDateTime`). Furthermore, removing any event from the array and re-running detection SHALL produce a result that contains no pairs involving the removed event's ID.
+_For any_ array of events with `startDateTime` and optional `endDateTime`, the `detectConflicts` function SHALL return a pair `(A, B)` if and only if `A.start < B.effectiveEnd AND A.effectiveEnd > B.start` (where `effectiveEnd = endDateTime ?? startDateTime`). Furthermore, removing any event from the array and re-running detection SHALL produce a result that contains no pairs involving the removed event's ID.
 
 **Validates: Requirements 8.1, 8.3, 8.4, 8.6**
 
 ### Property 8: Star button reverts on message failure
 
-*For any* star button in a given visual state (starred or unstarred), if the corresponding message to the background service worker fails (rejects or returns `success: false`), the button SHALL return to its original visual state (the `aria-pressed` attribute SHALL equal its value before the click).
+_For any_ star button in a given visual state (starred or unstarred), if the corresponding message to the background service worker fails (rejects or returns `success: false`), the button SHALL return to its original visual state (the `aria-pressed` attribute SHALL equal its value before the click).
 
 **Validates: Requirements 7.8**
 
@@ -469,32 +482,35 @@ PBT is appropriate for this feature because several core modules are pure functi
 
 Each of the 8 correctness properties maps to a single property-based test file in `tests/property/`:
 
-| Property | Test File |
-|----------|-----------|
-| 1: Filter matching | `filter-matching.property.test.ts` |
-| 2: Date grouping | `date-grouping.property.test.ts` |
+| Property                  | Test File                                |
+| ------------------------- | ---------------------------------------- |
+| 1: Filter matching        | `filter-matching.property.test.ts`       |
+| 2: Date grouping          | `date-grouping.property.test.ts`         |
 | 3: Date format round-trip | `date-format-roundtrip.property.test.ts` |
-| 4: Range formatting | `date-format-range.property.test.ts` |
-| 5: Undo round-trip | `undo-roundtrip.property.test.ts` |
-| 6: Badge count | `badge-count.property.test.ts` |
-| 7: Conflict detection | `conflict-detection.property.test.ts` |
-| 8: Star button revert | `star-button-revert.property.test.ts` |
+| 4: Range formatting       | `date-format-range.property.test.ts`     |
+| 5: Undo round-trip        | `undo-roundtrip.property.test.ts`        |
+| 6: Badge count            | `badge-count.property.test.ts`           |
+| 7: Conflict detection     | `conflict-detection.property.test.ts`    |
+| 8: Star button revert     | `star-button-revert.property.test.ts`    |
 
 ### Unit Tests (Vitest)
 
 Unit tests cover specific examples, edge cases, and integration points:
 
 **`src/core/date-formatter.ts`:**
+
 - Swedish format with known dates (Req 4.2)
 - English format with known dates (Req 4.3)
 - Null endDateTime produces no range (Req 4.5)
 - Cross-day start/end (edge case)
 
 **`src/core/date-config.ts`:**
+
 - Exports DAY_TO_DATE with 7 entries (Req 5.1)
 - All values are valid ISO date strings (Req 5.1)
 
 **`src/core/conflict-detector.ts`:**
+
 - No conflicts in non-overlapping events
 - Two overlapping events detected
 - Three-way overlap (A overlaps B, B overlaps C, A doesn't overlap C)
@@ -502,6 +518,7 @@ Unit tests cover specific examples, edge cases, and integration points:
 - Empty array returns empty
 
 **`src/ui/popup/` components:**
+
 - EventItem renders star toggle (Req 1.2)
 - EventItem renders source link when sourceUrl present (Req 1.4)
 - EventItem expand/collapse toggle (Req 1.6, 1.7)
@@ -510,28 +527,33 @@ Unit tests cover specific examples, edge cases, and integration points:
 - Export button triggers ICS download (Req 1.1)
 
 **`src/ui/stars/` components:**
+
 - SearchFilter filters events (Req 2.1)
 - EventGrid date grouping with section headers (Req 2.3)
 - BulkActions select/unstar/export (Req 2.5, 2.6)
 - Column header rename (Req 2.7)
 
 **`src/ui/shared/UndoToast.tsx`:**
+
 - Toast appears on unstar (Req 7.1)
 - Undo click restores event (Req 7.2)
 - Timer expiry triggers permanent deletion (Req 7.3)
 
 **`src/extension/background.ts`:**
+
 - Badge update on storage change (Req 7.4, 7.5)
 - Badge cleared on zero events (Req 7.6)
 - New message commands (language, onboarding)
 
 **`src/ui/popup/components/OnboardingView.tsx`:**
+
 - Renders on first run (Req 6.1)
 - Contains all required sections (Req 6.2)
 - Dismissible (Req 6.3)
 - Help link re-opens (Req 6.4)
 
 **`src/ui/shared/LanguageToggle.tsx`:**
+
 - Renders with correct options (Req 6.5)
 - Persists selection (Req 6.6)
 - Default follows browser (Req 6.7)
@@ -539,6 +561,7 @@ Unit tests cover specific examples, edge cases, and integration points:
 ### E2E Tests (Playwright)
 
 E2E tests for critical flows only:
+
 - Star event → verify badge updates → open popup → verify count → export ICS
 - Unstar from popup → verify undo toast → click undo → verify event restored
 - Stars page search filter with multiple events
@@ -547,6 +570,7 @@ E2E tests for critical flows only:
 ### Human Review Checkpoints
 
 Visual design items require human approval before implementation:
+
 1. **Color palette and branding** (Req 3.1–3.3, 3.10, 3.11): Present 2–3 palette options with mockups
 2. **Icon redesign** (Req 3.7, 3.8): Present 2–3 icon concepts at all four sizes
 3. **Conflict visualization** (Req 8.7, 8.8): Present visualization approaches (colored grouping, timeline, connecting lines)

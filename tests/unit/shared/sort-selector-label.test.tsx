@@ -54,11 +54,7 @@ describe('SortSelector labelClassName prop', () => {
 
   it('defaults to text-gray-600 when no labelClassName is passed', () => {
     render(
-      <SortSelector
-        currentOrder="chronological"
-        onOrderChange={onOrderChange}
-        adapter={adapter}
-      />,
+      <SortSelector currentOrder="chronological" onOrderChange={onOrderChange} adapter={adapter} />,
     );
 
     const label = screen.getByText('Sort:');

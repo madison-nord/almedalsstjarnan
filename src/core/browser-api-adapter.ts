@@ -1,9 +1,4 @@
-import type {
-  IBrowserApiAdapter,
-  StorageSchema,
-  MessagePayload,
-  MessageResponse,
-} from './types';
+import type { IBrowserApiAdapter, StorageSchema, MessagePayload, MessageResponse } from './types';
 
 /**
  * Production implementation wrapping chrome.* APIs.
@@ -17,7 +12,7 @@ export class BrowserApiAdapter implements IBrowserApiAdapter {
     keys: K[],
   ): Promise<Partial<Pick<StorageSchema, K>>> {
     try {
-      return await chrome.storage.local.get(keys) as Partial<Pick<StorageSchema, K>>;
+      return (await chrome.storage.local.get(keys)) as Partial<Pick<StorageSchema, K>>;
     } catch (error: unknown) {
       throw new Error(
         `storageLocalGet failed: ${error instanceof Error ? error.message : String(error)}`,
@@ -37,7 +32,7 @@ export class BrowserApiAdapter implements IBrowserApiAdapter {
 
   async sendMessage<T>(message: MessagePayload): Promise<MessageResponse<T>> {
     try {
-      return await chrome.runtime.sendMessage(message) as MessageResponse<T>;
+      return (await chrome.runtime.sendMessage(message)) as MessageResponse<T>;
     } catch (error: unknown) {
       throw new Error(
         `sendMessage failed: ${error instanceof Error ? error.message : String(error)}`,
@@ -55,16 +50,11 @@ export class BrowserApiAdapter implements IBrowserApiAdapter {
     }
   }
 
-  async download(options: {
-    readonly url: string;
-    readonly filename: string;
-  }): Promise<number> {
+  async download(options: { readonly url: string; readonly filename: string }): Promise<number> {
     try {
       return await chrome.downloads.download(options);
     } catch (error: unknown) {
-      throw new Error(
-        `download failed: ${error instanceof Error ? error.message : String(error)}`,
-      );
+      throw new Error(`download failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -80,17 +70,11 @@ export class BrowserApiAdapter implements IBrowserApiAdapter {
 
   onStorageChanged(
     callback: (
-      changes: Record<
-        string,
-        { readonly oldValue?: unknown; readonly newValue?: unknown }
-      >,
+      changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
     ) => void,
   ): () => void {
     const listener = (
-      changes: Record<
-        string,
-        { readonly oldValue?: unknown; readonly newValue?: unknown }
-      >,
+      changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
       areaName: string,
     ): void => {
       if (areaName === 'local') {

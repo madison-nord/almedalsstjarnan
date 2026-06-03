@@ -37,12 +37,14 @@ graph TD
 **Current state:** The popup is a flex column with `min-h-[480px]`. The footer flows naturally after the event list, meaning it scrolls off-screen when many events are present.
 
 **Target state:**
+
 - Root container: `min-h-[560px]` with `h-[560px]` to fix the popup height and `flex flex-col overflow-hidden`
 - Header: remains at the top (flex-shrink-0)
 - Event list area: `flex-1 overflow-hidden` — the EventList component already has `overflow-y-auto flex-1` on its `<ul>`
 - Footer: `flex-shrink-0` — stays pinned at the bottom of the flex container
 
 **Key classes on root:**
+
 ```
 w-[360px] h-[560px] min-h-[560px] flex flex-col overflow-hidden bg-white
 ```
@@ -56,9 +58,14 @@ The `overflow-hidden` on the root prevents the entire popup from scrolling. The 
 **Target state:** Rendered as a fixed overlay with backdrop, centered in the popup viewport.
 
 **Structure:**
+
 ```tsx
-<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-     role="dialog" aria-modal="true" aria-labelledby="onboarding-title">
+<div
+  className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="onboarding-title"
+>
   <section className="mx-4 p-4 bg-blue-50 border border-blue-200 rounded-lg max-h-[90%] overflow-y-auto">
     {/* existing content */}
   </section>
@@ -68,6 +75,7 @@ The `overflow-hidden` on the root prevents the entire popup from scrolling. The 
 **Focus trapping:** On mount, focus moves to the first focusable element inside the overlay. A `keydown` listener on the overlay container traps Tab/Shift+Tab within the modal's focusable elements. On dismiss, focus returns to the Help_Link button.
 
 **Implementation approach:**
+
 - Add a `useEffect` that captures focusable elements within the dialog on mount
 - On Tab at last element → focus first element; on Shift+Tab at first element → focus last element
 - On Escape key → call `onDismiss`
@@ -78,6 +86,7 @@ The `overflow-hidden` on the root prevents the entire popup from scrolling. The 
 **Current state:** Returns `null` when `selectedCount === 0`.
 
 **Target state:** Always renders the toolbar. When `selectedCount === 0`:
+
 - The count displays "0 / {totalCount}"
 - The "unstar selected" and "export selected" buttons have `disabled` attribute and reduced opacity (`opacity-50 cursor-not-allowed`)
 - The "select all / clear" button remains enabled (so users can select all)
@@ -91,6 +100,7 @@ The `overflow-hidden` on the root prevents the entire popup from scrolling. The 
 **Target state:** Remove the conditional `border-l-2 border-l-slate-300` class entirely. The conflict indicator (dot + tooltip) remains unchanged.
 
 **Change:**
+
 ```tsx
 // Before
 <td className={`whitespace-nowrap px-3 py-2 text-sm text-gray-600${isConflicting === true ? ' border-l-2 border-l-slate-300' : ''}`}>
@@ -105,23 +115,23 @@ No data model changes. All improvements are purely presentational.
 
 ## Correctness Properties
 
-*A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
+_A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees._
 
 ### Property 1: BulkActions always renders with correct button state
 
-*For any* `selectedCount` (0 to totalCount) and any `totalCount` ≥ 0, the BulkActions component SHALL render a non-null element, and the "unstar selected" and "export selected" buttons SHALL be disabled if and only if `selectedCount === 0`.
+_For any_ `selectedCount` (0 to totalCount) and any `totalCount` ≥ 0, the BulkActions component SHALL render a non-null element, and the "unstar selected" and "export selected" buttons SHALL be disabled if and only if `selectedCount === 0`.
 
 **Validates: Requirements 2.1, 2.2, 2.3**
 
 ### Property 2: BulkActions always displays counts
 
-*For any* `selectedCount` and `totalCount`, the rendered BulkActions output SHALL contain both the selectedCount value and the totalCount value as visible text.
+_For any_ `selectedCount` and `totalCount`, the rendered BulkActions output SHALL contain both the selectedCount value and the totalCount value as visible text.
 
 **Validates: Requirements 2.4, 2.5**
 
 ### Property 3: EventRow date/time column has no conditional border styling
 
-*For any* event and any conflict state (true or false), the date/time column `<td>` in EventRow SHALL have identical border-related class names — specifically, no `border-l` variant shall be present.
+_For any_ event and any conflict state (true or false), the date/time column `<td>` in EventRow SHALL have identical border-related class names — specifically, no `border-l` variant shall be present.
 
 **Validates: Requirements 3.1, 3.2, 3.3**
 
@@ -165,6 +175,7 @@ No new E2E tests needed — these are visual/layout changes that are best verifi
 ### Current State
 
 The star button is injected into each event card on the Almedalsveckan programme page via the content script (`src/extension/content-script.ts` and `src/extension/star-button.ts`). It renders inside a Shadow DOM with scoped CSS (`src/extension/star-button.css`). Currently:
+
 - The filled star uses a basic yellow color that doesn't match the extension's branded amber+navy style
 - The button is positioned in the top-right corner of the event card
 
@@ -185,6 +196,6 @@ The star button is injected into each event card on the Almedalsveckan programme
 
 **Property 4: Star button filled state uses branded colors**
 
-*For any* event card in the starred state, the star button SVG SHALL have `fill: #f59e0b` and `stroke: #1e3a5f`. *For any* event card in the unstarred state, the star button SVG SHALL have `fill: none` and `stroke: #6b7280`.
+_For any_ event card in the starred state, the star button SVG SHALL have `fill: #f59e0b` and `stroke: #1e3a5f`. _For any_ event card in the unstarred state, the star button SVG SHALL have `fill: none` and `stroke: #6b7280`.
 
 **Validates: Requirements 5.1, 5.2**

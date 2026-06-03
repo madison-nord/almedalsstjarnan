@@ -76,9 +76,7 @@ describe('BrowserApiAdapter', () => {
 
       const adapter = await getAdapter();
 
-      await expect(adapter.storageLocalGet(['starredEvents'])).rejects.toThrow(
-        /storageLocalGet/,
-      );
+      await expect(adapter.storageLocalGet(['starredEvents'])).rejects.toThrow(/storageLocalGet/);
     });
 
     it('returns a Promise', async () => {
@@ -110,9 +108,9 @@ describe('BrowserApiAdapter', () => {
 
       const adapter = await getAdapter();
 
-      await expect(
-        adapter.storageLocalSet({ sortOrder: 'chronological' }),
-      ).rejects.toThrow(/storageLocalSet/);
+      await expect(adapter.storageLocalSet({ sortOrder: 'chronological' })).rejects.toThrow(
+        /storageLocalSet/,
+      );
     });
 
     it('returns a Promise that resolves to void', async () => {
@@ -141,9 +139,7 @@ describe('BrowserApiAdapter', () => {
     });
 
     it('rejects with a descriptive error including method name on failure', async () => {
-      chromeMock.runtime.sendMessage.mockRejectedValue(
-        new Error('extension context invalidated'),
-      );
+      chromeMock.runtime.sendMessage.mockRejectedValue(new Error('extension context invalidated'));
 
       const adapter = await getAdapter();
 
@@ -210,15 +206,13 @@ describe('BrowserApiAdapter', () => {
     });
 
     it('rejects with a descriptive error including method name on failure', async () => {
-      chromeMock.downloads.download.mockRejectedValue(
-        new Error('download blocked'),
-      );
+      chromeMock.downloads.download.mockRejectedValue(new Error('download blocked'));
 
       const adapter = await getAdapter();
 
-      await expect(
-        adapter.download({ url: 'blob:x', filename: 'f.ics' }),
-      ).rejects.toThrow(/download/);
+      await expect(adapter.download({ url: 'blob:x', filename: 'f.ics' })).rejects.toThrow(
+        /download/,
+      );
     });
 
     it('returns a Promise', async () => {
@@ -250,9 +244,9 @@ describe('BrowserApiAdapter', () => {
 
       const adapter = await getAdapter();
 
-      await expect(
-        adapter.createTab({ url: 'chrome-extension://id/stars.html' }),
-      ).rejects.toThrow(/createTab/);
+      await expect(adapter.createTab({ url: 'chrome-extension://id/stars.html' })).rejects.toThrow(
+        /createTab/,
+      );
     });
 
     it('returns a Promise that resolves to void', async () => {
@@ -276,9 +270,7 @@ describe('BrowserApiAdapter', () => {
 
       expect(chromeMock.storage.onChanged.addListener).toHaveBeenCalledTimes(1);
       // The adapter should pass a wrapper or the callback itself to addListener
-      expect(chromeMock.storage.onChanged.addListener).toHaveBeenCalledWith(
-        expect.any(Function),
-      );
+      expect(chromeMock.storage.onChanged.addListener).toHaveBeenCalledWith(expect.any(Function));
     });
 
     it('returns an unsubscribe function', async () => {
@@ -297,15 +289,14 @@ describe('BrowserApiAdapter', () => {
       const unsubscribe = adapter.onStorageChanged(callback);
 
       // Get the listener that was passed to addListener
-      const registeredListener =
-        chromeMock.storage.onChanged.addListener.mock.calls[0]![0] as (...args: unknown[]) => void;
+      const registeredListener = chromeMock.storage.onChanged.addListener.mock.calls[0]![0] as (
+        ...args: unknown[]
+      ) => void;
 
       unsubscribe();
 
       expect(chromeMock.storage.onChanged.removeListener).toHaveBeenCalledTimes(1);
-      expect(chromeMock.storage.onChanged.removeListener).toHaveBeenCalledWith(
-        registeredListener,
-      );
+      expect(chromeMock.storage.onChanged.removeListener).toHaveBeenCalledWith(registeredListener);
     });
 
     it('forwards storage change events to the callback', async () => {
@@ -315,11 +306,10 @@ describe('BrowserApiAdapter', () => {
       adapter.onStorageChanged(callback);
 
       // Get the listener that was registered
-      const registeredListener =
-        chromeMock.storage.onChanged.addListener.mock.calls[0]![0] as (
-          changes: Record<string, unknown>,
-          areaName: string,
-        ) => void;
+      const registeredListener = chromeMock.storage.onChanged.addListener.mock.calls[0]![0] as (
+        changes: Record<string, unknown>,
+        areaName: string,
+      ) => void;
 
       // Simulate a storage change event
       const changes = {
@@ -336,11 +326,10 @@ describe('BrowserApiAdapter', () => {
 
       adapter.onStorageChanged(callback);
 
-      const registeredListener =
-        chromeMock.storage.onChanged.addListener.mock.calls[0]![0] as (
-          changes: Record<string, unknown>,
-          areaName: string,
-        ) => void;
+      const registeredListener = chromeMock.storage.onChanged.addListener.mock.calls[0]![0] as (
+        changes: Record<string, unknown>,
+        areaName: string,
+      ) => void;
 
       // Simulate a sync storage change (not local)
       registeredListener({ key: { newValue: 'val' } }, 'sync');
@@ -353,9 +342,7 @@ describe('BrowserApiAdapter', () => {
 
   describe('error wrapping', () => {
     it('includes the original error message in the rejection', async () => {
-      chromeMock.storage.local.get.mockRejectedValue(
-        new Error('original error message'),
-      );
+      chromeMock.storage.local.get.mockRejectedValue(new Error('original error message'));
 
       const adapter = await getAdapter();
 
@@ -369,9 +356,9 @@ describe('BrowserApiAdapter', () => {
 
       const adapter = await getAdapter();
 
-      await expect(
-        adapter.storageLocalSet({ sortOrder: 'chronological' }),
-      ).rejects.toThrow(/storageLocalSet.*disk full|disk full.*storageLocalSet/);
+      await expect(adapter.storageLocalSet({ sortOrder: 'chronological' })).rejects.toThrow(
+        /storageLocalSet.*disk full|disk full.*storageLocalSet/,
+      );
     });
 
     it('includes the method name in the rejection for sendMessage', async () => {
@@ -389,9 +376,9 @@ describe('BrowserApiAdapter', () => {
 
       const adapter = await getAdapter();
 
-      await expect(
-        adapter.download({ url: 'blob:x', filename: 'f.ics' }),
-      ).rejects.toThrow(/download.*blocked|blocked.*download/);
+      await expect(adapter.download({ url: 'blob:x', filename: 'f.ics' })).rejects.toThrow(
+        /download.*blocked|blocked.*download/,
+      );
     });
 
     it('includes the method name in the rejection for createTab', async () => {
@@ -399,9 +386,9 @@ describe('BrowserApiAdapter', () => {
 
       const adapter = await getAdapter();
 
-      await expect(
-        adapter.createTab({ url: 'chrome-extension://id/stars.html' }),
-      ).rejects.toThrow(/createTab.*limit reached|limit reached.*createTab/);
+      await expect(adapter.createTab({ url: 'chrome-extension://id/stars.html' })).rejects.toThrow(
+        /createTab.*limit reached|limit reached.*createTab/,
+      );
     });
   });
 

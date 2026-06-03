@@ -26,12 +26,10 @@ describe('Popup ExportButton', () => {
   beforeEach(() => {
     resetMocks();
     adapter = mockBrowserApi;
-    (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
-      (key: string) => {
-        if (key === 'exportToCalendar') return 'Export to calendar';
-        return '';
-      },
-    );
+    (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation((key: string) => {
+      if (key === 'exportToCalendar') return 'Export to calendar';
+      return '';
+    });
   });
 
   it('renders with localized label', () => {

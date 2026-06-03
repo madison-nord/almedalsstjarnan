@@ -95,7 +95,11 @@ const messageMap: Record<string, string> = {
 // ─── Helpers ──────────────────────────────────────────────────────
 
 let adapter: IBrowserApiAdapter;
-let storageChangedCallback: ((changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => void) | null;
+let storageChangedCallback:
+  | ((
+      changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
+    ) => void)
+  | null;
 
 function setupAdapter(events: StarredEvent[] = [], sortOrder: SortOrder = 'chronological'): void {
   storageChangedCallback = null;
@@ -122,7 +126,11 @@ function setupAdapter(events: StarredEvent[] = [], sortOrder: SortOrder = 'chron
   );
 
   (adapter.onStorageChanged as ReturnType<typeof vi.fn>).mockImplementation(
-    (cb: (changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => void) => {
+    (
+      cb: (
+        changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
+      ) => void,
+    ) => {
       storageChangedCallback = cb;
       return vi.fn();
     },
@@ -131,7 +139,10 @@ function setupAdapter(events: StarredEvent[] = [], sortOrder: SortOrder = 'chron
   (adapter.download as ReturnType<typeof vi.fn>).mockResolvedValue(1);
 }
 
-async function renderApp(events: StarredEvent[] = [], sortOrder: SortOrder = 'chronological'): Promise<void> {
+async function renderApp(
+  events: StarredEvent[] = [],
+  sortOrder: SortOrder = 'chronological',
+): Promise<void> {
   setupAdapter(events, sortOrder);
   render(<App adapter={adapter} />);
   await waitFor(() => {
@@ -173,7 +184,9 @@ describe('Stars Page App', () => {
     it('sends only GET_ALL_STARRED_EVENTS on mount (no GET_SORT_ORDER)', async () => {
       await renderApp();
 
-      const calls = (adapter.sendMessage as ReturnType<typeof vi.fn>).mock.calls as [MessagePayload][];
+      const calls = (adapter.sendMessage as ReturnType<typeof vi.fn>).mock.calls as [
+        MessagePayload,
+      ][];
       const commands = calls.map((call) => call[0].command);
       expect(commands).toContain('GET_ALL_STARRED_EVENTS');
       expect(commands).not.toContain('GET_SORT_ORDER');
@@ -231,7 +244,13 @@ describe('Stars Page App', () => {
     });
 
     it('displays event date-time in grid', async () => {
-      const events = [makeEvent({ id: 'e1', startDateTime: '2026-06-28T10:00:00+02:00', endDateTime: '2026-06-28T11:00:00+02:00' })];
+      const events = [
+        makeEvent({
+          id: 'e1',
+          startDateTime: '2026-06-28T10:00:00+02:00',
+          endDateTime: '2026-06-28T11:00:00+02:00',
+        }),
+      ];
       await renderApp(events);
 
       expect(screen.getByText('Sön 28 juni 10:00\u201311:00')).toBeInTheDocument();
@@ -252,7 +271,13 @@ describe('Stars Page App', () => {
     });
 
     it('renders title as a link when sourceUrl is present', async () => {
-      const events = [makeEvent({ id: 'e1', title: 'Linked Event', sourceUrl: 'https://almedalsveckan.info/event/e1' })];
+      const events = [
+        makeEvent({
+          id: 'e1',
+          title: 'Linked Event',
+          sourceUrl: 'https://almedalsveckan.info/event/e1',
+        }),
+      ];
       await renderApp(events);
 
       const link = screen.getByRole('link', { name: 'Linked Event' });
@@ -403,7 +428,9 @@ describe('Stars Page App', () => {
       expect(screen.getByRole('table')).toHaveTextContent('Keep this');
 
       // Cleanup: advance timer to avoid pending timers
-      act(() => { vi.advanceTimersByTime(5000); });
+      act(() => {
+        vi.advanceTimersByTime(5000);
+      });
       vi.useRealTimers();
     });
 
@@ -426,7 +453,9 @@ describe('Stars Page App', () => {
       );
 
       // Cleanup: advance timer to avoid pending timers
-      act(() => { vi.advanceTimersByTime(5000); });
+      act(() => {
+        vi.advanceTimersByTime(5000);
+      });
       vi.useRealTimers();
     });
 
@@ -443,7 +472,9 @@ describe('Stars Page App', () => {
       expect(screen.getByText('Event to remove')).toBeInTheDocument();
 
       // Cleanup: advance timer to avoid pending timers
-      act(() => { vi.advanceTimersByTime(5000); });
+      act(() => {
+        vi.advanceTimersByTime(5000);
+      });
       vi.useRealTimers();
     });
 
@@ -513,9 +544,7 @@ describe('Stars Page App', () => {
 
       expect(screen.getByText('No starred events')).toBeInTheDocument();
       expect(
-        screen.getByText(
-          'Visit the Almedalsveckan programme and click the star to save events.',
-        ),
+        screen.getByText('Visit the Almedalsveckan programme and click the star to save events.'),
       ).toBeInTheDocument();
     });
 
@@ -794,7 +823,11 @@ describe('Stars Page App', () => {
       const mockUnsubscribe = vi.fn();
       setupAdapter(makeEvents(1));
       (adapter.onStorageChanged as ReturnType<typeof vi.fn>).mockImplementation(
-        (cb: (changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => void) => {
+        (
+          cb: (
+            changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
+          ) => void,
+        ) => {
           storageChangedCallback = cb;
           return mockUnsubscribe;
         },

@@ -234,7 +234,9 @@ export const malformedEntryArb: fc.Arbitrary<Record<string, unknown>> = fc.oneof
     starred: fc.constant(true),
   }),
   // Entry is a primitive (not an object)
-  fc.oneof(fc.string(), fc.integer(), fc.boolean(), fc.constant(null)).map((v) => v as unknown as Record<string, unknown>),
+  fc
+    .oneof(fc.string(), fc.integer(), fc.boolean(), fc.constant(null))
+    .map((v) => v as unknown as Record<string, unknown>),
 );
 
 /**
@@ -249,10 +251,10 @@ export const mixedStorageRecordArb: fc.Arbitrary<{
 }> = fc
   .record({
     validEvents: fc.array(starredEventArb, { minLength: 0, maxLength: 10 }),
-    malformedEntries: fc.array(
-      fc.tuple(hexStringArb(16), malformedEntryArb),
-      { minLength: 0, maxLength: 10 },
-    ),
+    malformedEntries: fc.array(fc.tuple(hexStringArb(16), malformedEntryArb), {
+      minLength: 0,
+      maxLength: 10,
+    }),
   })
   .map(({ validEvents, malformedEntries }) => {
     const record: Record<string, unknown> = {};
@@ -291,4 +293,3 @@ export const invalidTopLevelArb: fc.Arbitrary<unknown> = fc.oneof(
   fc.double(),
   fc.boolean(),
 );
-

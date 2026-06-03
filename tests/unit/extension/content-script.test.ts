@@ -10,7 +10,12 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-import type { IBrowserApiAdapter, MessagePayload, MessageResponse, GetStarStateData } from '#core/types';
+import type {
+  IBrowserApiAdapter,
+  MessagePayload,
+  MessageResponse,
+  GetStarStateData,
+} from '#core/types';
 import {
   initContentScript,
   processEventCard,
@@ -24,13 +29,11 @@ import { createMockEventCard } from '#test/helpers/dom-helpers';
 
 function setupAdapter(): IBrowserApiAdapter {
   const adapter = mockBrowserApi;
-  (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
-    (key: string) => {
-      if (key === 'starEvent') return 'Star event';
-      if (key === 'unstarEvent') return 'Unstar event';
-      return '';
-    },
-  );
+  (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation((key: string) => {
+    if (key === 'starEvent') return 'Star event';
+    if (key === 'unstarEvent') return 'Unstar event';
+    return '';
+  });
   (adapter.sendMessage as ReturnType<typeof vi.fn>).mockImplementation(
     (message: MessagePayload): Promise<MessageResponse<GetStarStateData>> => {
       if (message.command === 'GET_STAR_STATE') {
@@ -244,10 +247,13 @@ describe('Content Script', () => {
                   startDateTime: '2026-06-22T07:30:00+02:00',
                   endDateTime: '2026-06-22T08:30:00+02:00',
                   location: 'Holmen 1',
-                  description: 'Efter en kort inledning bjuder vi in till ett samtal ombord på båten Vagabonde. Varmt välkommen!',
+                  description:
+                    'Efter en kort inledning bjuder vi in till ett samtal ombord på båten Vagabonde. Varmt välkommen!',
                   topic: 'Hållbarhet, Ekonomi',
-                  sourceUrl: 'https://almedalsveckan.info/rg/almedalsveckan/evenemang-almedalsveckan/2026/8363',
-                  icsDataUri: 'data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0AURL:https://almedalsveckan.info/rg/almedalsveckan/evenemang-almedalsveckan/2026/8363%0ADTSTART:20260622T073000%0ADTEND:20260622T083000%0ASUMMARY:Tillr%C3%A4cklighet%20kr%C3%A4vs%20f%C3%B6r%20att%20klara%20klimatkrisen%0ADESCRIPTION:Efter%20en%20kort%20inledning%20bjuder%20vi%20in%20till%20ett%20samtal%20ombord%20p%C3%A5%20b%C3%A5ten%20Vagabonde.%20Varmt%20v%C3%A4lkommen!%0ALOCATION:Holmen%201%0AEND:VEVENT%0AEND:VCALENDAR',
+                  sourceUrl:
+                    'https://almedalsveckan.info/rg/almedalsveckan/evenemang-almedalsveckan/2026/8363',
+                  icsDataUri:
+                    'data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0AURL:https://almedalsveckan.info/rg/almedalsveckan/evenemang-almedalsveckan/2026/8363%0ADTSTART:20260622T073000%0ADTEND:20260622T083000%0ASUMMARY:Tillr%C3%A4cklighet%20kr%C3%A4vs%20f%C3%B6r%20att%20klara%20klimatkrisen%0ADESCRIPTION:Efter%20en%20kort%20inledning%20bjuder%20vi%20in%20till%20ett%20samtal%20ombord%20p%C3%A5%20b%C3%A5ten%20Vagabonde.%20Varmt%20v%C3%A4lkommen!%0ALOCATION:Holmen%201%0AEND:VEVENT%0AEND:VCALENDAR',
                 },
               },
             });
@@ -351,8 +357,16 @@ describe('Content Script', () => {
   describe('cross-page consistency (same tab)', () => {
     it('maintains an internal eventId → StarButton[] map', async () => {
       // Create two cards with the same eventId
-      const card1 = createMockEventCard({ eventId: '9001', liId: 'item_4_aaa', divId: 'item4_aaa' });
-      const card2 = createMockEventCard({ eventId: '9001', liId: 'item_4_bbb', divId: 'item4_bbb' });
+      const card1 = createMockEventCard({
+        eventId: '9001',
+        liId: 'item_4_aaa',
+        divId: 'item4_aaa',
+      });
+      const card2 = createMockEventCard({
+        eventId: '9001',
+        liId: 'item_4_bbb',
+        divId: 'item4_bbb',
+      });
       document.body.appendChild(card1);
       document.body.appendChild(card2);
 
@@ -374,18 +388,32 @@ describe('Content Script', () => {
             return Promise.resolve({ success: true, data: { starred: false, storedFields: null } });
           }
           if (message.command === 'STAR_EVENT') {
-            return Promise.resolve({ success: true, data: undefined as unknown as GetStarStateData });
+            return Promise.resolve({
+              success: true,
+              data: undefined as unknown as GetStarStateData,
+            });
           }
           if (message.command === 'UNSTAR_EVENT') {
-            return Promise.resolve({ success: true, data: undefined as unknown as GetStarStateData });
+            return Promise.resolve({
+              success: true,
+              data: undefined as unknown as GetStarStateData,
+            });
           }
           return Promise.resolve({ success: true, data: undefined as unknown as GetStarStateData });
         },
       );
 
       // Create two cards with the same eventId
-      const card1 = createMockEventCard({ eventId: '9002', liId: 'item_4_ccc', divId: 'item4_ccc' });
-      const card2 = createMockEventCard({ eventId: '9002', liId: 'item_4_ddd', divId: 'item4_ddd' });
+      const card1 = createMockEventCard({
+        eventId: '9002',
+        liId: 'item_4_ccc',
+        divId: 'item4_ccc',
+      });
+      const card2 = createMockEventCard({
+        eventId: '9002',
+        liId: 'item_4_ddd',
+        divId: 'item4_ddd',
+      });
       document.body.appendChild(card1);
       document.body.appendChild(card2);
 
@@ -415,9 +443,17 @@ describe('Content Script', () => {
       const card = createMockEventCard({ eventId: '10001' });
       document.body.appendChild(card);
 
-      let storageChangedCallback: ((changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => void) | undefined;
+      let storageChangedCallback:
+        | ((
+            changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
+          ) => void)
+        | undefined;
       (adapter.onStorageChanged as ReturnType<typeof vi.fn>).mockImplementation(
-        (cb: (changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => void) => {
+        (
+          cb: (
+            changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
+          ) => void,
+        ) => {
           storageChangedCallback = cb;
           return vi.fn();
         },
@@ -473,10 +509,13 @@ describe('Content Script', () => {
                   startDateTime: '2026-06-22T07:30:00+02:00',
                   endDateTime: '2026-06-22T08:30:00+02:00',
                   location: 'Holmen 1',
-                  description: 'Efter en kort inledning bjuder vi in till ett samtal ombord på båten Vagabonde. Varmt välkommen!',
+                  description:
+                    'Efter en kort inledning bjuder vi in till ett samtal ombord på båten Vagabonde. Varmt välkommen!',
                   topic: 'Hållbarhet, Ekonomi',
-                  sourceUrl: 'https://almedalsveckan.info/rg/almedalsveckan/evenemang-almedalsveckan/2026/8363',
-                  icsDataUri: 'data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0AURL:https://almedalsveckan.info/rg/almedalsveckan/evenemang-almedalsveckan/2026/8363%0ADTSTART:20260622T073000%0ADTEND:20260622T083000%0ASUMMARY:Tillr%C3%A4cklighet%20kr%C3%A4vs%20f%C3%B6r%20att%20klara%20klimatkrisen%0ADESCRIPTION:Efter%20en%20kort%20inledning%20bjuder%20vi%20in%20till%20ett%20samtal%20ombord%20p%C3%A5%20b%C3%A5ten%20Vagabonde.%20Varmt%20v%C3%A4lkommen!%0ALOCATION:Holmen%201%0AEND:VEVENT%0AEND:VCALENDAR',
+                  sourceUrl:
+                    'https://almedalsveckan.info/rg/almedalsveckan/evenemang-almedalsveckan/2026/8363',
+                  icsDataUri:
+                    'data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0AURL:https://almedalsveckan.info/rg/almedalsveckan/evenemang-almedalsveckan/2026/8363%0ADTSTART:20260622T073000%0ADTEND:20260622T083000%0ASUMMARY:Tillr%C3%A4cklighet%20kr%C3%A4vs%20f%C3%B6r%20att%20klara%20klimatkrisen%0ADESCRIPTION:Efter%20en%20kort%20inledning%20bjuder%20vi%20in%20till%20ett%20samtal%20ombord%20p%C3%A5%20b%C3%A5ten%20Vagabonde.%20Varmt%20v%C3%A4lkommen!%0ALOCATION:Holmen%201%0AEND:VEVENT%0AEND:VCALENDAR',
                 },
               },
             });
@@ -488,9 +527,17 @@ describe('Content Script', () => {
       const card = createMockEventCard({ eventId: '10002' });
       document.body.appendChild(card);
 
-      let storageChangedCallback: ((changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => void) | undefined;
+      let storageChangedCallback:
+        | ((
+            changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
+          ) => void)
+        | undefined;
       (adapter.onStorageChanged as ReturnType<typeof vi.fn>).mockImplementation(
-        (cb: (changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => void) => {
+        (
+          cb: (
+            changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
+          ) => void,
+        ) => {
           storageChangedCallback = cb;
           return vi.fn();
         },

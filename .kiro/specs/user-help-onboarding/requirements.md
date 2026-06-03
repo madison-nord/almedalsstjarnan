@@ -124,4 +124,3 @@ The Almedalsstjärnan extension currently provides a minimal onboarding modal wi
 4. THE Help_Modal SHALL use Tailwind CSS utility classes for all styling.
 5. WHILE displayed within the Popup, THE Help_Modal SHALL arrange Feature_Groups in a single-column layout.
 6. WHILE displayed within the Stars_Page at a viewport width of 768px or greater, THE Help_Modal SHALL arrange Feature_Groups in a two-column grid layout.
-

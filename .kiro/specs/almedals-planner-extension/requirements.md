@@ -40,7 +40,7 @@ Almedalsstjärnan is a Chrome-first, WebExtensions-compatible desktop browser ex
 2. THE Extension project SHALL require Node.js version 20 or higher, enforced via an engines field in package.json.
 3. THE Extension project SHALL use Vite as the bundler with vite-plugin-web-extension for hot reload during development.
 4. THE Extension project SHALL use TypeScript in strict mode with noUncheckedIndexedAccess and noImplicitOverride enabled in tsconfig.json.
-5. THE Extension project SHALL define path aliases #core/*, #ui/*, #features/*, #extension/*, and #test/* in both tsconfig.json and vite.config.ts.
+5. THE Extension project SHALL define path aliases #core/_, #ui/_, #features/_, #extension/_, and #test/\* in both tsconfig.json and vite.config.ts.
 6. THE Extension project SHALL use ESLint and Prettier configured from the first commit, with consistent rules enforced across all source and test files.
 7. THE Extension project SHALL use Vitest as the unit test runner, fast-check for property-based tests, and Playwright for minimal E2E tests.
 8. THE Extension project SHALL use Tailwind CSS for Popup_UI and Stars_Page styling only.
@@ -61,14 +61,14 @@ Almedalsstjärnan is a Chrome-first, WebExtensions-compatible desktop browser ex
 
 1. THE Extension SHALL use manifest_version 3.
 2. THE Extension manifest SHALL declare the permissions: storage, downloads, tabs.
-3. THE Extension manifest SHALL declare a host_permissions entry for *://almedalsveckan.info/*.
+3. THE Extension manifest SHALL declare a host*permissions entry for *://almedalsveckan.info/\_.
 4. THE Extension manifest SHALL declare default_locale as "sv".
 5. THE Extension manifest SHALL NOT declare any of the following permissions: cookies, history, bookmarks, webRequest, nativeMessaging, identity, sidePanel.
 6. THE Extension manifest SHALL register a background service_worker script.
-7. THE Extension manifest SHALL register a content_scripts entry matching *://almedalsveckan.info/* with the Content_Script bundle.
+7. THE Extension manifest SHALL register a content*scripts entry matching *://almedalsveckan.info/\_ with the Content_Script bundle.
 8. THE Extension manifest SHALL declare a browser_action (action) with a default_popup pointing to the Popup_UI HTML file.
 9. THE Extension manifest SHALL use a simple deep-merge strategy at build time combining one base manifest JSON with per-browser override JSON files.
-10. THE Extension manifest SHALL reference localized name and description via __MSG_extensionName__ and __MSG_extensionDescription__ message keys.
+10. THE Extension manifest SHALL reference localized name and description via **MSG_extensionName** and **MSG_extensionDescription** message keys.
 
 ---
 
@@ -78,7 +78,7 @@ Almedalsstjärnan is a Chrome-first, WebExtensions-compatible desktop browser ex
 
 #### Acceptance Criteria
 
-1. THE Extension SHALL provide locale files at _locales/sv/messages.json and _locales/en/messages.json.
+1. THE Extension SHALL provide locale files at \_locales/sv/messages.json and \_locales/en/messages.json.
 2. WHEN the browser UI language is Swedish, THE Extension SHALL display all extension-created user-facing text in Swedish.
 3. WHEN the browser UI language is English, THE Extension SHALL display all extension-created user-facing text in English.
 4. WHEN the browser UI language is neither Swedish nor English, THE Extension SHALL display all extension-created user-facing text in Swedish.
@@ -264,7 +264,7 @@ Almedalsstjärnan is a Chrome-first, WebExtensions-compatible desktop browser ex
 
 1. THE Browser_API_Adapter SHALL provide methods wrapping: chrome.storage.local.get, chrome.storage.local.set, chrome.runtime.sendMessage, chrome.i18n.getMessage, chrome.downloads.download, chrome.tabs.create.
 2. THE Browser_API_Adapter SHALL expose a consistent Promise-based interface for all wrapped methods.
-3. THE Browser_API_Adapter SHALL be the sole module that directly references chrome.* or browser.* global APIs.
+3. THE Browser*API_Adapter SHALL be the sole module that directly references chrome.* or browser.\_ global APIs.
 4. THE Browser_API_Adapter SHALL be injectable/mockable in all consuming modules for unit testing.
 5. IF a browser API call fails, THEN THE Browser_API_Adapter SHALL reject the Promise with a descriptive error including the API method name and the original error message.
 
@@ -309,7 +309,7 @@ Almedalsstjärnan is a Chrome-first, WebExtensions-compatible desktop browser ex
 #### Acceptance Criteria
 
 1. THE Extension SHALL request only the permissions: storage, downloads, tabs.
-2. THE Extension SHALL request only the host_permissions: *://almedalsveckan.info/*.
+2. THE Extension SHALL request only the host*permissions: *://almedalsveckan.info/\_.
 3. THE Extension SHALL NOT request any of: cookies, history, bookmarks, webRequest, nativeMessaging, identity, sidePanel.
 4. THE Extension SHALL NOT execute any remote code or load scripts from external URLs.
 5. THE Extension SHALL NOT transmit any user data to external servers.
@@ -326,7 +326,7 @@ Almedalsstjärnan is a Chrome-first, WebExtensions-compatible desktop browser ex
 1. WHEN the build command is executed, THE Extension build pipeline SHALL produce a dist/ directory containing all extension files ready for loading as an unpacked extension.
 2. WHEN the package command is executed, THE Extension build pipeline SHALL produce a .zip file suitable for Chrome Web Store upload.
 3. THE Extension build pipeline SHALL perform manifest deep-merge (base + browser override) during the build step.
-4. THE Extension build pipeline SHALL resolve all path aliases (#core/*, #ui/*, #features/*, #extension/*, #test/*) during bundling.
+4. THE Extension build pipeline SHALL resolve all path aliases (#core/_, #ui/_, #features/_, #extension/_, #test/\*) during bundling.
 5. THE Extension build pipeline SHALL tree-shake unused code from the final bundles.
 6. THE CI pipeline SHALL run on every push and pull request, executing: lint, type-check, unit tests (Vitest), and property-based tests (fast-check).
 7. THE CI pipeline SHALL fail the build if any lint error, type error, or test failure is detected.

@@ -87,7 +87,8 @@ describe('handleMessage — STAR_EVENT', () => {
       event: sampleEvent,
     });
 
-    const setCall = (mockBrowserApi.storageLocalSet as ReturnType<typeof vi.fn>).mock.calls[0]?.[0] as {
+    const setCall = (mockBrowserApi.storageLocalSet as ReturnType<typeof vi.fn>).mock
+      .calls[0]?.[0] as {
       readonly starredEvents: Record<string, StarredEvent>;
     };
     const stored = setCall.starredEvents['evt-001'];

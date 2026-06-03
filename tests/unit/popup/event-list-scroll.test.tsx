@@ -20,13 +20,11 @@ import { EventList } from '#ui/popup/components/EventList';
 // ─── Helpers ──────────────────────────────────────────────────────
 
 function setupAdapter(): IBrowserApiAdapter {
-  (mockBrowserApi.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
-    (key: string) => {
-      if (key === 'eventCountIndicator') return '{count} of {total}';
-      if (key === 'loadMore') return 'Load more';
-      return key;
-    },
-  );
+  (mockBrowserApi.getMessage as ReturnType<typeof vi.fn>).mockImplementation((key: string) => {
+    if (key === 'eventCountIndicator') return '{count} of {total}';
+    if (key === 'loadMore') return 'Load more';
+    return key;
+  });
   return mockBrowserApi;
 }
 

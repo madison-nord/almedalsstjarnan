@@ -13,7 +13,12 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import fc from 'fast-check';
 
-import type { IBrowserApiAdapter, MessagePayload, MessageResponse, GetStarStateData } from '#core/types';
+import type {
+  IBrowserApiAdapter,
+  MessagePayload,
+  MessageResponse,
+  GetStarStateData,
+} from '#core/types';
 import { createStarButton } from '#extension/star-button';
 import { mockBrowserApi } from '#test/helpers/mock-browser-api';
 import { processEventCard } from '#extension/content-script';
@@ -41,78 +46,70 @@ describe('Property 8: star button reverts on message failure', () => {
 
   function setupAdapter(): IBrowserApiAdapter {
     const adapter = { ...mockBrowserApi };
-    (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
-      (key: string) => {
-        if (key === 'starEvent') return 'Star event';
-        if (key === 'unstarEvent') return 'Unstar event';
-        return '';
-      },
-    );
+    (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation((key: string) => {
+      if (key === 'starEvent') return 'Star event';
+      if (key === 'unstarEvent') return 'Unstar event';
+      return '';
+    });
     return adapter;
   }
 
   it('button reverts to original state when onStar callback rejects (initially unstarred)', async () => {
     await fc.assert(
-      fc.asyncProperty(
-        fc.string({ minLength: 1, maxLength: 20 }),
-        async (eventId: string) => {
-          const host = createHost();
-          const adapter = setupAdapter();
+      fc.asyncProperty(fc.string({ minLength: 1, maxLength: 20 }), async (eventId: string) => {
+        const host = createHost();
+        const adapter = setupAdapter();
 
-          const onStar = vi.fn().mockRejectedValue(new Error('Service worker unavailable'));
-          const onUnstar = vi.fn().mockResolvedValue(undefined);
+        const onStar = vi.fn().mockRejectedValue(new Error('Service worker unavailable'));
+        const onUnstar = vi.fn().mockResolvedValue(undefined);
 
-          createStarButton(host, {
-            eventId,
-            initialStarred: false,
-            adapter,
-            onStar,
-            onUnstar,
-          });
+        createStarButton(host, {
+          eventId,
+          initialStarred: false,
+          adapter,
+          onStar,
+          onUnstar,
+        });
 
-          const btn = host.shadowRoot!.querySelector('button.star-btn') as HTMLButtonElement;
-          expect(btn.getAttribute('aria-pressed')).toBe('false');
+        const btn = host.shadowRoot!.querySelector('button.star-btn') as HTMLButtonElement;
+        expect(btn.getAttribute('aria-pressed')).toBe('false');
 
-          btn.click();
-          await new Promise((r) => setTimeout(r, 20));
+        btn.click();
+        await new Promise((r) => setTimeout(r, 20));
 
-          // Button should revert to unstarred (original state)
-          expect(btn.getAttribute('aria-pressed')).toBe('false');
-        },
-      ),
+        // Button should revert to unstarred (original state)
+        expect(btn.getAttribute('aria-pressed')).toBe('false');
+      }),
       { numRuns: 100 },
     );
   });
 
   it('button reverts to original state when onUnstar callback rejects (initially starred)', async () => {
     await fc.assert(
-      fc.asyncProperty(
-        fc.string({ minLength: 1, maxLength: 20 }),
-        async (eventId: string) => {
-          const host = createHost();
-          const adapter = setupAdapter();
+      fc.asyncProperty(fc.string({ minLength: 1, maxLength: 20 }), async (eventId: string) => {
+        const host = createHost();
+        const adapter = setupAdapter();
 
-          const onStar = vi.fn().mockResolvedValue(undefined);
-          const onUnstar = vi.fn().mockRejectedValue(new Error('Service worker unavailable'));
+        const onStar = vi.fn().mockResolvedValue(undefined);
+        const onUnstar = vi.fn().mockRejectedValue(new Error('Service worker unavailable'));
 
-          createStarButton(host, {
-            eventId,
-            initialStarred: true,
-            adapter,
-            onStar,
-            onUnstar,
-          });
+        createStarButton(host, {
+          eventId,
+          initialStarred: true,
+          adapter,
+          onStar,
+          onUnstar,
+        });
 
-          const btn = host.shadowRoot!.querySelector('button.star-btn') as HTMLButtonElement;
-          expect(btn.getAttribute('aria-pressed')).toBe('true');
+        const btn = host.shadowRoot!.querySelector('button.star-btn') as HTMLButtonElement;
+        expect(btn.getAttribute('aria-pressed')).toBe('true');
 
-          btn.click();
-          await new Promise((r) => setTimeout(r, 20));
+        btn.click();
+        await new Promise((r) => setTimeout(r, 20));
 
-          // Button should revert to starred (original state)
-          expect(btn.getAttribute('aria-pressed')).toBe('true');
-        },
-      ),
+        // Button should revert to starred (original state)
+        expect(btn.getAttribute('aria-pressed')).toBe('true');
+      }),
       { numRuns: 100 },
     );
   });
@@ -154,50 +151,50 @@ describe('Property 8: star button reverts on message failure', () => {
   it('content-script onStar reverts button when sendMessage returns success: false', async () => {
     let counter = 0;
     await fc.assert(
-      fc.asyncProperty(
-        fc.boolean(),
-        async () => {
-          counter++;
-          const uniqueId = `evt-star-fail-${counter}`;
-          const adapter = setupAdapter();
-          (adapter.sendMessage as ReturnType<typeof vi.fn>).mockImplementation(
-            (message: MessagePayload): Promise<MessageResponse<unknown>> => {
-              if (message.command === 'GET_STAR_STATE') {
-                return Promise.resolve({ success: true, data: { starred: false, storedFields: null } });
-              }
-              if (message.command === 'STAR_EVENT') {
-                return Promise.resolve({ success: false, error: 'Storage full' });
-              }
-              return Promise.resolve({ success: true, data: undefined });
-            },
-          );
+      fc.asyncProperty(fc.boolean(), async () => {
+        counter++;
+        const uniqueId = `evt-star-fail-${counter}`;
+        const adapter = setupAdapter();
+        (adapter.sendMessage as ReturnType<typeof vi.fn>).mockImplementation(
+          (message: MessagePayload): Promise<MessageResponse<unknown>> => {
+            if (message.command === 'GET_STAR_STATE') {
+              return Promise.resolve({
+                success: true,
+                data: { starred: false, storedFields: null },
+              });
+            }
+            if (message.command === 'STAR_EVENT') {
+              return Promise.resolve({ success: false, error: 'Storage full' });
+            }
+            return Promise.resolve({ success: true, data: undefined });
+          },
+        );
 
-          const card = createMockEventCard({
-            eventId: uniqueId,
-            liId: `item_4_${uniqueId}`,
-            divId: `item4_${uniqueId}`,
-          });
-          document.body.appendChild(card);
+        const card = createMockEventCard({
+          eventId: uniqueId,
+          liId: `item_4_${uniqueId}`,
+          divId: `item4_${uniqueId}`,
+        });
+        document.body.appendChild(card);
 
-          await processEventCard(card, adapter);
+        await processEventCard(card, adapter);
 
-          const host = card.querySelector('.almedals-star-host') as HTMLElement;
-          const btn = host.shadowRoot!.querySelector('button.star-btn') as HTMLButtonElement;
+        const host = card.querySelector('.almedals-star-host') as HTMLElement;
+        const btn = host.shadowRoot!.querySelector('button.star-btn') as HTMLButtonElement;
 
-          // Initially unstarred
-          expect(btn.getAttribute('aria-pressed')).toBe('false');
+        // Initially unstarred
+        expect(btn.getAttribute('aria-pressed')).toBe('false');
 
-          // Click to star — should fail and revert
-          btn.click();
-          await new Promise((r) => setTimeout(r, 20));
+        // Click to star — should fail and revert
+        btn.click();
+        await new Promise((r) => setTimeout(r, 20));
 
-          // Should revert to unstarred
-          expect(btn.getAttribute('aria-pressed')).toBe('false');
+        // Should revert to unstarred
+        expect(btn.getAttribute('aria-pressed')).toBe('false');
 
-          // Cleanup
-          card.remove();
-        },
-      ),
+        // Cleanup
+        card.remove();
+      }),
       { numRuns: 20 },
     );
   });
@@ -205,66 +202,66 @@ describe('Property 8: star button reverts on message failure', () => {
   it('content-script onUnstar reverts button when sendMessage throws', async () => {
     let counter = 0;
     await fc.assert(
-      fc.asyncProperty(
-        fc.boolean(),
-        async () => {
-          counter++;
-          const uniqueId = `evt-unstar-fail-${counter}`;
-          const adapter = setupAdapter();
-          (adapter.sendMessage as ReturnType<typeof vi.fn>).mockImplementation(
-            (message: MessagePayload): Promise<MessageResponse<unknown>> => {
-              if (message.command === 'GET_STAR_STATE') {
-                return Promise.resolve({
-                  success: true,
-                  data: {
-                    starred: true,
-                    storedFields: {
-                      title: 'Tillräcklighet krävs för att klara klimatkrisen',
-                      organiser: 'Den gröna tankesmedjan Cogito',
-                      startDateTime: '2026-06-22T07:30:00+02:00',
-                      endDateTime: '2026-06-22T08:30:00+02:00',
-                      location: 'Holmen 1',
-                      description: 'Efter en kort inledning bjuder vi in till ett samtal ombord på båten Vagabonde. Varmt välkommen!',
-                      topic: 'Hållbarhet, Ekonomi',
-                      sourceUrl: 'https://almedalsveckan.info/rg/almedalsveckan/evenemang-almedalsveckan/2026/8363',
-                      icsDataUri: 'data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0AURL:https://almedalsveckan.info/rg/almedalsveckan/evenemang-almedalsveckan/2026/8363%0ADTSTART:20260622T073000%0ADTEND:20260622T083000%0ASUMMARY:Tillr%C3%A4cklighet%20kr%C3%A4vs%20f%C3%B6r%20att%20klara%20klimatkrisen%0ADESCRIPTION:Efter%20en%20kort%20inledning%20bjuder%20vi%20in%20till%20ett%20samtal%20ombord%20p%C3%A5%20b%C3%A5ten%20Vagabonde.%20Varmt%20v%C3%A4lkommen!%0ALOCATION:Holmen%201%0AEND:VEVENT%0AEND:VCALENDAR',
-                    },
-                  } as GetStarStateData,
-                });
-              }
-              if (message.command === 'UNSTAR_EVENT') {
-                return Promise.reject(new Error('Extension context invalidated'));
-              }
-              return Promise.resolve({ success: true, data: undefined });
-            },
-          );
+      fc.asyncProperty(fc.boolean(), async () => {
+        counter++;
+        const uniqueId = `evt-unstar-fail-${counter}`;
+        const adapter = setupAdapter();
+        (adapter.sendMessage as ReturnType<typeof vi.fn>).mockImplementation(
+          (message: MessagePayload): Promise<MessageResponse<unknown>> => {
+            if (message.command === 'GET_STAR_STATE') {
+              return Promise.resolve({
+                success: true,
+                data: {
+                  starred: true,
+                  storedFields: {
+                    title: 'Tillräcklighet krävs för att klara klimatkrisen',
+                    organiser: 'Den gröna tankesmedjan Cogito',
+                    startDateTime: '2026-06-22T07:30:00+02:00',
+                    endDateTime: '2026-06-22T08:30:00+02:00',
+                    location: 'Holmen 1',
+                    description:
+                      'Efter en kort inledning bjuder vi in till ett samtal ombord på båten Vagabonde. Varmt välkommen!',
+                    topic: 'Hållbarhet, Ekonomi',
+                    sourceUrl:
+                      'https://almedalsveckan.info/rg/almedalsveckan/evenemang-almedalsveckan/2026/8363',
+                    icsDataUri:
+                      'data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0AURL:https://almedalsveckan.info/rg/almedalsveckan/evenemang-almedalsveckan/2026/8363%0ADTSTART:20260622T073000%0ADTEND:20260622T083000%0ASUMMARY:Tillr%C3%A4cklighet%20kr%C3%A4vs%20f%C3%B6r%20att%20klara%20klimatkrisen%0ADESCRIPTION:Efter%20en%20kort%20inledning%20bjuder%20vi%20in%20till%20ett%20samtal%20ombord%20p%C3%A5%20b%C3%A5ten%20Vagabonde.%20Varmt%20v%C3%A4lkommen!%0ALOCATION:Holmen%201%0AEND:VEVENT%0AEND:VCALENDAR',
+                  },
+                } as GetStarStateData,
+              });
+            }
+            if (message.command === 'UNSTAR_EVENT') {
+              return Promise.reject(new Error('Extension context invalidated'));
+            }
+            return Promise.resolve({ success: true, data: undefined });
+          },
+        );
 
-          const card = createMockEventCard({
-            eventId: uniqueId,
-            liId: `item_4_${uniqueId}`,
-            divId: `item4_${uniqueId}`,
-          });
-          document.body.appendChild(card);
+        const card = createMockEventCard({
+          eventId: uniqueId,
+          liId: `item_4_${uniqueId}`,
+          divId: `item4_${uniqueId}`,
+        });
+        document.body.appendChild(card);
 
-          await processEventCard(card, adapter);
+        await processEventCard(card, adapter);
 
-          const host = card.querySelector('.almedals-star-host') as HTMLElement;
-          const btn = host.shadowRoot!.querySelector('button.star-btn') as HTMLButtonElement;
+        const host = card.querySelector('.almedals-star-host') as HTMLElement;
+        const btn = host.shadowRoot!.querySelector('button.star-btn') as HTMLButtonElement;
 
-          // Initially starred
-          expect(btn.getAttribute('aria-pressed')).toBe('true');
+        // Initially starred
+        expect(btn.getAttribute('aria-pressed')).toBe('true');
 
-          // Click to unstar — should fail and revert
-          btn.click();
-          await new Promise((r) => setTimeout(r, 20));
+        // Click to unstar — should fail and revert
+        btn.click();
+        await new Promise((r) => setTimeout(r, 20));
 
-          // Should revert to starred
-          expect(btn.getAttribute('aria-pressed')).toBe('true');
+        // Should revert to starred
+        expect(btn.getAttribute('aria-pressed')).toBe('true');
 
-          // Cleanup
-          card.remove();
-        },
-      ),
+        // Cleanup
+        card.remove();
+      }),
       { numRuns: 20 },
     );
   });

@@ -42,11 +42,7 @@ function eventsOverlap(a: ConflictEvent, b: ConflictEvent): boolean {
   const bEnd = getEffectiveEnd(b);
 
   // Special case: two zero-duration events at the same start time conflict
-  if (
-    a.endDateTime === null &&
-    b.endDateTime === null &&
-    a.startDateTime === b.startDateTime
-  ) {
+  if (a.endDateTime === null && b.endDateTime === null && a.startDateTime === b.startDateTime) {
     return true;
   }
 

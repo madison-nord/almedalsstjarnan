@@ -21,9 +21,7 @@ import { BulkActions } from '#ui/stars/components/BulkActions';
 // ─── Helpers ──────────────────────────────────────────────────────
 
 function setupAdapter(): IBrowserApiAdapter {
-  (mockBrowserApi.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
-    (key: string) => key,
-  );
+  (mockBrowserApi.getMessage as ReturnType<typeof vi.fn>).mockImplementation((key: string) => key);
   return mockBrowserApi;
 }
 
@@ -43,12 +41,11 @@ describe('Property 1: BulkActions always renders with correct button state', () 
 
     fc.assert(
       fc.property(
-        fc.integer({ min: 0, max: 100 }).chain((totalCount) =>
-          fc.tuple(
-            fc.integer({ min: 0, max: totalCount }),
-            fc.constant(totalCount),
+        fc
+          .integer({ min: 0, max: 100 })
+          .chain((totalCount) =>
+            fc.tuple(fc.integer({ min: 0, max: totalCount }), fc.constant(totalCount)),
           ),
-        ),
         ([selectedCount, totalCount]) => {
           const { container } = render(
             React.createElement(BulkActions, {
@@ -111,12 +108,11 @@ describe('Property 2: BulkActions always displays counts', () => {
 
     fc.assert(
       fc.property(
-        fc.integer({ min: 0, max: 100 }).chain((totalCount) =>
-          fc.tuple(
-            fc.integer({ min: 0, max: totalCount }),
-            fc.constant(totalCount),
+        fc
+          .integer({ min: 0, max: 100 })
+          .chain((totalCount) =>
+            fc.tuple(fc.integer({ min: 0, max: totalCount }), fc.constant(totalCount)),
           ),
-        ),
         ([selectedCount, totalCount]) => {
           const { container } = render(
             React.createElement(BulkActions, {

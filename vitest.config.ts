@@ -14,10 +14,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    include: [
-      'tests/unit/**/*.test.{ts,tsx}',
-      'tests/property/**/*.property.test.ts',
-    ],
+    include: ['tests/unit/**/*.test.{ts,tsx}', 'tests/property/**/*.property.test.ts'],
     setupFiles: ['tests/helpers/mock-browser-api.ts'],
     coverage: {
       provider: 'v8',

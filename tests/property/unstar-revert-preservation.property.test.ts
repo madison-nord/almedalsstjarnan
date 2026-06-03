@@ -25,14 +25,21 @@ import { useStarredEvents } from '#ui/popup/hooks/useStarredEvents';
 
 describe('Property 2: Preservation — Non-pending events and undo behavior unchanged', () => {
   // Feature: unstar-revert-bug, Property 2: Preservation
-  it('with no pending deletions, onStorageChanged results in events state containing exactly the storage contents (sorted)', { timeout: 60_000 }, async () => {
-    await fc.assert(
-      fc.asyncProperty(
-        starredEventArrayArb,
-        sortOrderArb,
-        async (allEvents, sortOrder) => {
+  it(
+    'with no pending deletions, onStorageChanged results in events state containing exactly the storage contents (sorted)',
+    { timeout: 60_000 },
+    async () => {
+      await fc.assert(
+        fc.asyncProperty(starredEventArrayArb, sortOrderArb, async (allEvents, sortOrder) => {
           // Track the onStorageChanged callback so we can trigger it manually
-          let storageChangedCallback: ((changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => void) | null = null;
+          let storageChangedCallback:
+            | ((
+                changes: Record<
+                  string,
+                  { readonly oldValue?: unknown; readonly newValue?: unknown }
+                >,
+              ) => void)
+            | null = null;
 
           // Setup mock: fetch returns all events, sort order returns the generated one
           const sendMessageMock = mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>;
@@ -48,9 +55,18 @@ describe('Property 2: Preservation — Non-pending events and undo behavior unch
 
           const onStorageChangedMock = mockBrowserApi.onStorageChanged as ReturnType<typeof vi.fn>;
           onStorageChangedMock.mockImplementation(
-            (cb: (changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => void) => {
+            (
+              cb: (
+                changes: Record<
+                  string,
+                  { readonly oldValue?: unknown; readonly newValue?: unknown }
+                >,
+              ) => void,
+            ) => {
               storageChangedCallback = cb;
-              return () => { storageChangedCallback = null; };
+              return () => {
+                storageChangedCallback = null;
+              };
             },
           );
 
@@ -82,158 +98,168 @@ describe('Property 2: Preservation — Non-pending events and undo behavior unch
           expect(actualIds).toEqual(expectedIds);
 
           unmount();
-        },
-      ),
-      { numRuns: 100 },
-    );
-  });
+        }),
+        { numRuns: 100 },
+      );
+    },
+  );
 
   // Feature: unstar-revert-bug, Property 2: Preservation
-  it('undoUnstar restores the event to the visible events list and sends STAR_EVENT message', { timeout: 60_000 }, async () => {
-    await fc.assert(
-      fc.asyncProperty(
-        starredEventArrayArb.filter((events) => events.length >= 1),
-        sortOrderArb,
-        async (allEvents, sortOrder) => {
-          // Pick a random event to unstar then undo
-          const targetIndex = Math.floor(Math.random() * allEvents.length);
-          const targetEvent = allEvents[targetIndex]!;
+  it(
+    'undoUnstar restores the event to the visible events list and sends STAR_EVENT message',
+    { timeout: 60_000 },
+    async () => {
+      await fc.assert(
+        fc.asyncProperty(
+          starredEventArrayArb.filter((events) => events.length >= 1),
+          sortOrderArb,
+          async (allEvents, sortOrder) => {
+            // Pick a random event to unstar then undo
+            const targetIndex = Math.floor(Math.random() * allEvents.length);
+            const targetEvent = allEvents[targetIndex]!;
 
-          // Setup mock
-          const sendMessageMock = mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>;
-          sendMessageMock.mockImplementation((message: { command: string }) => {
-            if (message.command === 'GET_ALL_STARRED_EVENTS') {
-              return Promise.resolve({ success: true, data: [...allEvents] });
-            }
-            if (message.command === 'GET_SORT_ORDER') {
-              return Promise.resolve({ success: true, data: sortOrder });
-            }
-            return Promise.resolve({ success: true, data: undefined });
-          });
+            // Setup mock
+            const sendMessageMock = mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>;
+            sendMessageMock.mockImplementation((message: { command: string }) => {
+              if (message.command === 'GET_ALL_STARRED_EVENTS') {
+                return Promise.resolve({ success: true, data: [...allEvents] });
+              }
+              if (message.command === 'GET_SORT_ORDER') {
+                return Promise.resolve({ success: true, data: sortOrder });
+              }
+              return Promise.resolve({ success: true, data: undefined });
+            });
 
-          const onStorageChangedMock = mockBrowserApi.onStorageChanged as ReturnType<typeof vi.fn>;
-          onStorageChangedMock.mockImplementation(() => () => {});
+            const onStorageChangedMock = mockBrowserApi.onStorageChanged as ReturnType<
+              typeof vi.fn
+            >;
+            onStorageChangedMock.mockImplementation(() => () => {});
 
-          // Render the hook
-          const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
+            // Render the hook
+            const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
 
-          // Wait for initial load
-          await waitFor(() => {
-            expect(result.current.loading).toBe(false);
-          });
+            // Wait for initial load
+            await waitFor(() => {
+              expect(result.current.loading).toBe(false);
+            });
 
-          // Unstar the target event (adds to pendingDeletions)
-          act(() => {
-            result.current.unstarEvent(targetEvent.id);
-          });
+            // Unstar the target event (adds to pendingDeletions)
+            act(() => {
+              result.current.unstarEvent(targetEvent.id);
+            });
 
-          // Verify event is removed from visible list
-          expect(
-            result.current.events.find((e: StarredEvent) => e.id === targetEvent.id),
-          ).toBeUndefined();
+            // Verify event is removed from visible list
+            expect(
+              result.current.events.find((e: StarredEvent) => e.id === targetEvent.id),
+            ).toBeUndefined();
 
-          // Verify event is in pendingDeletions
-          expect(
-            result.current.pendingDeletions.find((e: StarredEvent) => e.id === targetEvent.id),
-          ).toBeDefined();
+            // Verify event is in pendingDeletions
+            expect(
+              result.current.pendingDeletions.find((e: StarredEvent) => e.id === targetEvent.id),
+            ).toBeDefined();
 
-          // Clear sendMessage mock call history to track the undo call
-          sendMessageMock.mockClear();
+            // Clear sendMessage mock call history to track the undo call
+            sendMessageMock.mockClear();
 
-          // Call undoUnstar
-          act(() => {
-            result.current.undoUnstar(targetEvent.id);
-          });
+            // Call undoUnstar
+            act(() => {
+              result.current.undoUnstar(targetEvent.id);
+            });
 
-          // Verify event is restored to visible events list
-          expect(
-            result.current.events.find((e: StarredEvent) => e.id === targetEvent.id),
-          ).toBeDefined();
+            // Verify event is restored to visible events list
+            expect(
+              result.current.events.find((e: StarredEvent) => e.id === targetEvent.id),
+            ).toBeDefined();
 
-          // Verify event is removed from pendingDeletions
-          expect(
-            result.current.pendingDeletions.find((e: StarredEvent) => e.id === targetEvent.id),
-          ).toBeUndefined();
+            // Verify event is removed from pendingDeletions
+            expect(
+              result.current.pendingDeletions.find((e: StarredEvent) => e.id === targetEvent.id),
+            ).toBeUndefined();
 
-          // Verify STAR_EVENT message was sent
-          expect(sendMessageMock).toHaveBeenCalledWith(
-            expect.objectContaining({
-              command: 'STAR_EVENT',
-              event: expect.objectContaining({ id: targetEvent.id }),
-            }),
-          );
+            // Verify STAR_EVENT message was sent
+            expect(sendMessageMock).toHaveBeenCalledWith(
+              expect.objectContaining({
+                command: 'STAR_EVENT',
+                event: expect.objectContaining({ id: targetEvent.id }),
+              }),
+            );
 
-          unmount();
-        },
-      ),
-      { numRuns: 100 },
-    );
-  });
+            unmount();
+          },
+        ),
+        { numRuns: 100 },
+      );
+    },
+  );
 
   // Feature: unstar-revert-bug, Property 2: Preservation
-  it('remaining events after unstarring one event equal the original list minus the unstarred event', { timeout: 60_000 }, async () => {
-    await fc.assert(
-      fc.asyncProperty(
-        starredEventArrayArb.filter((events) => events.length >= 2),
-        sortOrderArb,
-        async (allEvents, sortOrder) => {
-          // Pick a random event to unstar
-          const targetIndex = Math.floor(Math.random() * allEvents.length);
-          const targetEvent = allEvents[targetIndex]!;
+  it(
+    'remaining events after unstarring one event equal the original list minus the unstarred event',
+    { timeout: 60_000 },
+    async () => {
+      await fc.assert(
+        fc.asyncProperty(
+          starredEventArrayArb.filter((events) => events.length >= 2),
+          sortOrderArb,
+          async (allEvents, sortOrder) => {
+            // Pick a random event to unstar
+            const targetIndex = Math.floor(Math.random() * allEvents.length);
+            const targetEvent = allEvents[targetIndex]!;
 
-          // Setup mock
-          const sendMessageMock = mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>;
-          sendMessageMock.mockImplementation((message: { command: string }) => {
-            if (message.command === 'GET_ALL_STARRED_EVENTS') {
-              return Promise.resolve({ success: true, data: [...allEvents] });
-            }
-            if (message.command === 'GET_SORT_ORDER') {
-              return Promise.resolve({ success: true, data: sortOrder });
-            }
-            return Promise.resolve({ success: true, data: undefined });
-          });
+            // Setup mock
+            const sendMessageMock = mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>;
+            sendMessageMock.mockImplementation((message: { command: string }) => {
+              if (message.command === 'GET_ALL_STARRED_EVENTS') {
+                return Promise.resolve({ success: true, data: [...allEvents] });
+              }
+              if (message.command === 'GET_SORT_ORDER') {
+                return Promise.resolve({ success: true, data: sortOrder });
+              }
+              return Promise.resolve({ success: true, data: undefined });
+            });
 
-          const onStorageChangedMock = mockBrowserApi.onStorageChanged as ReturnType<typeof vi.fn>;
-          onStorageChangedMock.mockImplementation(() => () => {});
+            const onStorageChangedMock = mockBrowserApi.onStorageChanged as ReturnType<
+              typeof vi.fn
+            >;
+            onStorageChangedMock.mockImplementation(() => () => {});
 
-          // Render the hook
-          const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
+            // Render the hook
+            const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
 
-          // Wait for initial load
-          await waitFor(() => {
-            expect(result.current.loading).toBe(false);
-          });
+            // Wait for initial load
+            await waitFor(() => {
+              expect(result.current.loading).toBe(false);
+            });
 
-          // Record events before unstarring (sorted)
-          const eventsBefore = [...result.current.events];
+            // Record events before unstarring (sorted)
+            const eventsBefore = [...result.current.events];
 
-          // Unstar the target event
-          act(() => {
-            result.current.unstarEvent(targetEvent.id);
-          });
+            // Unstar the target event
+            act(() => {
+              result.current.unstarEvent(targetEvent.id);
+            });
 
-          // The remaining events (before any storage change) should equal
-          // the original list minus the unstarred event
-          const eventsAfter = result.current.events;
-          const expectedRemaining = eventsBefore.filter((e) => e.id !== targetEvent.id);
+            // The remaining events (before any storage change) should equal
+            // the original list minus the unstarred event
+            const eventsAfter = result.current.events;
+            const expectedRemaining = eventsBefore.filter((e) => e.id !== targetEvent.id);
 
-          // Same length
-          expect(eventsAfter.length).toBe(expectedRemaining.length);
+            // Same length
+            expect(eventsAfter.length).toBe(expectedRemaining.length);
 
-          // Same IDs in same order (unstarring only removes, doesn't re-sort)
-          const afterIds = eventsAfter.map((e: StarredEvent) => e.id);
-          const expectedIds = expectedRemaining.map((e) => e.id);
-          expect(afterIds).toEqual(expectedIds);
+            // Same IDs in same order (unstarring only removes, doesn't re-sort)
+            const afterIds = eventsAfter.map((e: StarredEvent) => e.id);
+            const expectedIds = expectedRemaining.map((e) => e.id);
+            expect(afterIds).toEqual(expectedIds);
 
-          // The unstarred event should not be in the remaining list
-          expect(
-            eventsAfter.find((e: StarredEvent) => e.id === targetEvent.id),
-          ).toBeUndefined();
+            // The unstarred event should not be in the remaining list
+            expect(eventsAfter.find((e: StarredEvent) => e.id === targetEvent.id)).toBeUndefined();
 
-          unmount();
-        },
-      ),
-      { numRuns: 100 },
-    );
-  });
+            unmount();
+          },
+        ),
+        { numRuns: 100 },
+      );
+    },
+  );
 });

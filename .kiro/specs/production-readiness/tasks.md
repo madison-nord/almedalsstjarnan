@@ -166,7 +166,7 @@ Harden the Almedalsstjärnan extension for public release through code correctne
 - Checkpoints ensure incremental validation
 - Property tests validate universal correctness properties from the design document
 - Unit tests validate specific examples and edge cases
-- The storage validator is a pure function — no chrome.* API calls inside it (per browser-extension-patterns steering)
+- The storage validator is a pure function — no chrome.\* API calls inside it (per browser-extension-patterns steering)
 - The `fnv1aHex` rename is internal (private function) so no export changes are needed beyond updating JSDoc
 
 ## Task Dependency Graph

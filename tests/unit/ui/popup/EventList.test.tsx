@@ -126,12 +126,10 @@ describe('EventList', () => {
     });
 
     it('substitutes correctly with Swedish locale message', () => {
-      (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
-        (key: string) => {
-          if (key === 'eventCountIndicator') return '{count} av {total}';
-          return messageMap[key] ?? '';
-        },
-      );
+      (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation((key: string) => {
+        if (key === 'eventCountIndicator') return '{count} av {total}';
+        return messageMap[key] ?? '';
+      });
       const events = makeEvents(7);
       render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} />);
 

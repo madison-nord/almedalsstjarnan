@@ -21,6 +21,7 @@ The deferred deletion pattern used for undo support in both `useStarredEvents` h
 The bug manifests when a user unstars an event and any storage change occurs before the undo toast expires. The `fetchEvents` function reloads all events from storage (where the pending-deletion event still exists) and overwrites local state, causing the hidden event to reappear.
 
 **Formal Specification:**
+
 ```
 FUNCTION isBugCondition(input)
   INPUT: input of type { eventId: string, storageChangeOccurred: boolean, undoClicked: boolean }
@@ -44,6 +45,7 @@ END FUNCTION
 ### Preservation Requirements
 
 **Unchanged Behaviors:**
+
 - Clicking the undo button before toast expiry restores the event to the starred list and persists it in storage
 - Starring a new event from the content script displays it in both popup and Stars Page via the storage change listener
 - Changing sort order re-sorts displayed events without affecting starred/unstarred state
@@ -53,6 +55,7 @@ END FUNCTION
 
 **Scope:**
 All inputs that do NOT involve a storage refresh while events are pending deletion should be completely unaffected by this fix. This includes:
+
 - Normal starring of events (content script → background → storage change → UI update)
 - Sort order changes
 - Language preference changes
@@ -96,6 +99,7 @@ Assuming our root cause analysis is correct:
 **Function**: `fetchEvents`
 
 **Specific Changes**:
+
 1. **Access `pendingDeletions` inside `fetchEvents`**: Use a ref (`pendingDeletionsRef`) to track current pending-deletion IDs so the memoized `fetchEvents` callback can read them without re-creating on every render.
 2. **Filter storage results**: After fetching events from background, filter out any event whose ID is in the pending-deletions set before calling `setEvents`.
 
@@ -104,12 +108,14 @@ Assuming our root cause analysis is correct:
 **Function**: `fetchEvents`
 
 **Specific Changes**:
+
 1. **Same ref-based approach**: Add a `pendingDeletionsRef` that mirrors `pendingDeletions` state.
 2. **Same filter logic**: Filter fetched events against pending-deletion IDs before setting state.
 
 **Detailed implementation for both hooks**:
 
 1. **Add a `pendingDeletionsRef`**:
+
    ```typescript
    const pendingDeletionsRef = useRef<Set<string>>(new Set());
    ```
@@ -120,24 +126,28 @@ Assuming our root cause analysis is correct:
    - In `undoUnstar`: remove the eventId from `pendingDeletionsRef.current`
 
 3. **Filter in `fetchEvents`**:
-   ```typescript
-   const fetchEvents = useCallback(async (order: SortOrder): Promise<void> => {
-     const response = await adapter.sendMessage<StarredEvent[]>({
-       command: 'GET_ALL_STARRED_EVENTS',
-     }) as GetAllStarredEventsResponse;
 
-     if (response.success) {
-       const pendingIds = pendingDeletionsRef.current;
-       const filtered = pendingIds.size > 0
-         ? response.data.filter((e) => !pendingIds.has(e.id))
-         : response.data;
-       const sorted = sortEvents(filtered, order);
-       setEvents(sorted);
-     }
-   }, [adapter]);
+   ```typescript
+   const fetchEvents = useCallback(
+     async (order: SortOrder): Promise<void> => {
+       const response = (await adapter.sendMessage<StarredEvent[]>({
+         command: 'GET_ALL_STARRED_EVENTS',
+       })) as GetAllStarredEventsResponse;
+
+       if (response.success) {
+         const pendingIds = pendingDeletionsRef.current;
+         const filtered =
+           pendingIds.size > 0 ? response.data.filter((e) => !pendingIds.has(e.id)) : response.data;
+         const sorted = sortEvents(filtered, order);
+         setEvents(sorted);
+       }
+     },
+     [adapter],
+   );
    ```
 
 4. **Update `unstarEvent`** to also add to the ref:
+
    ```typescript
    const unstarEvent = useCallback((eventId: string): void => {
      pendingDeletionsRef.current.add(eventId);
@@ -152,29 +162,36 @@ Assuming our root cause analysis is correct:
    ```
 
 5. **Update `confirmUnstar`** to also remove from the ref:
+
    ```typescript
-   const confirmUnstar = useCallback((eventId: string): void => {
-     pendingDeletionsRef.current.delete(eventId);
-     setPendingDeletions((prev) => prev.filter((e) => e.id !== eventId));
-     void adapter.sendMessage({ command: 'UNSTAR_EVENT', eventId });
-   }, [adapter]);
+   const confirmUnstar = useCallback(
+     (eventId: string): void => {
+       pendingDeletionsRef.current.delete(eventId);
+       setPendingDeletions((prev) => prev.filter((e) => e.id !== eventId));
+       void adapter.sendMessage({ command: 'UNSTAR_EVENT', eventId });
+     },
+     [adapter],
+   );
    ```
 
 6. **Update `undoUnstar`** to also remove from the ref:
    ```typescript
-   const undoUnstar = useCallback((eventId: string): void => {
-     pendingDeletionsRef.current.delete(eventId);
-     setPendingDeletions((prev) => {
-       const event = prev.find((e) => e.id === eventId);
-       if (event) {
-         setEvents((currentEvents) =>
-           sortEvents([...currentEvents, event], sortOrderRef.current),
-         );
-         void adapter.sendMessage({ command: 'STAR_EVENT', event });
-       }
-       return prev.filter((e) => e.id !== eventId);
-     });
-   }, [adapter]);
+   const undoUnstar = useCallback(
+     (eventId: string): void => {
+       pendingDeletionsRef.current.delete(eventId);
+       setPendingDeletions((prev) => {
+         const event = prev.find((e) => e.id === eventId);
+         if (event) {
+           setEvents((currentEvents) =>
+             sortEvents([...currentEvents, event], sortOrderRef.current),
+           );
+           void adapter.sendMessage({ command: 'STAR_EVENT', event });
+         }
+         return prev.filter((e) => e.id !== eventId);
+       });
+     },
+     [adapter],
+   );
    ```
 
 ## Testing Strategy
@@ -190,12 +207,14 @@ The testing strategy follows a two-phase approach: first, surface counterexample
 **Test Plan**: Write unit tests that simulate the sequence: unstar an event → trigger a storage change → verify the event reappears in state. Run these tests on the UNFIXED code to observe failures and confirm the root cause.
 
 **Test Cases**:
+
 1. **Popup storage refresh after unstar**: Unstar event → simulate `onStorageChanged` → assert event reappears in `events` (will fail on unfixed code — event DOES reappear, confirming bug)
 2. **Stars Page storage refresh after unstar**: Same sequence on Stars Page hook (will fail on unfixed code)
 3. **Multiple pending deletions**: Unstar 3 events → trigger storage change → assert all 3 reappear (will fail on unfixed code)
 4. **Storage change from unrelated key**: Change sort order → verify `starredEvents` change triggers reload (will fail on unfixed code if sort write triggers starredEvents listener)
 
 **Expected Counterexamples**:
+
 - After `onStorageChanged` fires, `fetchEvents` overwrites local state with full storage contents including pending-deletion events
 - The `pendingDeletions` array is not consulted during `fetchEvents`
 
@@ -204,6 +223,7 @@ The testing strategy follows a two-phase approach: first, surface counterexample
 **Goal**: Verify that for all inputs where the bug condition holds, the fixed function produces the expected behavior.
 
 **Pseudocode:**
+
 ```
 FOR ALL input WHERE isBugCondition(input) DO
   result := fetchEvents_fixed(sortOrder)
@@ -217,6 +237,7 @@ END FOR
 **Goal**: Verify that for all inputs where the bug condition does NOT hold, the fixed function produces the same result as the original function.
 
 **Pseudocode:**
+
 ```
 FOR ALL input WHERE NOT isBugCondition(input) DO
   ASSERT fetchEvents_original(input) = fetchEvents_fixed(input)
@@ -224,6 +245,7 @@ END FOR
 ```
 
 **Testing Approach**: Property-based testing is recommended for preservation checking because:
+
 - It generates many random event configurations and storage states
 - It catches edge cases like empty pending-deletion sets, single-event lists, and concurrent operations
 - It provides strong guarantees that non-pending events are never filtered out
@@ -231,6 +253,7 @@ END FOR
 **Test Plan**: Observe behavior on UNFIXED code first for non-pending-deletion scenarios (starring, sorting, undo), then write property-based tests capturing that behavior.
 
 **Test Cases**:
+
 1. **Undo restores event**: Unstar event → call `undoUnstar` → verify event returns to list and is re-starred in storage
 2. **Non-pending events unaffected**: With no pending deletions, `fetchEvents` returns all stored events unchanged
 3. **Badge count preservation**: After `confirmUnstar`, badge count reflects correct total

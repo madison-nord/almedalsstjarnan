@@ -9,15 +9,15 @@ describe('Property 11: ICS export filename pattern', () => {
   it('filename matches almedalsstjarnan-starred-events-YYYYMMDD-HHMMSS.ics', () => {
     fc.assert(
       fc.property(
-        fc.date({
-          min: new Date('2020-01-01T00:00:00Z'),
-          max: new Date('2035-12-31T23:59:59Z'),
-        }).filter((d) => !isNaN(d.getTime())),
+        fc
+          .date({
+            min: new Date('2020-01-01T00:00:00Z'),
+            max: new Date('2035-12-31T23:59:59Z'),
+          })
+          .filter((d) => !isNaN(d.getTime())),
         (date) => {
           const filename = generateExportFilename(date);
-          expect(filename).toMatch(
-            /^almedalsstjarnan-starred-events-\d{8}-\d{6}\.ics$/,
-          );
+          expect(filename).toMatch(/^almedalsstjarnan-starred-events-\d{8}-\d{6}\.ics$/);
 
           // Verify the date components match the input
           const match = filename.match(

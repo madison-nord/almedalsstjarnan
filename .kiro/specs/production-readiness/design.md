@@ -50,13 +50,13 @@ graph TD
 
 ### Design Decisions
 
-| Decision | Rationale |
-|---|---|
-| Storage validator as a separate `src/core/storage-validator.ts` module | Pure function, easily unit-testable and property-testable in isolation. Follows one-export-per-file convention. |
-| `checkYearMismatch` in `date-config.ts` | Co-locates year logic with year data. Keeps the module as the single source of truth for year-specific configuration. |
-| Package script in TypeScript (`scripts/package.ts`) | Project already uses TypeScript everywhere. Run via `tsx` (already available via vitest's transitive dep) or `node --import tsx`. Cross-platform via Node.js `fs` and `child_process`. |
-| ICS locale parameter already exists but is unused | The `_locale` parameter in `generateICS` is already declared. Design threads it through `buildDescription` to prepend the source label. |
-| Security audit runs before build | Fails fast on vulnerable deps, avoids wasting CI minutes building with known-bad dependencies. |
+| Decision                                                               | Rationale                                                                                                                                                                              |
+| ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Storage validator as a separate `src/core/storage-validator.ts` module | Pure function, easily unit-testable and property-testable in isolation. Follows one-export-per-file convention.                                                                        |
+| `checkYearMismatch` in `date-config.ts`                                | Co-locates year logic with year data. Keeps the module as the single source of truth for year-specific configuration.                                                                  |
+| Package script in TypeScript (`scripts/package.ts`)                    | Project already uses TypeScript everywhere. Run via `tsx` (already available via vitest's transitive dep) or `node --import tsx`. Cross-platform via Node.js `fs` and `child_process`. |
+| ICS locale parameter already exists but is unused                      | The `_locale` parameter in `generateICS` is already declared. Design threads it through `buildDescription` to prepend the source label.                                                |
+| Security audit runs before build                                       | Fails fast on vulnerable deps, avoids wasting CI minutes building with known-bad dependencies.                                                                                         |
 
 ## Components and Interfaces
 
@@ -82,9 +82,7 @@ export interface StorageValidationResult {
  * @param raw - The raw value from storage (could be anything)
  * @returns StorageValidationResult with valid entries and list of rejected keys
  */
-export function validateStarredEvents(
-  raw: unknown,
-): StorageValidationResult;
+export function validateStarredEvents(raw: unknown): StorageValidationResult;
 
 /**
  * Validates a single entry against the StarredEvent schema.
@@ -101,13 +99,11 @@ export function validateStarredEvents(
  * @param entry - The raw entry value
  * @returns true if the entry is a valid StarredEvent
  */
-export function isValidStarredEntry(
-  key: string,
-  entry: unknown,
-): entry is StarredEvent;
+export function isValidStarredEntry(key: string, entry: unknown): entry is StarredEvent;
 ```
 
 **Implementation strategy:**
+
 - `validateStarredEvents` first checks that `raw` is a non-null, non-array object (`typeof raw === 'object' && raw !== null && !Array.isArray(raw)`)
 - If top-level check fails, return `{ valid: {}, invalidKeys: [] }`
 - Iterate `Object.entries(raw)`, apply `isValidStarredEntry` to each
@@ -152,6 +148,7 @@ function buildDescription(
 ```
 
 **Logic:**
+
 - If `description` is null and `sourceUrl` is null → return null
 - Build parts array:
   - If `description` is non-null, include it
@@ -165,12 +162,14 @@ The source label values are hardcoded in the generator (not pulled from `locale-
 The updated `.github/workflows/ci.yml` adds three concerns:
 
 1. **Security audit** — new step after install, before lint:
+
    ```yaml
    - name: Security audit
      run: pnpm audit --prod --audit-level=high
    ```
 
 2. **E2E tests** — new steps after build:
+
    ```yaml
    - name: Install Playwright browsers
      run: npx playwright install chromium
@@ -224,6 +223,7 @@ if (process.platform === 'win32') {
 ```
 
 The `package` script in `package.json` becomes:
+
 ```json
 "package": "pnpm run build && tsx scripts/package.ts"
 ```
@@ -263,42 +263,42 @@ The `tabs` permission is removed. `chrome.tabs.create` for extension-internal UR
 
 ## Correctness Properties
 
-*A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
+_A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees._
 
 ### Property 1: fnv1aHex deterministic consistency
 
-*For any* input string, calling `fnv1aHex` SHALL produce a deterministic hex string output, and calling it twice with the same input SHALL produce identical results.
+_For any_ input string, calling `fnv1aHex` SHALL produce a deterministic hex string output, and calling it twice with the same input SHALL produce identical results.
 
 **Validates: Requirements 1.3**
 
 ### Property 2: Storage validator rejects invalid top-level values
 
-*For any* value that is not a non-null, non-array object (including null, undefined, arrays, strings, numbers, and booleans), the storage validator SHALL return an empty valid record.
+_For any_ value that is not a non-null, non-array object (including null, undefined, arrays, strings, numbers, and booleans), the storage validator SHALL return an empty valid record.
 
 **Validates: Requirements 3.1, 3.2**
 
 ### Property 3: Storage validator filters malformed entries and preserves valid entries unchanged
 
-*For any* object containing a mix of valid `StarredEvent` entries and malformed entries (missing fields, wrong types, id/key mismatch), the storage validator SHALL return exactly the subset of entries that satisfy all validation checks, with each valid entry identical to the input (round-trip preservation).
+_For any_ object containing a mix of valid `StarredEvent` entries and malformed entries (missing fields, wrong types, id/key mismatch), the storage validator SHALL return exactly the subset of entries that satisfy all validation checks, with each valid entry identical to the input (round-trip preservation).
 
 **Validates: Requirements 3.3, 3.4, 3.5, 3.6**
 
 ### Property 4: ICS locale-aware source label
 
-*For any* set of starred events that have non-null `sourceUrl` fields, and *for any* supported locale, the generated ICS DESCRIPTION field SHALL contain the locale-appropriate source label (`"Källa:"` for `'sv'`, `"Source:"` for `'en'`) followed by the source URL.
+_For any_ set of starred events that have non-null `sourceUrl` fields, and _for any_ supported locale, the generated ICS DESCRIPTION field SHALL contain the locale-appropriate source label (`"Källa:"` for `'sv'`, `"Source:"` for `'en'`) followed by the source URL.
 
 **Validates: Requirements 7.1, 7.2**
 
 ## Error Handling
 
-| Scenario | Handling |
-|---|---|
-| Storage contains non-object value for `starredEvents` | Validator returns empty record; background logs `console.warn` with corruption message |
-| Individual entry fails validation | Entry excluded from returned record; background logs `console.warn` identifying the key |
-| `checkYearMismatch` detects mismatch | Background logs `console.warn` with expected/actual year; extension continues normally |
-| `pnpm audit` finds high/critical vulnerability | CI step exits non-zero; workflow fails before build |
-| E2E test fails in CI | Playwright exits non-zero; artifacts uploaded; workflow fails |
-| Package script: zip command fails | `execSync` throws; script exits non-zero; user sees error in terminal |
+| Scenario                                              | Handling                                                                                |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Storage contains non-object value for `starredEvents` | Validator returns empty record; background logs `console.warn` with corruption message  |
+| Individual entry fails validation                     | Entry excluded from returned record; background logs `console.warn` identifying the key |
+| `checkYearMismatch` detects mismatch                  | Background logs `console.warn` with expected/actual year; extension continues normally  |
+| `pnpm audit` finds high/critical vulnerability        | CI step exits non-zero; workflow fails before build                                     |
+| E2E test fails in CI                                  | Playwright exits non-zero; artifacts uploaded; workflow fails                           |
+| Package script: zip command fails                     | `execSync` throws; script exits non-zero; user sees error in terminal                   |
 
 No new error types or discriminated unions are introduced beyond `StorageValidationResult`. The validator is intentionally lenient (filter, don't throw) to match the requirement of graceful degradation.
 
@@ -306,29 +306,30 @@ No new error types or discriminated unions are introduced beyond `StorageValidat
 
 ### Unit Tests
 
-| Module | Test File | Coverage |
-|---|---|---|
-| `storage-validator.ts` | `tests/unit/core/storage-validator.test.ts` | All branches of `validateStarredEvents` and `isValidStarredEntry` |
-| `date-config.ts` (checkYearMismatch) | `tests/unit/core/date-config.test.ts` | Match and mismatch scenarios with mocked Date |
-| `ics-generator.ts` (locale threading) | `tests/unit/core/ics-generator.test.ts` | Both locales with sourceUrl present/absent |
-| `event-normalizer.ts` (rename) | `tests/unit/core/event-normalizer.test.ts` | Verify `fnv1aHex` export produces same output as before |
-| `background.ts` (year check + validator integration) | `tests/unit/background/background.test.ts` | Verify checkYearMismatch called, console.warn on mismatch, validator applied |
+| Module                                               | Test File                                   | Coverage                                                                     |
+| ---------------------------------------------------- | ------------------------------------------- | ---------------------------------------------------------------------------- |
+| `storage-validator.ts`                               | `tests/unit/core/storage-validator.test.ts` | All branches of `validateStarredEvents` and `isValidStarredEntry`            |
+| `date-config.ts` (checkYearMismatch)                 | `tests/unit/core/date-config.test.ts`       | Match and mismatch scenarios with mocked Date                                |
+| `ics-generator.ts` (locale threading)                | `tests/unit/core/ics-generator.test.ts`     | Both locales with sourceUrl present/absent                                   |
+| `event-normalizer.ts` (rename)                       | `tests/unit/core/event-normalizer.test.ts`  | Verify `fnv1aHex` export produces same output as before                      |
+| `background.ts` (year check + validator integration) | `tests/unit/background/background.test.ts`  | Verify checkYearMismatch called, console.warn on mismatch, validator applied |
 
 ### Property-Based Tests (fast-check)
 
 Library: **fast-check** (already installed, v4.7.0)
 Configuration: minimum 100 iterations per property (`numRuns: 100`)
 
-| Property | Test File | Tag |
-|---|---|---|
-| Property 1: fnv1aHex consistency | `tests/property/fnv1a-consistency.property.test.ts` | `Feature: production-readiness, Property 1: fnv1aHex deterministic consistency` |
-| Property 2: Invalid top-level rejection | `tests/property/storage-validator-toplevel.property.test.ts` | `Feature: production-readiness, Property 2: Storage validator rejects invalid top-level values` |
-| Property 3: Entry filtering + round-trip | `tests/property/storage-validator-entries.property.test.ts` | `Feature: production-readiness, Property 3: Storage validator filters malformed entries and preserves valid entries unchanged` |
-| Property 4: ICS locale source label | `tests/property/ics-locale-label.property.test.ts` | `Feature: production-readiness, Property 4: ICS locale-aware source label` |
+| Property                                 | Test File                                                    | Tag                                                                                                                            |
+| ---------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| Property 1: fnv1aHex consistency         | `tests/property/fnv1a-consistency.property.test.ts`          | `Feature: production-readiness, Property 1: fnv1aHex deterministic consistency`                                                |
+| Property 2: Invalid top-level rejection  | `tests/property/storage-validator-toplevel.property.test.ts` | `Feature: production-readiness, Property 2: Storage validator rejects invalid top-level values`                                |
+| Property 3: Entry filtering + round-trip | `tests/property/storage-validator-entries.property.test.ts`  | `Feature: production-readiness, Property 3: Storage validator filters malformed entries and preserves valid entries unchanged` |
+| Property 4: ICS locale source label      | `tests/property/ics-locale-label.property.test.ts`           | `Feature: production-readiness, Property 4: ICS locale-aware source label`                                                     |
 
 ### E2E Tests (Playwright)
 
 Already exist at:
+
 - `tests/e2e/star-unstar.e2e.test.ts` — star/unstar flow
 - `tests/e2e/ics-export.e2e.test.ts` — ICS export flow
 

@@ -24,9 +24,7 @@ describe('Property 4: ICS locale-aware source label', () => {
    * source label ("Källa:" for 'sv', "Source:" for 'en') followed by the sourceUrl.
    */
   it('DESCRIPTION contains locale-appropriate source label followed by sourceUrl', () => {
-    const eventWithSourceUrlArb = starredEventArb.filter(
-      (event) => event.sourceUrl !== null,
-    );
+    const eventWithSourceUrlArb = starredEventArb.filter((event) => event.sourceUrl !== null);
 
     const localeArb = fc.oneof(fc.constant('sv' as const), fc.constant('en' as const));
 

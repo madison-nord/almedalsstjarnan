@@ -61,10 +61,9 @@ export function useStarredEvents(
     async (order: SortOrder): Promise<void> => {
       const generation = ++fetchGenerationRef.current;
 
-      const response =
-        await adapter.sendMessage<StarredEvent[]>({
-          command: 'GET_ALL_STARRED_EVENTS',
-        }) as GetAllStarredEventsResponse;
+      const response = (await adapter.sendMessage<StarredEvent[]>({
+        command: 'GET_ALL_STARRED_EVENTS',
+      })) as GetAllStarredEventsResponse;
 
       // Discard stale responses — only the latest fetch should set state
       if (generation !== fetchGenerationRef.current) return;
@@ -79,9 +78,10 @@ export function useStarredEvents(
               pendingIds.delete(id);
             }
           }
-          const filtered = pendingIds.size > 0
-            ? response.data.filter((e) => !pendingIds.has(e.id))
-            : response.data;
+          const filtered =
+            pendingIds.size > 0
+              ? response.data.filter((e) => !pendingIds.has(e.id))
+              : response.data;
           const sorted = sortEvents(filtered, order);
           setEvents(sorted);
         } else {
@@ -108,9 +108,7 @@ export function useStarredEvents(
 
       if (cancelled) return;
 
-      const order = sortResponse.success
-        ? sortResponse.data
-        : DEFAULT_SORT_ORDER;
+      const order = sortResponse.success ? sortResponse.data : DEFAULT_SORT_ORDER;
 
       setSortOrder(order);
       sortOrderRef.current = order;
@@ -176,9 +174,7 @@ export function useStarredEvents(
         const event = prev.find((e) => e.id === eventId);
         if (event) {
           // Re-add to displayed events and re-sort
-          setEvents((currentEvents) =>
-            sortEvents([...currentEvents, event], sortOrderRef.current),
-          );
+          setEvents((currentEvents) => sortEvents([...currentEvents, event], sortOrderRef.current));
           // Re-star in storage (reverses the immediate UNSTAR_EVENT)
           void adapter.sendMessage({ command: 'STAR_EVENT', event });
         }
@@ -188,15 +184,12 @@ export function useStarredEvents(
     [adapter],
   );
 
-  const confirmUnstar = useCallback(
-    (eventId: string): void => {
-      // Event was already removed from storage in unstarEvent.
-      // Keep ID in pendingDeletionsRef — fetchEvents will clean it up
-      // once it confirms the event is gone from storage.
-      setPendingDeletions((prev) => prev.filter((e) => e.id !== eventId));
-    },
-    [],
-  );
+  const confirmUnstar = useCallback((eventId: string): void => {
+    // Event was already removed from storage in unstarEvent.
+    // Keep ID in pendingDeletionsRef — fetchEvents will clean it up
+    // once it confirms the event is gone from storage.
+    setPendingDeletions((prev) => prev.filter((e) => e.id !== eventId));
+  }, []);
 
   const exportEvents = useCallback((): void => {
     const effectiveLocale = resolveEffectiveLocale(languagePreference);

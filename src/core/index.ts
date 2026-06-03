@@ -38,7 +38,13 @@ export { parseICS, unfoldLines, unescapeICSText } from './ics-parser';
 export { normalizeEvent, deriveEventId, parseDateTime } from './event-normalizer';
 
 export type { YearMismatchResult } from './date-config';
-export { DAY_TO_DATE, SWEDISH_DAYS, STOCKHOLM_SUMMER_OFFSET, YEAR, checkYearMismatch } from './date-config';
+export {
+  DAY_TO_DATE,
+  SWEDISH_DAYS,
+  STOCKHOLM_SUMMER_OFFSET,
+  YEAR,
+  checkYearMismatch,
+} from './date-config';
 
 export { sortEvents, isTimeBasedSort } from './sorter';
 
@@ -52,16 +58,8 @@ export { detectConflicts, getConflictingEventIds } from './conflict-detector';
 
 export { filterEvents } from './event-filter';
 
-export type {
-  MutableFieldName,
-  MutableFields,
-  ComparisonResult,
-} from './event-field-comparator';
-export {
-  MUTABLE_FIELDS,
-  normalizeFieldValue,
-  compareEventFields,
-} from './event-field-comparator';
+export type { MutableFieldName, MutableFields, ComparisonResult } from './event-field-comparator';
+export { MUTABLE_FIELDS, normalizeFieldValue, compareEventFields } from './event-field-comparator';
 
 export type { SupportedLocale } from './locale-messages';
 export { getLocalizedMessage, resolveEffectiveLocale } from './locale-messages';

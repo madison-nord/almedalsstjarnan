@@ -166,9 +166,7 @@ export interface MessageResponseError {
   readonly error: string;
 }
 
-export type MessageResponse<T = unknown> =
-  | MessageResponseSuccess<T>
-  | MessageResponseError;
+export type MessageResponse<T = unknown> = MessageResponseSuccess<T> | MessageResponseError;
 
 // ─── Response type map per command ────────────────────────────────
 

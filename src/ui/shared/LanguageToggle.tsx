@@ -56,8 +56,7 @@ export function LanguageToggle({
   const handleChange = useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>): void => {
       const value = event.target.value;
-      const newLocale: 'sv' | 'en' | null =
-        value === 'sv' ? 'sv' : value === 'en' ? 'en' : null;
+      const newLocale: 'sv' | 'en' | null = value === 'sv' ? 'sv' : value === 'en' ? 'en' : null;
 
       setLocale(newLocale);
       onLocaleChange(newLocale);

@@ -76,9 +76,7 @@ export function getLocalizedMessage(
  * @param languagePreference - The stored language preference (null means auto)
  * @returns The resolved locale to use for ICS generation
  */
-export function resolveEffectiveLocale(
-  languagePreference: 'sv' | 'en' | null,
-): SupportedLocale {
+export function resolveEffectiveLocale(languagePreference: 'sv' | 'en' | null): SupportedLocale {
   if (languagePreference !== null) {
     return languagePreference;
   }

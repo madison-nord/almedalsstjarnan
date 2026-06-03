@@ -60,14 +60,12 @@ describe('Popup EventItem star toggle and source link', () => {
     resetMocks();
     adapter = mockBrowserApi;
     onUnstar = vi.fn();
-    (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
-      (key: string) => {
-        if (key === 'unstarEvent') return 'Unstar event';
-        if (key === 'expandEvent') return 'Show details';
-        if (key === 'collapseEvent') return 'Hide details';
-        return '';
-      },
-    );
+    (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation((key: string) => {
+      if (key === 'unstarEvent') return 'Unstar event';
+      if (key === 'expandEvent') return 'Show details';
+      if (key === 'collapseEvent') return 'Hide details';
+      return '';
+    });
   });
 
   describe('star toggle', () => {
@@ -139,7 +137,9 @@ describe('Popup EventItem star toggle and source link', () => {
       const event = makeEvent({ sourceUrl: null });
       render(<EventItem event={event} onUnstar={onUnstar} adapter={adapter} />);
 
-      expect(screen.queryByRole('link', { name: 'Demokrati i förändring' })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('link', { name: 'Demokrati i förändring' }),
+      ).not.toBeInTheDocument();
       expect(screen.getByText('Demokrati i förändring')).toBeInTheDocument();
     });
 
@@ -266,7 +266,9 @@ describe('Popup EventItem star toggle and source link', () => {
       const event = makeEvent({
         description: 'Conditional render test',
       });
-      const { container } = render(<EventItem event={event} onUnstar={onUnstar} adapter={adapter} />);
+      const { container } = render(
+        <EventItem event={event} onUnstar={onUnstar} adapter={adapter} />,
+      );
 
       // When collapsed, the description text should not exist in the DOM at all
       expect(container.textContent).not.toContain('Conditional render test');
@@ -366,16 +368,14 @@ describe('Popup EventItem star toggle and source link', () => {
     });
 
     it('tooltip shows "Show more" when collapsed via showMore i18n key', () => {
-      (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
-        (key: string) => {
-          if (key === 'showMore') return 'Show more';
-          if (key === 'showLess') return 'Show less';
-          if (key === 'expandEvent') return 'Show details';
-          if (key === 'collapseEvent') return 'Hide details';
-          if (key === 'unstarEvent') return 'Unstar event';
-          return '';
-        },
-      );
+      (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation((key: string) => {
+        if (key === 'showMore') return 'Show more';
+        if (key === 'showLess') return 'Show less';
+        if (key === 'expandEvent') return 'Show details';
+        if (key === 'collapseEvent') return 'Hide details';
+        if (key === 'unstarEvent') return 'Unstar event';
+        return '';
+      });
       const event = makeEvent();
       render(<EventItem event={event} onUnstar={onUnstar} adapter={adapter} />);
 
@@ -385,16 +385,14 @@ describe('Popup EventItem star toggle and source link', () => {
 
     it('tooltip shows "Show less" when expanded via showLess i18n key', async () => {
       const user = userEvent.setup();
-      (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
-        (key: string) => {
-          if (key === 'showMore') return 'Show more';
-          if (key === 'showLess') return 'Show less';
-          if (key === 'expandEvent') return 'Show details';
-          if (key === 'collapseEvent') return 'Hide details';
-          if (key === 'unstarEvent') return 'Unstar event';
-          return '';
-        },
-      );
+      (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation((key: string) => {
+        if (key === 'showMore') return 'Show more';
+        if (key === 'showLess') return 'Show less';
+        if (key === 'expandEvent') return 'Show details';
+        if (key === 'collapseEvent') return 'Hide details';
+        if (key === 'unstarEvent') return 'Unstar event';
+        return '';
+      });
       const event = makeEvent({ description: 'Test' });
       render(<EventItem event={event} onUnstar={onUnstar} adapter={adapter} />);
 
@@ -407,7 +405,6 @@ describe('Popup EventItem star toggle and source link', () => {
   });
 });
 
-
 describe('description URL stripping (Requirement 11)', () => {
   let adapter: IBrowserApiAdapter;
   let onUnstar: (eventId: string) => void;
@@ -416,16 +413,14 @@ describe('description URL stripping (Requirement 11)', () => {
     resetMocks();
     adapter = mockBrowserApi;
     onUnstar = vi.fn();
-    (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
-      (key: string) => {
-        if (key === 'unstarEvent') return 'Unstar event';
-        if (key === 'expandEvent') return 'Show details';
-        if (key === 'collapseEvent') return 'Hide details';
-        if (key === 'showMore') return 'Show more';
-        if (key === 'showLess') return 'Show less';
-        return '';
-      },
-    );
+    (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation((key: string) => {
+      if (key === 'unstarEvent') return 'Unstar event';
+      if (key === 'expandEvent') return 'Show details';
+      if (key === 'collapseEvent') return 'Hide details';
+      if (key === 'showMore') return 'Show more';
+      if (key === 'showLess') return 'Show less';
+      return '';
+    });
   });
 
   it('strips sourceUrl from rendered description when sourceUrl is present in description', async () => {

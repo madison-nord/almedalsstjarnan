@@ -17,12 +17,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom/vitest';
 
-import type {
-  IBrowserApiAdapter,
-  SortOrder,
-  MessagePayload,
-  MessageResponse,
-} from '#core/types';
+import type { IBrowserApiAdapter, SortOrder, MessagePayload, MessageResponse } from '#core/types';
 import { mockBrowserApi, resetMocks } from '#test/helpers/mock-browser-api';
 
 import { App } from '#ui/popup/App';

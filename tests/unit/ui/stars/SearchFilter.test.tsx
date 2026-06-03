@@ -56,9 +56,7 @@ function makeEvent(overrides: Partial<StarredEvent> & { readonly id: string }): 
 describe('SearchFilter', () => {
   it('renders an input with the correct placeholder from i18n', () => {
     const adapter = setupAdapter();
-    render(
-      <SearchFilter value="" onChange={vi.fn()} adapter={adapter} />,
-    );
+    render(<SearchFilter value="" onChange={vi.fn()} adapter={adapter} />);
 
     const input = screen.getByPlaceholderText('Filter events…');
     expect(input).toBeInTheDocument();
@@ -66,9 +64,7 @@ describe('SearchFilter', () => {
 
   it('renders an input with the correct aria-label from i18n', () => {
     const adapter = setupAdapter();
-    render(
-      <SearchFilter value="" onChange={vi.fn()} adapter={adapter} />,
-    );
+    render(<SearchFilter value="" onChange={vi.fn()} adapter={adapter} />);
 
     const input = screen.getByLabelText('Filter');
     expect(input).toBeInTheDocument();
@@ -76,9 +72,7 @@ describe('SearchFilter', () => {
 
   it('displays the current value', () => {
     const adapter = setupAdapter();
-    render(
-      <SearchFilter value="demokrati" onChange={vi.fn()} adapter={adapter} />,
-    );
+    render(<SearchFilter value="demokrati" onChange={vi.fn()} adapter={adapter} />);
 
     const input = screen.getByRole('textbox') as HTMLInputElement;
     expect(input.value).toBe('demokrati');
@@ -87,9 +81,7 @@ describe('SearchFilter', () => {
   it('calls onChange when user types', () => {
     const adapter = setupAdapter();
     const onChange = vi.fn();
-    render(
-      <SearchFilter value="" onChange={onChange} adapter={adapter} />,
-    );
+    render(<SearchFilter value="" onChange={onChange} adapter={adapter} />);
 
     const input = screen.getByRole('textbox');
     fireEvent.change(input, { target: { value: 'klim' } });
@@ -99,9 +91,7 @@ describe('SearchFilter', () => {
 
   it('has a visible label element for accessibility', () => {
     const adapter = setupAdapter();
-    render(
-      <SearchFilter value="" onChange={vi.fn()} adapter={adapter} />,
-    );
+    render(<SearchFilter value="" onChange={vi.fn()} adapter={adapter} />);
 
     const label = screen.getByText('Filter');
     expect(label.tagName).toBe('LABEL');
@@ -110,9 +100,7 @@ describe('SearchFilter', () => {
 
   it('input has the correct id matching the label', () => {
     const adapter = setupAdapter();
-    render(
-      <SearchFilter value="" onChange={vi.fn()} adapter={adapter} />,
-    );
+    render(<SearchFilter value="" onChange={vi.fn()} adapter={adapter} />);
 
     const input = screen.getByRole('textbox');
     expect(input).toHaveAttribute('id', 'stars-filter');
@@ -123,9 +111,24 @@ describe('SearchFilter', () => {
 
 describe('filterEvents integration', () => {
   const events: readonly StarredEvent[] = [
-    makeEvent({ id: 'e1', title: 'Demokrati i förändring', organiser: 'Sveriges Riksdag', topic: 'Demokrati' }),
-    makeEvent({ id: 'e2', title: 'Hållbar utveckling', organiser: 'Naturskyddsföreningen', topic: 'Hållbarhet' }),
-    makeEvent({ id: 'e3', title: 'Framtidens sjukvård', organiser: 'Region Gotland', topic: 'Hälsa' }),
+    makeEvent({
+      id: 'e1',
+      title: 'Demokrati i förändring',
+      organiser: 'Sveriges Riksdag',
+      topic: 'Demokrati',
+    }),
+    makeEvent({
+      id: 'e2',
+      title: 'Hållbar utveckling',
+      organiser: 'Naturskyddsföreningen',
+      topic: 'Hållbarhet',
+    }),
+    makeEvent({
+      id: 'e3',
+      title: 'Framtidens sjukvård',
+      organiser: 'Region Gotland',
+      topic: 'Hälsa',
+    }),
     makeEvent({ id: 'e4', title: 'Klimatkrisen', organiser: null, topic: null }),
   ];
 

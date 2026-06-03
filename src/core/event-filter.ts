@@ -38,9 +38,7 @@ export function filterEvents(
     const topic = (event.topic ?? '').toLowerCase();
 
     return (
-      title.includes(lowerFilter) ||
-      organiser.includes(lowerFilter) ||
-      topic.includes(lowerFilter)
+      title.includes(lowerFilter) || organiser.includes(lowerFilter) || topic.includes(lowerFilter)
     );
   });
 }

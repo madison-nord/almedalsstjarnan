@@ -20,16 +20,14 @@ import { BulkActions } from '#ui/stars/components/BulkActions';
 // ─── Helpers ──────────────────────────────────────────────────────
 
 function setupAdapter(): IBrowserApiAdapter {
-  (mockBrowserApi.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
-    (key: string) => {
-      const messages: Record<string, string> = {
-        selectAll: 'Select all',
-        unstarSelected: 'Unstar selected',
-        exportSelected: 'Export selected',
-      };
-      return messages[key] ?? key;
-    },
-  );
+  (mockBrowserApi.getMessage as ReturnType<typeof vi.fn>).mockImplementation((key: string) => {
+    const messages: Record<string, string> = {
+      selectAll: 'Select all',
+      unstarSelected: 'Unstar selected',
+      exportSelected: 'Export selected',
+    };
+    return messages[key] ?? key;
+  });
   return mockBrowserApi;
 }
 
@@ -72,9 +70,7 @@ describe('BulkActions always-visible disabled state (Requirements 2.1, 2.2, 2.3,
       const { container } = renderBulkActions({ selectedCount: 0, totalCount: 10 });
 
       const buttons = container.querySelectorAll('button');
-      const unstarButton = Array.from(buttons).find(
-        (btn) => btn.textContent === 'Unstar selected',
-      );
+      const unstarButton = Array.from(buttons).find((btn) => btn.textContent === 'Unstar selected');
 
       expect(unstarButton).toBeDefined();
       expect(unstarButton!).toBeDisabled();
@@ -86,9 +82,7 @@ describe('BulkActions always-visible disabled state (Requirements 2.1, 2.2, 2.3,
       const { container } = renderBulkActions({ selectedCount: 0, totalCount: 10 });
 
       const buttons = container.querySelectorAll('button');
-      const exportButton = Array.from(buttons).find(
-        (btn) => btn.textContent === 'Export selected',
-      );
+      const exportButton = Array.from(buttons).find((btn) => btn.textContent === 'Export selected');
 
       expect(exportButton).toBeDefined();
       expect(exportButton!).toBeDisabled();
@@ -102,9 +96,7 @@ describe('BulkActions always-visible disabled state (Requirements 2.1, 2.2, 2.3,
       const { container } = renderBulkActions({ selectedCount: 3, totalCount: 10 });
 
       const buttons = container.querySelectorAll('button');
-      const unstarButton = Array.from(buttons).find(
-        (btn) => btn.textContent === 'Unstar selected',
-      );
+      const unstarButton = Array.from(buttons).find((btn) => btn.textContent === 'Unstar selected');
 
       expect(unstarButton).toBeDefined();
       expect(unstarButton!).not.toBeDisabled();
@@ -116,9 +108,7 @@ describe('BulkActions always-visible disabled state (Requirements 2.1, 2.2, 2.3,
       const { container } = renderBulkActions({ selectedCount: 3, totalCount: 10 });
 
       const buttons = container.querySelectorAll('button');
-      const exportButton = Array.from(buttons).find(
-        (btn) => btn.textContent === 'Export selected',
-      );
+      const exportButton = Array.from(buttons).find((btn) => btn.textContent === 'Export selected');
 
       expect(exportButton).toBeDefined();
       expect(exportButton!).not.toBeDisabled();
@@ -132,9 +122,7 @@ describe('BulkActions always-visible disabled state (Requirements 2.1, 2.2, 2.3,
       const { container } = renderBulkActions({ selectedCount: 0, totalCount: 10 });
 
       const buttons = container.querySelectorAll('button');
-      const selectAllButton = Array.from(buttons).find(
-        (btn) => btn.textContent === 'Select all',
-      );
+      const selectAllButton = Array.from(buttons).find((btn) => btn.textContent === 'Select all');
 
       expect(selectAllButton).toBeDefined();
       expect(selectAllButton!).not.toBeDisabled();

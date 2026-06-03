@@ -8,16 +8,16 @@ The extension follows a message-passing architecture where a content script inje
 
 **Key design decisions and rationale:**
 
-| Decision | Rationale |
-|---|---|
-| Shadow DOM for star buttons | Complete style isolation from host page CSS; no Tailwind leak into content script |
-| Single MutationObserver | Server-rendered pages with dynamic updates; one observer handles both initial scan and late-arriving cards |
-| Background service worker as single source of truth | Manifest V3 requirement; centralizes storage access; enables cross-tab consistency |
-| Browser API adapter | All `chrome.*` calls behind one injectable interface; unit tests never touch real browser APIs |
-| `vite-plugin-web-extension` (aklinker1) | Handles multi-entry bundling (content script, background, popup, stars page), manifest processing, and HMR in a single plugin |
-| `fast-check` for property-based tests | Validates ICS round-trip, sorter idempotence, and normalizer invariants across thousands of generated inputs |
-| Path aliases with `#` prefix | Avoids conflict with npm scoped packages (`@`); clear visual distinction for internal imports |
-| Manual semver 0.x.x | Pre-1.0 development; no automated release tooling needed yet |
+| Decision                                            | Rationale                                                                                                                     |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Shadow DOM for star buttons                         | Complete style isolation from host page CSS; no Tailwind leak into content script                                             |
+| Single MutationObserver                             | Server-rendered pages with dynamic updates; one observer handles both initial scan and late-arriving cards                    |
+| Background service worker as single source of truth | Manifest V3 requirement; centralizes storage access; enables cross-tab consistency                                            |
+| Browser API adapter                                 | All `chrome.*` calls behind one injectable interface; unit tests never touch real browser APIs                                |
+| `vite-plugin-web-extension` (aklinker1)             | Handles multi-entry bundling (content script, background, popup, stars page), manifest processing, and HMR in a single plugin |
+| `fast-check` for property-based tests               | Validates ICS round-trip, sorter idempotence, and normalizer invariants across thousands of generated inputs                  |
+| Path aliases with `#` prefix                        | Avoids conflict with npm scoped packages (`@`); clear visual distinction for internal imports                                 |
+| Manual semver 0.x.x                                 | Pre-1.0 development; no automated release tooling needed yet                                                                  |
 
 ## Architecture
 
@@ -324,7 +324,6 @@ dist/
     └── icon-128.png
 ```
 
-
 ### TypeScript Interfaces and Types (`src/core/types.ts`)
 
 ```typescript
@@ -448,9 +447,7 @@ export interface MessageResponseError {
   readonly error: string;
 }
 
-export type MessageResponse<T = unknown> =
-  | MessageResponseSuccess<T>
-  | MessageResponseError;
+export type MessageResponse<T = unknown> = MessageResponseSuccess<T> | MessageResponseError;
 
 // ─── Response type map per command ────────────────────────────────
 
@@ -500,7 +497,7 @@ export interface ICSCalendar {
 
 export interface IBrowserApiAdapter {
   storageLocalGet<K extends keyof StorageSchema>(
-    keys: K[]
+    keys: K[],
   ): Promise<Partial<Pick<StorageSchema, K>>>;
 
   storageLocalSet(items: Partial<StorageSchema>): Promise<void>;
@@ -515,7 +512,7 @@ export interface IBrowserApiAdapter {
 
   /** Register a listener for storage.onChanged events. Returns an unsubscribe function. */
   onStorageChanged(
-    callback: (changes: Record<string, { oldValue?: unknown; newValue?: unknown }>) => void
+    callback: (changes: Record<string, { oldValue?: unknown; newValue?: unknown }>) => void,
   ): () => void;
 }
 ```
@@ -533,7 +530,7 @@ import type { IBrowserApiAdapter, StorageSchema, MessagePayload, MessageResponse
  */
 export class BrowserApiAdapter implements IBrowserApiAdapter {
   async storageLocalGet<K extends keyof StorageSchema>(
-    keys: K[]
+    keys: K[],
   ): Promise<Partial<Pick<StorageSchema, K>>>;
 
   async storageLocalSet(items: Partial<StorageSchema>): Promise<void>;
@@ -547,7 +544,7 @@ export class BrowserApiAdapter implements IBrowserApiAdapter {
   async createTab(options: { url: string }): Promise<void>;
 
   onStorageChanged(
-    callback: (changes: Record<string, { oldValue?: unknown; newValue?: unknown }>) => void
+    callback: (changes: Record<string, { oldValue?: unknown; newValue?: unknown }>) => void,
   ): () => void;
 }
 
@@ -586,7 +583,7 @@ export function deriveEventId(
   icsUrl: string | null,
   detailUrl: string | null,
   title: string,
-  startDateTime: string
+  startDateTime: string,
 ): string;
 
 /**
@@ -690,10 +687,7 @@ import type { StarredEvent, SortOrder } from './types';
  * @param order - One of the four SortOrder values
  * @returns New sorted array
  */
-export function sortEvents(
-  events: readonly StarredEvent[],
-  order: SortOrder
-): StarredEvent[];
+export function sortEvents(events: readonly StarredEvent[], order: SortOrder): StarredEvent[];
 ```
 
 #### 6. Background Service Worker (`src/extension/background.ts`)
@@ -743,10 +737,7 @@ export function sortEvents(
 
 export function initContentScript(adapter: IBrowserApiAdapter): void;
 
-export function processEventCard(
-  card: Element,
-  adapter: IBrowserApiAdapter
-): Promise<void>;
+export function processEventCard(card: Element, adapter: IBrowserApiAdapter): Promise<void>;
 
 export function isEventCard(element: Element): boolean;
 
@@ -855,10 +846,9 @@ export const STAR_FILLED_SVG: string;
  */
 export function mergeManifest(
   base: Record<string, unknown>,
-  override: Record<string, unknown>
+  override: Record<string, unknown>,
 ): Record<string, unknown>;
 ```
-
 
 ## Data Models
 
@@ -866,10 +856,10 @@ export function mergeManifest(
 
 The extension uses `chrome.storage.local` with two top-level keys:
 
-| Key | Type | Default | Description |
-|---|---|---|---|
+| Key             | Type                            | Default             | Description                                                                                                                              |
+| --------------- | ------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | `starredEvents` | `Record<EventId, StarredEvent>` | `{}` (empty object) | Object keyed by event ID. Each value is a full `StarredEvent` object. Returned as `StarredEvent[]` (via `Object.values()`) to consumers. |
-| `sortOrder` | `SortOrder` | `"chronological"` | One of: `"chronological"`, `"reverse-chronological"`, `"alphabetical-by-title"`, `"starred-desc"` |
+| `sortOrder`     | `SortOrder`                     | `"chronological"`   | One of: `"chronological"`, `"reverse-chronological"`, `"alphabetical-by-title"`, `"starred-desc"`                                        |
 
 **Design decision:** `starredEvents` is stored as an object (not an array) keyed by `EventId` for O(1) lookup/insert/delete. The background service worker converts to an array when responding to `GET_ALL_STARRED_EVENTS`.
 
@@ -914,56 +904,54 @@ Each star button is rendered inside an isolated Shadow DOM:
 <!-- Injected into Event_Card by content script -->
 <div class="almedals-star-host" data-event-id="abc123">
   #shadow-root (open)
-    <style>
-      /* Scoped CSS — no Tailwind, no host page leakage */
-      .star-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 32px;
-        height: 32px;
-        padding: 0;
-        border: none;
-        background: transparent;
-        cursor: pointer;
-        border-radius: 4px;
-        transition: background-color 0.15s ease;
-      }
-      .star-btn:hover {
-        background-color: rgba(0, 0, 0, 0.06);
-      }
-      .star-btn:focus-visible {
-        outline: 2px solid #2563eb;
-        outline-offset: 2px;
-      }
-      .star-btn svg {
-        width: 16px;
-        height: 16px;
-      }
-      .star-btn[aria-pressed="true"] svg {
-        fill: #f59e0b;
-        stroke: #f59e0b;
-      }
-      .star-btn[aria-pressed="false"] svg {
-        fill: none;
-        stroke: #6b7280;
-        stroke-width: 1.5;
-      }
-    </style>
-    <button
-      class="star-btn"
-      type="button"
-      aria-pressed="false"
-      aria-label="Stjärnmärk evenemang"
-    >
-      <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-        <path d="M8 1.5l1.85 3.75 4.15.6-3 2.93.71 4.12L8 10.77 4.29 12.9l.71-4.12-3-2.93 4.15-.6L8 1.5z"/>
-      </svg>
-    </button>
+  <style>
+    /* Scoped CSS — no Tailwind, no host page leakage */
+    .star-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.15s ease;
+    }
+    .star-btn:hover {
+      background-color: rgba(0, 0, 0, 0.06);
+    }
+    .star-btn:focus-visible {
+      outline: 2px solid #2563eb;
+      outline-offset: 2px;
+    }
+    .star-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+    .star-btn[aria-pressed='true'] svg {
+      fill: #f59e0b;
+      stroke: #f59e0b;
+    }
+    .star-btn[aria-pressed='false'] svg {
+      fill: none;
+      stroke: #6b7280;
+      stroke-width: 1.5;
+    }
+  </style>
+  <button class="star-btn" type="button" aria-pressed="false" aria-label="Stjärnmärk evenemang">
+    <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M8 1.5l1.85 3.75 4.15.6-3 2.93.71 4.12L8 10.77 4.29 12.9l.71-4.12-3-2.93 4.15-.6L8 1.5z"
+      />
+    </svg>
+  </button>
 </div>
 ```
 
 **Placement rules:**
+
 - **Event cards (listing pages):** Star button inserted into the title row, after the `<h2>` title element
 - **Event detail blocks:** Star button inserted below the `<h1>` or `<h2>` title element
 
@@ -1080,10 +1068,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    include: [
-      'tests/unit/**/*.test.{ts,tsx}',
-      'tests/property/**/*.property.test.ts',
-    ],
+    include: ['tests/unit/**/*.test.{ts,tsx}', 'tests/property/**/*.property.test.ts'],
     coverage: {
       provider: 'v8',
       include: ['src/core/**/*.ts'],
@@ -1098,13 +1083,14 @@ export default defineConfig({
 
 Path aliases are configured in three places to ensure consistency:
 
-| Location | Purpose |
-|---|---|
-| `tsconfig.json` → `paths` | TypeScript type resolution and IDE support |
-| `vite.config.ts` → `resolve.alias` | Build-time module resolution |
-| `vitest.config.ts` → `resolve.alias` | Test-time module resolution |
+| Location                             | Purpose                                    |
+| ------------------------------------ | ------------------------------------------ |
+| `tsconfig.json` → `paths`            | TypeScript type resolution and IDE support |
+| `vite.config.ts` → `resolve.alias`   | Build-time module resolution               |
+| `vitest.config.ts` → `resolve.alias` | Test-time module resolution                |
 
 All five aliases:
+
 - `#core/*` → `src/core/*`
 - `#ui/*` → `src/ui/*`
 - `#features/*` → `src/features/*`
@@ -1118,6 +1104,7 @@ The complete i18n message key catalog (26 keys × 2 locales) is maintained in a 
 **→ #[[file:.kiro/specs/almedals-planner-extension/i18n-catalog.md]]**
 
 That file contains:
+
 - Summary table mapping each key to its Swedish/English value and which module uses it
 - Full `_locales/sv/messages.json` content
 - Full `_locales/en/messages.json` content
@@ -1210,14 +1197,14 @@ jobs:
 
 Six steering files guide development. Two are always included, four are conditionally included when relevant files are read.
 
-| File | Inclusion | Trigger Pattern |
-|---|---|---|
-| `coding-conventions.md` | Always | — |
-| `testing-standards.md` | Always | — |
-| `browser-extension-patterns.md` | Conditional (fileMatch) | `src/extension/**` |
-| `accessibility-standards.md` | Conditional (fileMatch) | `src/ui/**`, `src/extension/star-button.*` |
-| `i18n-guide.md` | Conditional (fileMatch) | `**/*.tsx`, `_locales/**` |
-| `commit-messages.md` | Always | — |
+| File                            | Inclusion               | Trigger Pattern                            |
+| ------------------------------- | ----------------------- | ------------------------------------------ |
+| `coding-conventions.md`         | Always                  | —                                          |
+| `testing-standards.md`          | Always                  | —                                          |
+| `browser-extension-patterns.md` | Conditional (fileMatch) | `src/extension/**`                         |
+| `accessibility-standards.md`    | Conditional (fileMatch) | `src/ui/**`, `src/extension/star-button.*` |
+| `i18n-guide.md`                 | Conditional (fileMatch) | `**/*.tsx`, `_locales/**`                  |
+| `commit-messages.md`            | Always                  | —                                          |
 
 **Rationale for splitting:** Each steering file targets a specific concern. Always-included files cover universal rules (code style, testing, commits). Conditional files load only when the agent is working on relevant modules, keeping context focused.
 
@@ -1228,53 +1215,56 @@ All steering files are created during project scaffolding (task 1) so they are a
 Three hooks automate quality checks during development:
 
 **Hook 1: Lint on file save**
+
 - Event: `fileEdited`
 - File patterns: `src/**/*.ts, src/**/*.tsx`
 - Action: `askAgent` — "Run `pnpm run lint` and report any errors. If there are fixable errors, run `pnpm run lint:fix` and report what was fixed."
 
 **Hook 2: Type check on file save**
+
 - Event: `fileEdited`
 - File patterns: `src/**/*.ts, src/**/*.tsx`
 - Action: `askAgent` — "Run `pnpm run typecheck` and report any type errors found."
 
 **Hook 3: Run related tests on file save**
+
 - Event: `fileEdited`
 - File patterns: `src/**/*.ts, src/**/*.tsx, tests/**/*.test.ts, tests/**/*.test.tsx`
 - Action: `askAgent` — "Identify the test file(s) related to the edited file and run them with `pnpm exec vitest run --reporter=verbose {test_file}`. Report pass/fail results."
 
 ### Integration Points Between Modules
 
-| Source Module | Target Module | Integration Mechanism | Data Exchanged |
-|---|---|---|---|
-| Content Script | Background SW | `chrome.runtime.sendMessage` via adapter | `STAR_EVENT`, `UNSTAR_EVENT`, `GET_STAR_STATE` payloads |
-| Content Script | storage.onChanged | `chrome.storage.onChanged` via adapter | Listens for `starredEvents` changes to update all visible star buttons (cross-tab consistency) |
-| Content Script | Content Script (internal) | In-memory `eventId → StarButton[]` map | After toggling one star button, updates all other visible star buttons for the same event ID (cross-page consistency within same tab) |
-| Content Script | Event Normalizer | Direct function call | DOM Element → `NormalizerResult` |
-| Content Script | Star Button | Direct function call | Creates Shadow DOM, returns update/destroy handles |
-| Event Normalizer | ICS Parser | Direct function call | Decodes `data:text/calendar` URI, parses ICS content to extract SUMMARY, DTSTART, DTEND, LOCATION, DESCRIPTION, URL fields |
-| Popup UI | Background SW | `chrome.runtime.sendMessage` via adapter | `GET_ALL_STARRED_EVENTS`, `GET_SORT_ORDER`, `SET_SORT_ORDER` payloads |
-| Popup UI | storage.onChanged | `chrome.storage.onChanged` via adapter | Listens for `starredEvents` changes to refresh displayed list (live update when events starred/unstarred from other contexts) |
-| Stars Page | Background SW | `chrome.runtime.sendMessage` via adapter | `GET_ALL_STARRED_EVENTS`, `GET_SORT_ORDER`, `SET_SORT_ORDER`, `UNSTAR_EVENT` payloads |
-| Stars Page | storage.onChanged | `chrome.storage.onChanged` via adapter | Listens for `starredEvents` changes to refresh displayed list (live update when events starred/unstarred from other contexts) |
-| Stars Page | ICS Generator | Direct function call | `StarredEvent[]` → ICS string |
-| Stars Page | Browser API Adapter | `downloads.download` via adapter | Blob URL + filename |
-| Background SW | storage.local | `chrome.storage.local.get/set` via adapter | `StorageSchema` objects |
-| Background SW | Background SW (internal) | `starredAt` timestamp generation | When processing STAR_EVENT, generates `starredAt = new Date().toISOString()` and adds it to the NormalizedEvent to create a StarredEvent |
-| Popup UI / Stars Page | Sorter | Direct function call | `StarredEvent[]` + `SortOrder` → sorted `StarredEvent[]` |
-| ICS Generator | ICS Parser | Used together in round-trip tests | ICS string ↔ `ICSCalendar` |
-| Build system | Manifest merge | Build-time function call | `base.json` + `chrome.json` → merged `manifest.json` |
-| All modules | i18n | `chrome.i18n.getMessage` via adapter | Message key → localized string |
+| Source Module         | Target Module             | Integration Mechanism                      | Data Exchanged                                                                                                                           |
+| --------------------- | ------------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Content Script        | Background SW             | `chrome.runtime.sendMessage` via adapter   | `STAR_EVENT`, `UNSTAR_EVENT`, `GET_STAR_STATE` payloads                                                                                  |
+| Content Script        | storage.onChanged         | `chrome.storage.onChanged` via adapter     | Listens for `starredEvents` changes to update all visible star buttons (cross-tab consistency)                                           |
+| Content Script        | Content Script (internal) | In-memory `eventId → StarButton[]` map     | After toggling one star button, updates all other visible star buttons for the same event ID (cross-page consistency within same tab)    |
+| Content Script        | Event Normalizer          | Direct function call                       | DOM Element → `NormalizerResult`                                                                                                         |
+| Content Script        | Star Button               | Direct function call                       | Creates Shadow DOM, returns update/destroy handles                                                                                       |
+| Event Normalizer      | ICS Parser                | Direct function call                       | Decodes `data:text/calendar` URI, parses ICS content to extract SUMMARY, DTSTART, DTEND, LOCATION, DESCRIPTION, URL fields               |
+| Popup UI              | Background SW             | `chrome.runtime.sendMessage` via adapter   | `GET_ALL_STARRED_EVENTS`, `GET_SORT_ORDER`, `SET_SORT_ORDER` payloads                                                                    |
+| Popup UI              | storage.onChanged         | `chrome.storage.onChanged` via adapter     | Listens for `starredEvents` changes to refresh displayed list (live update when events starred/unstarred from other contexts)            |
+| Stars Page            | Background SW             | `chrome.runtime.sendMessage` via adapter   | `GET_ALL_STARRED_EVENTS`, `GET_SORT_ORDER`, `SET_SORT_ORDER`, `UNSTAR_EVENT` payloads                                                    |
+| Stars Page            | storage.onChanged         | `chrome.storage.onChanged` via adapter     | Listens for `starredEvents` changes to refresh displayed list (live update when events starred/unstarred from other contexts)            |
+| Stars Page            | ICS Generator             | Direct function call                       | `StarredEvent[]` → ICS string                                                                                                            |
+| Stars Page            | Browser API Adapter       | `downloads.download` via adapter           | Blob URL + filename                                                                                                                      |
+| Background SW         | storage.local             | `chrome.storage.local.get/set` via adapter | `StorageSchema` objects                                                                                                                  |
+| Background SW         | Background SW (internal)  | `starredAt` timestamp generation           | When processing STAR_EVENT, generates `starredAt = new Date().toISOString()` and adds it to the NormalizedEvent to create a StarredEvent |
+| Popup UI / Stars Page | Sorter                    | Direct function call                       | `StarredEvent[]` + `SortOrder` → sorted `StarredEvent[]`                                                                                 |
+| ICS Generator         | ICS Parser                | Used together in round-trip tests          | ICS string ↔ `ICSCalendar`                                                                                                               |
+| Build system          | Manifest merge            | Build-time function call                   | `base.json` + `chrome.json` → merged `manifest.json`                                                                                     |
+| All modules           | i18n                      | `chrome.i18n.getMessage` via adapter       | Message key → localized string                                                                                                           |
 
 ### Test File Organization
 
-| Test Category | Directory | Naming Pattern | Runner | Min Iterations |
-|---|---|---|---|---|
-| Unit tests (core) | `tests/unit/core/` | `{module}.test.ts` | Vitest | N/A |
-| Unit tests (extension) | `tests/unit/extension/` | `{module}.test.ts` | Vitest | N/A |
-| Unit tests (UI) | `tests/unit/ui/{page}/` | `App.test.tsx` | Vitest + jsdom | N/A |
-| Property tests | `tests/property/` | `{property-name}.property.test.ts` | Vitest + fast-check | 100 |
-| E2E tests | `tests/e2e/` | `{flow}.e2e.test.ts` | Playwright | N/A |
-| Test helpers | `tests/helpers/` | `{purpose}.ts` | (imported) | N/A |
+| Test Category          | Directory               | Naming Pattern                     | Runner              | Min Iterations |
+| ---------------------- | ----------------------- | ---------------------------------- | ------------------- | -------------- |
+| Unit tests (core)      | `tests/unit/core/`      | `{module}.test.ts`                 | Vitest              | N/A            |
+| Unit tests (extension) | `tests/unit/extension/` | `{module}.test.ts`                 | Vitest              | N/A            |
+| Unit tests (UI)        | `tests/unit/ui/{page}/` | `App.test.tsx`                     | Vitest + jsdom      | N/A            |
+| Property tests         | `tests/property/`       | `{property-name}.property.test.ts` | Vitest + fast-check | 100            |
+| E2E tests              | `tests/e2e/`            | `{flow}.e2e.test.ts`               | Playwright          | N/A            |
+| Test helpers           | `tests/helpers/`        | `{purpose}.ts`                     | (imported)          | N/A            |
 
 ### Test Helpers
 
@@ -1315,32 +1305,32 @@ export function createMockEventCard(overrides?: Partial<EventCardFields>): HTMLE
 export function loadFixture(): Document;
 ```
 
-
 ## Correctness Properties
 
-*A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
+_A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees._
 
 ### Property 1: ICS round-trip preservation
 
-*For any* valid array of `StarredEvent` objects, generating an ICS string via `generateICS` and then parsing it back via `parseICS` SHALL produce event objects with equivalent `uid`, `dtstart`, `dtend`, `summary`, `location`, `description`, and `organizer` fields to the input events.
+_For any_ valid array of `StarredEvent` objects, generating an ICS string via `generateICS` and then parsing it back via `parseICS` SHALL produce event objects with equivalent `uid`, `dtstart`, `dtend`, `summary`, `location`, `description`, and `organizer` fields to the input events.
 
 **Validates: Requirements 12.1, 12.3, 12.8, 12.9, 18.6**
 
 ### Property 2: Sorter idempotence
 
-*For any* valid array of `StarredEvent` objects and *for any* valid `SortOrder` value, sorting the array and then sorting the result again with the same `SortOrder` SHALL produce an array identical to the first sort result.
+_For any_ valid array of `StarredEvent` objects and _for any_ valid `SortOrder` value, sorting the array and then sorting the result again with the same `SortOrder` SHALL produce an array identical to the first sort result.
 
 **Validates: Requirements 11.8, 18.7**
 
 ### Property 3: Sorter length preservation
 
-*For any* valid array of `StarredEvent` objects and *for any* valid `SortOrder` value, the sorted output array SHALL have the same length as the input array.
+_For any_ valid array of `StarredEvent` objects and _for any_ valid `SortOrder` value, the sorted output array SHALL have the same length as the input array.
 
 **Validates: Requirements 11.7, 18.8**
 
 ### Property 4: Sorter ordering correctness
 
-*For any* valid array of `StarredEvent` objects, when sorted by a given `SortOrder`:
+_For any_ valid array of `StarredEvent` objects, when sorted by a given `SortOrder`:
+
 - `chronological`: each element's `startDateTime` SHALL be ≤ the next element's `startDateTime`, with ties broken by ascending `id`
 - `reverse-chronological`: each element's `startDateTime` SHALL be ≥ the next element's `startDateTime`, with ties broken by ascending `id`
 - `alphabetical-by-title`: each element's `title` SHALL be ≤ the next element's `title` (locale-aware comparison), with ties broken by ascending `id`
@@ -1350,73 +1340,73 @@ export function loadFixture(): Document;
 
 ### Property 5: Sorter non-mutation
 
-*For any* valid array of `StarredEvent` objects and *for any* valid `SortOrder` value, after calling `sortEvents(events, order)`, the original `events` array SHALL be deeply equal to its state before the call.
+_For any_ valid array of `StarredEvent` objects and _for any_ valid `SortOrder` value, after calling `sortEvents(events, order)`, the original `events` array SHALL be deeply equal to its state before the call.
 
 **Validates: Requirements 11.7**
 
 ### Property 6: Normalizer whitespace trimming
 
-*For any* valid DOM element representing an Event_Card where string fields contain leading or trailing whitespace, the `normalizeEvent` function SHALL produce a `NormalizedEvent` where all string fields (`title`, `organiser`, `location`, `description`, `topic`) are trimmed of leading and trailing whitespace.
+_For any_ valid DOM element representing an Event_Card where string fields contain leading or trailing whitespace, the `normalizeEvent` function SHALL produce a `NormalizedEvent` where all string fields (`title`, `organiser`, `location`, `description`, `topic`) are trimmed of leading and trailing whitespace.
 
 **Validates: Requirements 6.5**
 
 ### Property 7: Normalizer required field rejection
 
-*For any* DOM element representing an Event_Card that is missing one or more required fields (event identifier, title, or start date-time), the `normalizeEvent` function SHALL return a `NormalizerError` result with `ok: false` and a `reason` string identifying the missing field.
+_For any_ DOM element representing an Event_Card that is missing one or more required fields (event identifier, title, or start date-time), the `normalizeEvent` function SHALL return a `NormalizerError` result with `ok: false` and a `reason` string identifying the missing field.
 
 **Validates: Requirements 6.3**
 
 ### Property 8: ICS CRLF line endings
 
-*For any* valid array of `StarredEvent` objects, the ICS string produced by `generateICS` SHALL contain no bare LF characters (`\n` not preceded by `\r`). Every line ending SHALL be CRLF (`\r\n`).
+_For any_ valid array of `StarredEvent` objects, the ICS string produced by `generateICS` SHALL contain no bare LF characters (`\n` not preceded by `\r`). Every line ending SHALL be CRLF (`\r\n`).
 
 **Validates: Requirements 12.5**
 
 ### Property 9: ICS line folding
 
-*For any* valid array of `StarredEvent` objects, every content line in the ICS string produced by `generateICS` (after unfolding continuation lines) SHALL be at most 75 octets long before the CRLF terminator.
+_For any_ valid array of `StarredEvent` objects, every content line in the ICS string produced by `generateICS` (after unfolding continuation lines) SHALL be at most 75 octets long before the CRLF terminator.
 
 **Validates: Requirements 12.6**
 
 ### Property 10: ICS UID format
 
-*For any* valid `StarredEvent`, the VEVENT UID in the generated ICS output SHALL match the pattern `{event.id}@almedalsstjarnan`.
+_For any_ valid `StarredEvent`, the VEVENT UID in the generated ICS output SHALL match the pattern `{event.id}@almedalsstjarnan`.
 
 **Validates: Requirements 12.4**
 
 ### Property 11: ICS export filename pattern
 
-*For any* `Date` object, `generateExportFilename(date)` SHALL produce a string matching the regex `^almedalsstjarnan-starred-events-\d{8}-\d{6}\.ics$`.
+_For any_ `Date` object, `generateExportFilename(date)` SHALL produce a string matching the regex `^almedalsstjarnan-starred-events-\d{8}-\d{6}\.ics$`.
 
 **Validates: Requirements 12.7**
 
 ### Property 12: Content script injection idempotence
 
-*For any* set of Event_Card DOM elements, running the content script injection logic twice on the same DOM SHALL produce the same number of Star_Buttons as running it once. Elements with `data-almedals-planner-initialized="1"` SHALL NOT receive a second Star_Button.
+_For any_ set of Event_Card DOM elements, running the content script injection logic twice on the same DOM SHALL produce the same number of Star_Buttons as running it once. Elements with `data-almedals-planner-initialized="1"` SHALL NOT receive a second Star_Button.
 
 **Validates: Requirements 4.4, 4.5, 20.3**
 
 ### Property 13: Star button ARIA state correctness
 
-*For any* event in either starred or unstarred state, the Star_Button's `aria-pressed` attribute SHALL equal `"true"` when starred and `"false"` when unstarred, and the `aria-label` SHALL equal the localized "Unstar event" when starred and "Star event" when unstarred.
+_For any_ event in either starred or unstarred state, the Star_Button's `aria-pressed` attribute SHALL equal `"true"` when starred and `"false"` when unstarred, and the `aria-label` SHALL equal the localized "Unstar event" when starred and "Star event" when unstarred.
 
 **Validates: Requirements 5.4, 5.5, 14.3, 14.4**
 
 ### Property 14: Manifest merge precedence
 
-*For any* two valid JSON objects (base and override), `mergeManifest(base, override)` SHALL produce an object where: (a) all keys from both objects are present, (b) for keys present in both, the override value takes precedence, and (c) nested objects are recursively merged following the same rules.
+_For any_ two valid JSON objects (base and override), `mergeManifest(base, override)` SHALL produce an object where: (a) all keys from both objects are present, (b) for keys present in both, the override value takes precedence, and (c) nested objects are recursively merged following the same rules.
 
 **Validates: Requirements 2.9, 17.3**
 
 ### Property 15: Background star/unstar round-trip
 
-*For any* valid `NormalizedEvent`, sending `STAR_EVENT` followed by `GET_STAR_STATE` for that event's ID SHALL return `true`, and subsequently sending `UNSTAR_EVENT` followed by `GET_STAR_STATE` SHALL return `false`.
+_For any_ valid `NormalizedEvent`, sending `STAR_EVENT` followed by `GET_STAR_STATE` for that event's ID SHALL return `true`, and subsequently sending `UNSTAR_EVENT` followed by `GET_STAR_STATE` SHALL return `false`.
 
 **Validates: Requirements 7.2, 7.3, 7.4**
 
 ### Property 16: Background sort order round-trip
 
-*For any* valid `SortOrder` value, sending `SET_SORT_ORDER` with that value followed by `GET_SORT_ORDER` SHALL return the same `SortOrder` value.
+_For any_ valid `SortOrder` value, sending `SET_SORT_ORDER` with that value followed by `GET_SORT_ORDER` SHALL return the same `SortOrder` value.
 
 **Validates: Requirements 7.6, 7.7**
 
@@ -1424,21 +1414,21 @@ export function loadFixture(): Document;
 
 ### Error Handling Strategy by Module
 
-| Module | Error Source | Handling Strategy | User Impact |
-|---|---|---|---|
-| **Event Normalizer** | Missing required DOM fields | Return `NormalizerError` with field name; caller skips card | Star button not shown on malformed card |
-| **Event Normalizer** | Unparseable date-time | Return `NormalizerError` with reason | Star button not shown |
-| **Content Script** | Normalizer returns error | Log warning to console; skip card; continue processing others | One card missing star button |
-| **Content Script** | Message send failure | Log error to console; star button remains in previous state | Click appears to do nothing; no crash |
-| **Content Script** | Shadow DOM attachment failure | Log error; skip card | One card missing star button |
-| **Background SW** | Storage read/write failure | Return `MessageResponseError` with descriptive message | UI shows localized error message |
-| **Background SW** | Unknown message command | Return `MessageResponseError` with "Unknown command" | Logged; no user-visible effect |
-| **ICS Generator** | Empty events array | Generate valid VCALENDAR with zero VEVENTs | User downloads empty calendar file |
-| **ICS Generator** | Event with special characters | Escape per RFC 5545 rules | Correct ICS output |
-| **Browser API Adapter** | Any chrome.* API failure | Reject Promise with `{method}: {originalError.message}` | Caller handles per module strategy |
-| **Popup UI** | Message response error | Display localized error message | User sees error toast/banner |
-| **Stars Page** | Export download failure | Display localized error message | User sees error, can retry |
-| **Stars Page** | Unstar failure | Display localized error message; keep event in list | User sees error, can retry |
+| Module                  | Error Source                  | Handling Strategy                                             | User Impact                             |
+| ----------------------- | ----------------------------- | ------------------------------------------------------------- | --------------------------------------- |
+| **Event Normalizer**    | Missing required DOM fields   | Return `NormalizerError` with field name; caller skips card   | Star button not shown on malformed card |
+| **Event Normalizer**    | Unparseable date-time         | Return `NormalizerError` with reason                          | Star button not shown                   |
+| **Content Script**      | Normalizer returns error      | Log warning to console; skip card; continue processing others | One card missing star button            |
+| **Content Script**      | Message send failure          | Log error to console; star button remains in previous state   | Click appears to do nothing; no crash   |
+| **Content Script**      | Shadow DOM attachment failure | Log error; skip card                                          | One card missing star button            |
+| **Background SW**       | Storage read/write failure    | Return `MessageResponseError` with descriptive message        | UI shows localized error message        |
+| **Background SW**       | Unknown message command       | Return `MessageResponseError` with "Unknown command"          | Logged; no user-visible effect          |
+| **ICS Generator**       | Empty events array            | Generate valid VCALENDAR with zero VEVENTs                    | User downloads empty calendar file      |
+| **ICS Generator**       | Event with special characters | Escape per RFC 5545 rules                                     | Correct ICS output                      |
+| **Browser API Adapter** | Any chrome.\* API failure     | Reject Promise with `{method}: {originalError.message}`       | Caller handles per module strategy      |
+| **Popup UI**            | Message response error        | Display localized error message                               | User sees error toast/banner            |
+| **Stars Page**          | Export download failure       | Display localized error message                               | User sees error, can retry              |
+| **Stars Page**          | Unstar failure                | Display localized error message; keep event in list           | User sees error, can retry              |
 
 ### Error Propagation Flow
 
@@ -1481,12 +1471,12 @@ graph TD
 
 ### Test Framework Configuration
 
-| Framework | Purpose | Configuration |
-|---|---|---|
-| **Vitest** | Unit tests, property test runner | `vitest.config.ts`, jsdom environment, globals enabled |
-| **fast-check** | Property-based test generation | Integrated with Vitest `it` blocks, min 100 iterations per property |
-| **Playwright** | E2E browser tests | `playwright.config.ts`, Chrome extension loading |
-| **@testing-library/react** | React component testing | Used in popup and stars page unit tests |
+| Framework                  | Purpose                          | Configuration                                                       |
+| -------------------------- | -------------------------------- | ------------------------------------------------------------------- |
+| **Vitest**                 | Unit tests, property test runner | `vitest.config.ts`, jsdom environment, globals enabled              |
+| **fast-check**             | Property-based test generation   | Integrated with Vitest `it` blocks, min 100 iterations per property |
+| **Playwright**             | E2E browser tests                | `playwright.config.ts`, Chrome extension loading                    |
+| **@testing-library/react** | React component testing          | Used in popup and stars page unit tests                             |
 
 ### Property-Based Testing Configuration
 
@@ -1505,7 +1495,7 @@ describe('ICS round-trip', () => {
         expect(parsed.events).toHaveLength(events.length);
         // ... field-by-field comparison
       }),
-      { numRuns: 100 }
+      { numRuns: 100 },
     );
   });
   // Tag: Feature: almedals-planner-extension, Property 1: ICS round-trip preservation
@@ -1524,7 +1514,7 @@ Every property test file includes a comment tag linking it to the design documen
 
 - All exported functions in `src/core/` must have unit test coverage
 - All 16 correctness properties must have corresponding property-based tests
-- Browser API adapter is mocked in ALL unit tests (no real chrome.* calls)
+- Browser API adapter is mocked in ALL unit tests (no real chrome.\* calls)
 - DOM fixture (`fixtures/almedalsveckan-program-2026.html`) used for content script tests
 
 ### TDD Workflow

@@ -2,10 +2,7 @@ import { describe, it, expect } from 'vitest';
 
 import type { StarredEvent } from '#core/types';
 
-import {
-  validateStarredEvents,
-  isValidStarredEntry,
-} from '#core/storage-validator';
+import { validateStarredEvents, isValidStarredEntry } from '#core/storage-validator';
 
 // ─── Helpers ──────────────────────────────────────────────────────
 

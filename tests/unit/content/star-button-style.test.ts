@@ -32,13 +32,11 @@ describe('Star Button Style — Branded Colors', () => {
     hostElement = document.createElement('div');
     document.body.appendChild(hostElement);
     adapter = mockBrowserApi;
-    (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
-      (key: string) => {
-        if (key === 'starEvent') return 'Star event';
-        if (key === 'unstarEvent') return 'Unstar event';
-        return '';
-      },
-    );
+    (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation((key: string) => {
+      if (key === 'starEvent') return 'Star event';
+      if (key === 'unstarEvent') return 'Unstar event';
+      return '';
+    });
   });
 
   afterEach(() => {

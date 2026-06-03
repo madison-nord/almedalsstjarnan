@@ -82,11 +82,11 @@ describe('Background: concurrent UNSTAR_EVENT race condition', () => {
   it('5 concurrent unstar operations all succeed', async () => {
     let storage: Record<string, Record<string, StarredEvent>> = {
       starredEvents: {
-        'e1': makeStarredEvent('e1'),
-        'e2': makeStarredEvent('e2'),
-        'e3': makeStarredEvent('e3'),
-        'e4': makeStarredEvent('e4'),
-        'e5': makeStarredEvent('e5'),
+        e1: makeStarredEvent('e1'),
+        e2: makeStarredEvent('e2'),
+        e3: makeStarredEvent('e3'),
+        e4: makeStarredEvent('e4'),
+        e5: makeStarredEvent('e5'),
       },
     };
 

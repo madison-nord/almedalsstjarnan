@@ -12,11 +12,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 
-import type {
-  IBrowserApiAdapter,
-  MessagePayload,
-  MessageResponse,
-} from '#core/types';
+import type { IBrowserApiAdapter, MessagePayload, MessageResponse } from '#core/types';
 import { mockBrowserApi, resetMocks } from '#test/helpers/mock-browser-api';
 
 import { App } from '#ui/popup/App';
@@ -74,7 +70,11 @@ interface SetupOptions {
 }
 
 function setupAdapter(options: SetupOptions = {}): void {
-  const { onboardingDismissed = false, onboardingFails = false, setOnboardingFails = false } = options;
+  const {
+    onboardingDismissed = false,
+    onboardingFails = false,
+    setOnboardingFails = false,
+  } = options;
 
   (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
     (key: string) => messageMap[key] ?? '',

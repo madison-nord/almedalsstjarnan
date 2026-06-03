@@ -61,14 +61,31 @@ function formatSectionDate(dateKey: string): string {
   const t = [0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4] as const;
   let y = year;
   if (month < 3) y -= 1;
-  const dow = (y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) + (t[month - 1] ?? 0) + day) % 7;
+  const dow =
+    (y +
+      Math.floor(y / 4) -
+      Math.floor(y / 100) +
+      Math.floor(y / 400) +
+      (t[month - 1] ?? 0) +
+      day) %
+    7;
   // Convert from 0=Sunday to 0=Monday (our index)
   const mondayIndex = (dow + 6) % 7;
 
   const svDays = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag', 'Söndag'] as const;
   const svMonths = [
-    'januari', 'februari', 'mars', 'april', 'maj', 'juni',
-    'juli', 'augusti', 'september', 'oktober', 'november', 'december',
+    'januari',
+    'februari',
+    'mars',
+    'april',
+    'maj',
+    'juni',
+    'juli',
+    'augusti',
+    'september',
+    'oktober',
+    'november',
+    'december',
   ] as const;
 
   const dayName = svDays[mondayIndex] ?? '';
@@ -109,7 +126,18 @@ export function groupEventsByDate(events: readonly StarredEvent[]): readonly Dat
   }));
 }
 
-export function EventGrid({ events, sortOrder, onUnstar, adapter, conflictingIds, conflictTitlesMap, selectedIds, onToggleSelection, onSelectAll, allSelected }: EventGridProps): React.JSX.Element {
+export function EventGrid({
+  events,
+  sortOrder,
+  onUnstar,
+  adapter,
+  conflictingIds,
+  conflictTitlesMap,
+  selectedIds,
+  onToggleSelection,
+  onSelectAll,
+  allSelected,
+}: EventGridProps): React.JSX.Element {
   const timeBased = isTimeBasedSort(sortOrder);
   const groups = timeBased ? groupEventsByDate(events) : [];
 

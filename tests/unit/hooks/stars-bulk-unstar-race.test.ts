@@ -51,7 +51,11 @@ describe('Bulk unstar on Stars Page — all events removed at once', () => {
 
     // Simulate storage that removes events as UNSTAR_EVENT is processed
     let storageContents = [...allEvents];
-    let storageChangedCallback: ((changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => void) | null = null;
+    let storageChangedCallback:
+      | ((
+          changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
+        ) => void)
+      | null = null;
 
     const sendMessageMock = mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>;
     sendMessageMock.mockImplementation((message: { command: string; eventId?: string }) => {
@@ -77,9 +81,15 @@ describe('Bulk unstar on Stars Page — all events removed at once', () => {
 
     const onStorageChangedMock = mockBrowserApi.onStorageChanged as ReturnType<typeof vi.fn>;
     onStorageChangedMock.mockImplementation(
-      (cb: (changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => void) => {
+      (
+        cb: (
+          changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
+        ) => void,
+      ) => {
         storageChangedCallback = cb;
-        return () => { storageChangedCallback = null; };
+        return () => {
+          storageChangedCallback = null;
+        };
       },
     );
 
@@ -136,7 +146,11 @@ describe('Bulk unstar on Stars Page — all events removed at once', () => {
       makeEvent('event-3', 'Panel C'),
     ];
 
-    let storageChangedCallback: ((changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => void) | null = null;
+    let storageChangedCallback:
+      | ((
+          changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
+        ) => void)
+      | null = null;
 
     const sendMessageMock = mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>;
     // Simulate: GET_ALL_STARRED_EVENTS returns progressively fewer events
@@ -159,9 +173,15 @@ describe('Bulk unstar on Stars Page — all events removed at once', () => {
 
     const onStorageChangedMock = mockBrowserApi.onStorageChanged as ReturnType<typeof vi.fn>;
     onStorageChangedMock.mockImplementation(
-      (cb: (changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => void) => {
+      (
+        cb: (
+          changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
+        ) => void,
+      ) => {
         storageChangedCallback = cb;
-        return () => { storageChangedCallback = null; };
+        return () => {
+          storageChangedCallback = null;
+        };
       },
     );
 

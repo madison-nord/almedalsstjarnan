@@ -54,33 +54,36 @@ export interface EventItemProps {
   readonly conflictTitles?: readonly string[];
 }
 
-export function EventItem({ event, onUnstar, adapter, isConflicting, conflictTitles }: EventItemProps): React.JSX.Element {
+export function EventItem({
+  event,
+  onUnstar,
+  adapter,
+  isConflicting,
+  conflictTitles,
+}: EventItemProps): React.JSX.Element {
   const [expanded, setExpanded] = useState(false);
 
-  const tooltipText = conflictTitles && conflictTitles.length > 0
-    ? conflictTitles.join(', ')
-    : '';
+  const tooltipText = conflictTitles && conflictTitles.length > 0 ? conflictTitles.join(', ') : '';
 
-  const titleElement = event.sourceUrl != null ? (
-    <a
-      href={event.sourceUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-sm font-semibold text-brand-secondary hover:underline break-words"
-    >
-      {event.title}
-    </a>
-  ) : (
-    <p className="text-sm font-semibold text-brand-secondary break-words">{event.title}</p>
-  );
+  const titleElement =
+    event.sourceUrl != null ? (
+      <a
+        href={event.sourceUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-sm font-semibold text-brand-secondary hover:underline break-words"
+      >
+        {event.title}
+      </a>
+    ) : (
+      <p className="text-sm font-semibold text-brand-secondary break-words">{event.title}</p>
+    );
 
   const toggleLabel = expanded
     ? adapter.getMessage('collapseEvent')
     : adapter.getMessage('expandEvent');
 
-  const toggleTooltip = expanded
-    ? adapter.getMessage('showLess')
-    : adapter.getMessage('showMore');
+  const toggleTooltip = expanded ? adapter.getMessage('showLess') : adapter.getMessage('showMore');
 
   return (
     <li className="bg-brand-surface rounded-lg shadow-sm p-3 flex items-start gap-2">
@@ -94,9 +97,7 @@ export function EventItem({ event, onUnstar, adapter, isConflicting, conflictTit
       </button>
       <div className="min-w-0 flex-1">
         <div className="flex items-start gap-1">
-          <div className="min-w-0 flex-1">
-            {titleElement}
-          </div>
+          <div className="min-w-0 flex-1">{titleElement}</div>
           <button
             type="button"
             onClick={() => setExpanded((prev) => !prev)}
@@ -105,13 +106,7 @@ export function EventItem({ event, onUnstar, adapter, isConflicting, conflictTit
             title={toggleTooltip}
             className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded text-gray-500 hover:text-gray-800 hover:bg-gray-200 text-base leading-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              aria-hidden="true"
-            >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path
                 d={expanded ? 'M18 15l-6-6-6 6' : 'M6 9l6 6 6-6'}
                 stroke="currentColor"
@@ -122,9 +117,7 @@ export function EventItem({ event, onUnstar, adapter, isConflicting, conflictTit
             </svg>
           </button>
         </div>
-        {event.organiser && (
-          <p className="text-xs text-gray-600 line-clamp-2">{event.organiser}</p>
-        )}
+        {event.organiser && <p className="text-xs text-gray-600 line-clamp-2">{event.organiser}</p>}
         <div className="text-xs text-gray-500 mt-0.5">
           <span>{formatEventDateTime(event.startDateTime, event.endDateTime, 'sv')}</span>
           {isConflicting === true && (
@@ -139,7 +132,9 @@ export function EventItem({ event, onUnstar, adapter, isConflicting, conflictTit
           )}
           {event.location && (
             <>
-              <span className="mx-1" aria-hidden="true">·</span>
+              <span className="mx-1" aria-hidden="true">
+                ·
+              </span>
               <span>{event.location}</span>
             </>
           )}
@@ -159,7 +154,9 @@ export function EventItem({ event, onUnstar, adapter, isConflicting, conflictTit
               </p>
             )}
             {event.description && (
-              <p className="whitespace-pre-line">{stripSourceUrl(event.description, event.sourceUrl)}</p>
+              <p className="whitespace-pre-line">
+                {stripSourceUrl(event.description, event.sourceUrl)}
+              </p>
             )}
           </div>
         )}

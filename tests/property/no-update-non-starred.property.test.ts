@@ -27,23 +27,19 @@ function createEmptyInMemoryAdapter(): IBrowserApiAdapter {
   const storage: Partial<StorageSchema> = {};
 
   return {
-    storageLocalGet: vi.fn().mockImplementation(
-      <K extends keyof StorageSchema>(keys: K[]) => {
-        const result: Partial<StorageSchema> = {};
-        for (const key of keys) {
-          if (key in storage) {
-            (result as Record<string, unknown>)[key] = storage[key];
-          }
+    storageLocalGet: vi.fn().mockImplementation(<K extends keyof StorageSchema>(keys: K[]) => {
+      const result: Partial<StorageSchema> = {};
+      for (const key of keys) {
+        if (key in storage) {
+          (result as Record<string, unknown>)[key] = storage[key];
         }
-        return Promise.resolve(result);
-      },
-    ),
-    storageLocalSet: vi.fn().mockImplementation(
-      (items: Partial<StorageSchema>) => {
-        Object.assign(storage, items);
-        return Promise.resolve();
-      },
-    ),
+      }
+      return Promise.resolve(result);
+    }),
+    storageLocalSet: vi.fn().mockImplementation((items: Partial<StorageSchema>) => {
+      Object.assign(storage, items);
+      return Promise.resolve();
+    }),
     sendMessage: vi.fn(),
     getMessage: vi.fn().mockReturnValue(''),
     download: vi.fn(),

@@ -22,10 +22,7 @@ export function isTimeBasedSort(order: SortOrder): boolean {
  * @param order - One of the four SortOrder values
  * @returns New sorted array
  */
-export function sortEvents(
-  events: readonly StarredEvent[],
-  order: SortOrder,
-): StarredEvent[] {
+export function sortEvents(events: readonly StarredEvent[], order: SortOrder): StarredEvent[] {
   const copy = [...events];
 
   switch (order) {

@@ -35,13 +35,11 @@ describe('Property 13: Star button ARIA state correctness', () => {
 
   function setupAdapter(): IBrowserApiAdapter {
     const adapter = mockBrowserApi;
-    (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
-      (key: string) => {
-        if (key === 'starEvent') return 'Star event';
-        if (key === 'unstarEvent') return 'Unstar event';
-        return '';
-      },
-    );
+    (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation((key: string) => {
+      if (key === 'starEvent') return 'Star event';
+      if (key === 'unstarEvent') return 'Unstar event';
+      return '';
+    });
     return adapter;
   }
 
@@ -96,9 +94,7 @@ describe('Property 13: Star button ARIA state correctness', () => {
 
           update(updatedStarred);
 
-          const btn = host.shadowRoot!.querySelector(
-            'button.star-btn',
-          ) as HTMLButtonElement;
+          const btn = host.shadowRoot!.querySelector('button.star-btn') as HTMLButtonElement;
 
           if (updatedStarred) {
             expect(btn.getAttribute('aria-pressed')).toBe('true');
@@ -135,9 +131,7 @@ describe('Property 13: Star button ARIA state correctness', () => {
           }
 
           const finalState = updates[updates.length - 1]!;
-          const btn = host.shadowRoot!.querySelector(
-            'button.star-btn',
-          ) as HTMLButtonElement;
+          const btn = host.shadowRoot!.querySelector('button.star-btn') as HTMLButtonElement;
 
           if (finalState) {
             expect(btn.getAttribute('aria-pressed')).toBe('true');

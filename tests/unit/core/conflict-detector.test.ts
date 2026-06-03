@@ -10,11 +10,7 @@ interface TestEvent {
   readonly endDateTime: string | null;
 }
 
-function makeEvent(
-  id: string,
-  start: string,
-  end: string | null = null,
-): TestEvent {
+function makeEvent(id: string, start: string, end: string | null = null): TestEvent {
   return { id, startDateTime: start, endDateTime: end };
 }
 
@@ -27,9 +23,7 @@ describe('detectConflicts', () => {
     });
 
     it('returns empty array for a single event', () => {
-      const events = [
-        makeEvent('a', '2026-06-22T10:00:00+02:00', '2026-06-22T11:00:00+02:00'),
-      ];
+      const events = [makeEvent('a', '2026-06-22T10:00:00+02:00', '2026-06-22T11:00:00+02:00')];
       expect(detectConflicts(events)).toEqual([]);
     });
 

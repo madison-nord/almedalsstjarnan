@@ -3,7 +3,11 @@
 import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
 
-import { compareEventFields, MUTABLE_FIELDS, normalizeFieldValue } from '#core/event-field-comparator';
+import {
+  compareEventFields,
+  MUTABLE_FIELDS,
+  normalizeFieldValue,
+} from '#core/event-field-comparator';
 import type { MutableFields, MutableFieldName } from '#core/event-field-comparator';
 
 import { mutableFieldsArb } from '#test/helpers/event-generators';
@@ -27,10 +31,7 @@ describe('Property 3: Comparison detects real differences (sensitivity)', () => 
       .tuple(
         mutableFieldsArb,
         fc.integer({ min: 0, max: MUTABLE_FIELDS.length - 1 }),
-        fc.oneof(
-          fc.stringMatching(/^[A-Za-z0-9]{1,50}$/),
-          fc.constant(null),
-        ),
+        fc.oneof(fc.stringMatching(/^[A-Za-z0-9]{1,50}$/), fc.constant(null)),
       )
       .filter(([base, fieldIndex, newValue]) => {
         const fieldName: MutableFieldName = MUTABLE_FIELDS[fieldIndex]!;

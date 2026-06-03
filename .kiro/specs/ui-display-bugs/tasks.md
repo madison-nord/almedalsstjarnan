@@ -38,7 +38,6 @@
   - _Requirements: 3.2_
 
 - [x] 3. Fix for empty "Länk till evenemanget:" label residual
-
   - [x] 3.1 Implement the stripSourceUrl regex fix
     - File: `src/ui/popup/components/EventItem.tsx`, function `stripSourceUrl`
     - Replace the simple `description.replace(sourceUrl, '').trim()` with a two-step approach:
@@ -68,7 +67,6 @@
     - _Requirements: 3.2_
 
 - [x] 4. Fix for language toggle closing popup on reload
-
   - [x] 4.1 Write unit test for handleLocaleChange (TDD — test first)
     - Test file: `tests/unit/popup/language-toggle-no-reload.test.ts`
     - Test that `handleLocaleChange` does NOT call `window.location.reload()`
@@ -101,7 +99,6 @@
     - _Requirements: 2.3_
 
 - [x] 5. Fix for sort label barely visible on dark header
-
   - [x] 5.1 Write unit test for SortSelector labelClassName prop (TDD — test first)
     - Test file: `tests/unit/shared/sort-selector-label.test.ts`
     - Test that SortSelector accepts an optional `labelClassName` prop
@@ -132,7 +129,6 @@
     - _Requirements: 2.4, 3.4_
 
 - [x] 6. Fix for extension icon not showing in browser toolbar
-
   - [x] 6.1 Write integration test for icon path resolution (TDD — test first)
     - Test file: `tests/unit/config/icon-path-resolution.test.ts`
     - Test that the merged manifest's `icons` and `action.default_icon` paths reference files that exist in the `icons/` directory
@@ -149,7 +145,7 @@
     - Verify that `dist/manifest.json` icon paths resolve to existing files after build
     - _Bug_Condition: manifest icon paths don't resolve because icons are copied after manifest generation_
     - _Expected_Behavior: all manifest icon paths resolve to existing PNG files in dist/_
-    - _Preservation: icon files still present in dist/icons/, locale files still in dist/_locales/_
+    - _Preservation: icon files still present in dist/icons/, locale files still in dist/\_locales/_
     - _Requirements: 1.1, 2.1, 3.1_
 
   - [x] 6.3 Verify icon test passes after fix

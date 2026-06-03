@@ -42,9 +42,7 @@ describe('LanguageToggle', () => {
   });
 
   function renderToggle() {
-    return render(
-      <LanguageToggle adapter={adapter} onLocaleChange={onLocaleChange} />,
-    );
+    return render(<LanguageToggle adapter={adapter} onLocaleChange={onLocaleChange} />);
   }
 
   describe('rendering', () => {
@@ -93,9 +91,7 @@ describe('LanguageToggle', () => {
 
     it('shows loading indicator before preference is fetched', () => {
       // Make sendMessage never resolve
-      (adapter.sendMessage as ReturnType<typeof vi.fn>).mockReturnValue(
-        new Promise(() => {}),
-      );
+      (adapter.sendMessage as ReturnType<typeof vi.fn>).mockReturnValue(new Promise(() => {}));
       renderToggle();
 
       expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
@@ -111,7 +107,7 @@ describe('LanguageToggle', () => {
       });
       renderToggle();
 
-      const select = await screen.findByRole('combobox') as HTMLSelectElement;
+      const select = (await screen.findByRole('combobox')) as HTMLSelectElement;
       expect(select.value).toBe('auto');
     });
 
@@ -122,7 +118,7 @@ describe('LanguageToggle', () => {
       });
       renderToggle();
 
-      const select = await screen.findByRole('combobox') as HTMLSelectElement;
+      const select = (await screen.findByRole('combobox')) as HTMLSelectElement;
       expect(select.value).toBe('sv');
     });
 
@@ -133,7 +129,7 @@ describe('LanguageToggle', () => {
       });
       renderToggle();
 
-      const select = await screen.findByRole('combobox') as HTMLSelectElement;
+      const select = (await screen.findByRole('combobox')) as HTMLSelectElement;
       expect(select.value).toBe('en');
     });
 
@@ -153,7 +149,7 @@ describe('LanguageToggle', () => {
       });
       renderToggle();
 
-      const select = await screen.findByRole('combobox') as HTMLSelectElement;
+      const select = (await screen.findByRole('combobox')) as HTMLSelectElement;
       expect(select.value).toBe('auto');
     });
   });
@@ -244,7 +240,7 @@ describe('LanguageToggle', () => {
     it('is a native select element supporting keyboard interaction', async () => {
       renderToggle();
 
-      const select = await screen.findByRole('combobox') as HTMLSelectElement;
+      const select = (await screen.findByRole('combobox')) as HTMLSelectElement;
       expect(select.tagName).toBe('SELECT');
       expect(select.tabIndex).not.toBe(-1);
     });

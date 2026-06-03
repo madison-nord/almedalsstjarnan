@@ -11,11 +11,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 
-import type {
-  IBrowserApiAdapter,
-  MessagePayload,
-  MessageResponse,
-} from '#core/types';
+import type { IBrowserApiAdapter, MessagePayload, MessageResponse } from '#core/types';
 import { mockBrowserApi, resetMocks } from '#test/helpers/mock-browser-api';
 
 import { App as PopupApp } from '#ui/popup/App';
@@ -156,11 +152,7 @@ describe('Smoke verification: already-implemented requirements', () => {
   describe('Requirement 6: Sort Selector Label', () => {
     it('has a visible label with for attribute', () => {
       render(
-        <SortSelector
-          currentOrder="chronological"
-          onOrderChange={vi.fn()}
-          adapter={adapter}
-        />,
+        <SortSelector currentOrder="chronological" onOrderChange={vi.fn()} adapter={adapter} />,
       );
 
       const label = screen.getByText('Sort:');
@@ -170,11 +162,7 @@ describe('Smoke verification: already-implemented requirements', () => {
 
     it('has a select element with matching id', () => {
       render(
-        <SortSelector
-          currentOrder="chronological"
-          onOrderChange={vi.fn()}
-          adapter={adapter}
-        />,
+        <SortSelector currentOrder="chronological" onOrderChange={vi.fn()} adapter={adapter} />,
       );
 
       const select = screen.getByRole('combobox', { name: 'Sort by' });
@@ -225,11 +213,7 @@ describe('Smoke verification: already-implemented requirements', () => {
       // We verify the SortSelector itself has the label (already tested above).
       // This test confirms the component renders correctly in isolation.
       render(
-        <SortSelector
-          currentOrder="chronological"
-          onOrderChange={vi.fn()}
-          adapter={adapter}
-        />,
+        <SortSelector currentOrder="chronological" onOrderChange={vi.fn()} adapter={adapter} />,
       );
 
       const label = screen.getByText('Sort:');

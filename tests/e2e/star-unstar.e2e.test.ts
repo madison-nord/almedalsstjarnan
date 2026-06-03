@@ -34,7 +34,8 @@ const FIXTURE_DIR = path.resolve(__dirname, '../../fixtures');
 async function startFixtureServer(): Promise<{ server: http.Server; port: number }> {
   const server = http.createServer((req, res) => {
     const requestPath = new URL(req.url ?? '/', 'http://127.0.0.1').pathname;
-    const relativePath = requestPath === '/' ? 'almedalsveckan-program-2026.html' : requestPath.replace(/^\/+/, '');
+    const relativePath =
+      requestPath === '/' ? 'almedalsveckan-program-2026.html' : requestPath.replace(/^\/+/, '');
     const filePath = path.resolve(FIXTURE_DIR, relativePath);
     const relativeToFixtureDir = path.relative(FIXTURE_DIR, filePath);
 
@@ -189,7 +190,9 @@ test.describe('Star/Unstar E2E Flow', () => {
     const popupPage2 = await openPopupPage(context, extensionId);
 
     // The popup should now show the empty state heading
-    const emptyState = popupPage2.getByRole('heading', { name: /No starred events|Inga stjärnmärkta/i });
+    const emptyState = popupPage2.getByRole('heading', {
+      name: /No starred events|Inga stjärnmärkta/i,
+    });
     await expect(emptyState).toBeVisible({ timeout: 5000 });
 
     await popupPage2.close();

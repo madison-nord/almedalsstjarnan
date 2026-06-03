@@ -150,10 +150,15 @@ export function App({ adapter }: AppProps): React.JSX.Element {
   }
 
   return (
-    <div key={locale ?? 'auto'} className="w-[360px] h-[600px] flex flex-col overflow-hidden bg-white">
+    <div
+      key={locale ?? 'auto'}
+      className="w-[360px] h-[600px] flex flex-col overflow-hidden bg-white"
+    >
       <header className="flex-shrink-0 bg-brand-secondary px-4 pt-4 pb-2 border-b-[3px] border-brand-primary">
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-brand-accent text-lg" aria-hidden="true">★</span>
+          <span className="text-brand-accent text-lg" aria-hidden="true">
+            ★
+          </span>
           <h1 className="text-lg font-semibold text-white">
             {localizedAdapter.getMessage('popupTitle')}
             {events.length > 0 && (
@@ -170,14 +175,25 @@ export function App({ adapter }: AppProps): React.JSX.Element {
       </header>
 
       {showOnboarding && (
-        <HelpModal adapter={localizedAdapter} onDismiss={handleDismissOnboarding} triggerRef={helpLinkRef} layoutMode="popup" />
+        <HelpModal
+          adapter={localizedAdapter}
+          onDismiss={handleDismissOnboarding}
+          triggerRef={helpLinkRef}
+          layoutMode="popup"
+        />
       )}
 
       <div className="flex-1 overflow-y-auto">
         {events.length === 0 ? (
           <EmptyState adapter={localizedAdapter} />
         ) : (
-          <EventList events={events} onUnstar={unstarEvent} adapter={localizedAdapter} conflictingIds={conflictingIds} conflictTitlesMap={conflictTitlesMap} />
+          <EventList
+            events={events}
+            onUnstar={unstarEvent}
+            adapter={localizedAdapter}
+            conflictingIds={conflictingIds}
+            conflictTitlesMap={conflictTitlesMap}
+          />
         )}
       </div>
 

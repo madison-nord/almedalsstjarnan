@@ -19,24 +19,24 @@ import { EventGrid } from '#ui/stars/components/EventGrid';
 // ─── Helpers ──────────────────────────────────────────────────────
 
 function setupAdapter(): IBrowserApiAdapter {
-  (mockBrowserApi.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
-    (key: string) => {
-      const messages: Record<string, string> = {
-        selectAll: 'Select all',
-        columnTitle: 'Title',
-        columnOrganiser: 'Organiser',
-        columnDateTime: 'Date & Time',
-        columnLocation: 'Location',
-        columnTopic: 'Topic',
-        columnActions: 'Actions',
-      };
-      return messages[key] ?? key;
-    },
-  );
+  (mockBrowserApi.getMessage as ReturnType<typeof vi.fn>).mockImplementation((key: string) => {
+    const messages: Record<string, string> = {
+      selectAll: 'Select all',
+      columnTitle: 'Title',
+      columnOrganiser: 'Organiser',
+      columnDateTime: 'Date & Time',
+      columnLocation: 'Location',
+      columnTopic: 'Topic',
+      columnActions: 'Actions',
+    };
+    return messages[key] ?? key;
+  });
   return mockBrowserApi;
 }
 
-function createEvent(overrides: Partial<StarredEvent> & { readonly id: string; readonly startDateTime: string }): StarredEvent {
+function createEvent(
+  overrides: Partial<StarredEvent> & { readonly id: string; readonly startDateTime: string },
+): StarredEvent {
   return {
     title: `Event ${overrides.id}`,
     organiser: null,
@@ -56,8 +56,16 @@ function createEvent(overrides: Partial<StarredEvent> & { readonly id: string; r
 function createMultiDayEvents(): StarredEvent[] {
   return [
     createEvent({ id: 'aaa', startDateTime: '2026-06-22T09:00:00+02:00', title: 'Morning Talk' }),
-    createEvent({ id: 'bbb', startDateTime: '2026-06-22T14:00:00+02:00', title: 'Afternoon Panel' }),
-    createEvent({ id: 'ccc', startDateTime: '2026-06-23T10:00:00+02:00', title: 'Tuesday Keynote' }),
+    createEvent({
+      id: 'bbb',
+      startDateTime: '2026-06-22T14:00:00+02:00',
+      title: 'Afternoon Panel',
+    }),
+    createEvent({
+      id: 'ccc',
+      startDateTime: '2026-06-23T10:00:00+02:00',
+      title: 'Tuesday Keynote',
+    }),
   ];
 }
 
@@ -124,12 +132,7 @@ describe('EventGrid conditional rendering (Requirements 2.3, 2.4, 2.5)', () => {
       const events = createMultiDayEvents();
 
       render(
-        <EventGrid
-          events={events}
-          sortOrder="starred-desc"
-          onUnstar={vi.fn()}
-          adapter={adapter}
-        />,
+        <EventGrid events={events} sortOrder="starred-desc" onUnstar={vi.fn()} adapter={adapter} />,
       );
 
       expect(screen.queryByText('Måndag 22 juni')).not.toBeInTheDocument();
@@ -148,12 +151,7 @@ describe('EventGrid conditional rendering (Requirements 2.3, 2.4, 2.5)', () => {
       const events = createMultiDayEvents();
 
       render(
-        <EventGrid
-          events={events}
-          sortOrder={sortOrder}
-          onUnstar={vi.fn()}
-          adapter={adapter}
-        />,
+        <EventGrid events={events} sortOrder={sortOrder} onUnstar={vi.fn()} adapter={adapter} />,
       );
 
       expect(screen.getByText('Title')).toBeInTheDocument();

@@ -56,13 +56,7 @@ describe('HelpModal', () => {
 
   describe('feature group rendering', () => {
     it('renders all 9 feature groups with icon, heading, and description', () => {
-      render(
-        <HelpModal
-          adapter={adapter}
-          onDismiss={onDismiss}
-          layoutMode="popup"
-        />,
-      );
+      render(<HelpModal adapter={adapter} onDismiss={onDismiss} layoutMode="popup" />);
 
       // Verify all 9 headings are rendered
       expect(screen.getByText('Stjärnmarkera evenemang')).toBeInTheDocument();
@@ -76,35 +70,21 @@ describe('HelpModal', () => {
       expect(screen.getByText('Språkväljare')).toBeInTheDocument();
 
       // Verify all 9 descriptions are rendered
-      expect(
-        screen.getByText('Klicka på stjärnan bredvid ett evenemang.'),
-      ).toBeInTheDocument();
+      expect(screen.getByText('Klicka på stjärnan bredvid ett evenemang.')).toBeInTheDocument();
       expect(
         screen.getByText('Se dina stjärnmarkerade evenemang i popup-fönstret.'),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(
-          'En dedikerad sida med alla stjärnmarkerade evenemang.',
-        ),
+        screen.getByText('En dedikerad sida med alla stjärnmarkerade evenemang.'),
       ).toBeInTheDocument();
       expect(
         screen.getByText('Sortera evenemang kronologiskt eller alfabetiskt.'),
       ).toBeInTheDocument();
-      expect(
-        screen.getByText('Se varningar om tidskonflikter.'),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText('Filtrera evenemang på stjärnsidan.'),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText('Markera flera och exportera eller ta bort.'),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText('Exportera till kalenderformat.'),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText('Växla mellan svenska och engelska.'),
-      ).toBeInTheDocument();
+      expect(screen.getByText('Se varningar om tidskonflikter.')).toBeInTheDocument();
+      expect(screen.getByText('Filtrera evenemang på stjärnsidan.')).toBeInTheDocument();
+      expect(screen.getByText('Markera flera och exportera eller ta bort.')).toBeInTheDocument();
+      expect(screen.getByText('Exportera till kalenderformat.')).toBeInTheDocument();
+      expect(screen.getByText('Växla mellan svenska och engelska.')).toBeInTheDocument();
 
       // Verify SVG icons are rendered (9 feature group icons + 1 dismiss button icon)
       const svgs = document.querySelectorAll('svg[aria-hidden="true"]');
@@ -114,39 +94,21 @@ describe('HelpModal', () => {
 
   describe('accessibility attributes', () => {
     it('has role="dialog" on the modal content', () => {
-      render(
-        <HelpModal
-          adapter={adapter}
-          onDismiss={onDismiss}
-          layoutMode="popup"
-        />,
-      );
+      render(<HelpModal adapter={adapter} onDismiss={onDismiss} layoutMode="popup" />);
 
       const dialog = screen.getByRole('dialog');
       expect(dialog).toBeInTheDocument();
     });
 
     it('has aria-modal="true" on the dialog', () => {
-      render(
-        <HelpModal
-          adapter={adapter}
-          onDismiss={onDismiss}
-          layoutMode="popup"
-        />,
-      );
+      render(<HelpModal adapter={adapter} onDismiss={onDismiss} layoutMode="popup" />);
 
       const dialog = screen.getByRole('dialog');
       expect(dialog).toHaveAttribute('aria-modal', 'true');
     });
 
     it('has aria-labelledby referencing the modal title', () => {
-      render(
-        <HelpModal
-          adapter={adapter}
-          onDismiss={onDismiss}
-          layoutMode="popup"
-        />,
-      );
+      render(<HelpModal adapter={adapter} onDismiss={onDismiss} layoutMode="popup" />);
 
       const dialog = screen.getByRole('dialog');
       const labelledBy = dialog.getAttribute('aria-labelledby');
@@ -161,13 +123,7 @@ describe('HelpModal', () => {
 
   describe('focus management', () => {
     it('moves initial focus to the dismiss button on mount', () => {
-      render(
-        <HelpModal
-          adapter={adapter}
-          onDismiss={onDismiss}
-          layoutMode="popup"
-        />,
-      );
+      render(<HelpModal adapter={adapter} onDismiss={onDismiss} layoutMode="popup" />);
 
       const dismissButton = screen.getByRole('button', { name: 'Stäng' });
       expect(dismissButton).toHaveFocus();
@@ -203,13 +159,7 @@ describe('HelpModal', () => {
 
   describe('keyboard interaction', () => {
     it('closes modal when Escape key is pressed', async () => {
-      render(
-        <HelpModal
-          adapter={adapter}
-          onDismiss={onDismiss}
-          layoutMode="popup"
-        />,
-      );
+      render(<HelpModal adapter={adapter} onDismiss={onDismiss} layoutMode="popup" />);
 
       // Press Escape on the modal container
       const modalContainer = screen.getByRole('dialog').closest('[class*="fixed"]')!;
@@ -221,13 +171,7 @@ describe('HelpModal', () => {
     it('closes modal when Enter is pressed on dismiss button', async () => {
       const user = userEvent.setup();
 
-      render(
-        <HelpModal
-          adapter={adapter}
-          onDismiss={onDismiss}
-          layoutMode="popup"
-        />,
-      );
+      render(<HelpModal adapter={adapter} onDismiss={onDismiss} layoutMode="popup" />);
 
       const dismissButton = screen.getByRole('button', { name: 'Stäng' });
       await user.type(dismissButton, '{Enter}');
@@ -238,13 +182,7 @@ describe('HelpModal', () => {
     it('closes modal when Space is pressed on dismiss button', async () => {
       const user = userEvent.setup();
 
-      render(
-        <HelpModal
-          adapter={adapter}
-          onDismiss={onDismiss}
-          layoutMode="popup"
-        />,
-      );
+      render(<HelpModal adapter={adapter} onDismiss={onDismiss} layoutMode="popup" />);
 
       const dismissButton = screen.getByRole('button', { name: 'Stäng' });
       await user.type(dismissButton, ' ');
@@ -255,13 +193,7 @@ describe('HelpModal', () => {
 
   describe('backdrop dismiss', () => {
     it('triggers onDismiss when backdrop is clicked', () => {
-      render(
-        <HelpModal
-          adapter={adapter}
-          onDismiss={onDismiss}
-          layoutMode="popup"
-        />,
-      );
+      render(<HelpModal adapter={adapter} onDismiss={onDismiss} layoutMode="popup" />);
 
       // The backdrop is the element with bg-black/40
       const backdrop = document.querySelector('.bg-black\\/40')!;
@@ -271,13 +203,7 @@ describe('HelpModal', () => {
     });
 
     it('does NOT trigger onDismiss when clicking inside modal content', () => {
-      render(
-        <HelpModal
-          adapter={adapter}
-          onDismiss={onDismiss}
-          layoutMode="popup"
-        />,
-      );
+      render(<HelpModal adapter={adapter} onDismiss={onDismiss} layoutMode="popup" />);
 
       // Click on the dialog content area
       const dialog = screen.getByRole('dialog');
@@ -289,13 +215,7 @@ describe('HelpModal', () => {
 
   describe('layout modes', () => {
     it('uses single-column layout for layoutMode="popup"', () => {
-      render(
-        <HelpModal
-          adapter={adapter}
-          onDismiss={onDismiss}
-          layoutMode="popup"
-        />,
-      );
+      render(<HelpModal adapter={adapter} onDismiss={onDismiss} layoutMode="popup" />);
 
       const dialog = screen.getByRole('dialog');
 
@@ -311,13 +231,7 @@ describe('HelpModal', () => {
     });
 
     it('uses two-column grid layout for layoutMode="page"', () => {
-      render(
-        <HelpModal
-          adapter={adapter}
-          onDismiss={onDismiss}
-          layoutMode="page"
-        />,
-      );
+      render(<HelpModal adapter={adapter} onDismiss={onDismiss} layoutMode="page" />);
 
       const dialog = screen.getByRole('dialog');
 

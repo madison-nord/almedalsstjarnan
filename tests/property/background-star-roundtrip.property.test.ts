@@ -31,23 +31,19 @@ function createInMemoryAdapter(): IBrowserApiAdapter {
   const storage: Partial<StorageSchema> = {};
 
   return {
-    storageLocalGet: vi.fn().mockImplementation(
-      <K extends keyof StorageSchema>(keys: K[]) => {
-        const result: Partial<StorageSchema> = {};
-        for (const key of keys) {
-          if (key in storage) {
-            (result as Record<string, unknown>)[key] = storage[key];
-          }
+    storageLocalGet: vi.fn().mockImplementation(<K extends keyof StorageSchema>(keys: K[]) => {
+      const result: Partial<StorageSchema> = {};
+      for (const key of keys) {
+        if (key in storage) {
+          (result as Record<string, unknown>)[key] = storage[key];
         }
-        return Promise.resolve(result);
-      },
-    ),
-    storageLocalSet: vi.fn().mockImplementation(
-      (items: Partial<StorageSchema>) => {
-        Object.assign(storage, items);
-        return Promise.resolve();
-      },
-    ),
+      }
+      return Promise.resolve(result);
+    }),
+    storageLocalSet: vi.fn().mockImplementation((items: Partial<StorageSchema>) => {
+      Object.assign(storage, items);
+      return Promise.resolve();
+    }),
     sendMessage: vi.fn(),
     getMessage: vi.fn().mockReturnValue(''),
     download: vi.fn(),
@@ -75,7 +71,9 @@ describe('Property 15: Background star/unstar round-trip', () => {
           eventId: event.id,
         });
         expect(stateAfterStar.success).toBe(true);
-        expect((stateAfterStar as MessageResponseSuccess<{ starred: boolean }>).data.starred).toBe(true);
+        expect((stateAfterStar as MessageResponseSuccess<{ starred: boolean }>).data.starred).toBe(
+          true,
+        );
 
         // Unstar the event
         const unstarResult = await handleMessage(adapter, {
@@ -90,7 +88,9 @@ describe('Property 15: Background star/unstar round-trip', () => {
           eventId: event.id,
         });
         expect(stateAfterUnstar.success).toBe(true);
-        expect((stateAfterUnstar as MessageResponseSuccess<{ starred: boolean }>).data.starred).toBe(false);
+        expect(
+          (stateAfterUnstar as MessageResponseSuccess<{ starred: boolean }>).data.starred,
+        ).toBe(false);
       }),
       { numRuns: 100 },
     );

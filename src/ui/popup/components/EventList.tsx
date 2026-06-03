@@ -25,7 +25,13 @@ export interface EventListProps {
   readonly conflictTitlesMap?: ReadonlyMap<string, readonly string[]>;
 }
 
-export function EventList({ events, onUnstar, adapter, conflictingIds, conflictTitlesMap }: EventListProps): React.JSX.Element {
+export function EventList({
+  events,
+  onUnstar,
+  adapter,
+  conflictingIds,
+  conflictTitlesMap,
+}: EventListProps): React.JSX.Element {
   const [displayCount, setDisplayCount] = useState(PAGE_SIZE);
 
   const total = events.length;
@@ -37,12 +43,13 @@ export function EventList({ events, onUnstar, adapter, conflictingIds, conflictT
     setDisplayCount((prev) => prev + PAGE_SIZE);
   };
 
-  const countText = total > 0
-    ? adapter
-        .getMessage('eventCountIndicator')
-        .replace('{count}', String(displayed))
-        .replace('{total}', String(total))
-    : null;
+  const countText =
+    total > 0
+      ? adapter
+          .getMessage('eventCountIndicator')
+          .replace('{count}', String(displayed))
+          .replace('{total}', String(total))
+      : null;
 
   return (
     <div className="flex flex-col overflow-hidden">

@@ -34,10 +34,7 @@ describe('Icon path resolution', () => {
       for (const size of expectedSizes) {
         const iconPath = icons[size]!;
         const resolved = path.resolve(PROJECT_ROOT, iconPath);
-        expect(
-          fs.existsSync(resolved),
-          `Expected icon file to exist: ${resolved}`,
-        ).toBe(true);
+        expect(fs.existsSync(resolved), `Expected icon file to exist: ${resolved}`).toBe(true);
       }
     });
 
@@ -60,10 +57,7 @@ describe('Icon path resolution', () => {
       for (const size of expectedSizes) {
         const iconPath = defaultIcon[size]!;
         const resolved = path.resolve(PROJECT_ROOT, iconPath);
-        expect(
-          fs.existsSync(resolved),
-          `Expected icon file to exist: ${resolved}`,
-        ).toBe(true);
+        expect(fs.existsSync(resolved), `Expected icon file to exist: ${resolved}`).toBe(true);
       }
     });
 

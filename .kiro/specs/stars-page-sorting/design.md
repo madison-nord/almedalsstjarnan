@@ -37,12 +37,12 @@ graph TD
 
 ### Change Summary
 
-| Component | Change |
-|-----------|--------|
+| Component                                | Change                                                                                                                                                        |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `src/ui/stars/hooks/useStarredEvents.ts` | Remove `GET_SORT_ORDER` fetch, remove `SET_SORT_ORDER` send, remove `sortOrder` from storage listener, initialize sort to `DEFAULT_SORT_ORDER` in-memory only |
-| `src/ui/stars/components/EventGrid.tsx` | Accept `sortOrder` prop, conditionally render grouped vs flat layout |
-| `src/core/sorter.ts` | Add `isTimeBasedSort(order)` utility (pure function) |
-| `src/ui/popup/hooks/useStarredEvents.ts` | No changes |
+| `src/ui/stars/components/EventGrid.tsx`  | Accept `sortOrder` prop, conditionally render grouped vs flat layout                                                                                          |
+| `src/core/sorter.ts`                     | Add `isTimeBasedSort(order)` utility (pure function)                                                                                                          |
+| `src/ui/popup/hooks/useStarredEvents.ts` | No changes                                                                                                                                                    |
 
 ## Components and Interfaces
 
@@ -84,7 +84,7 @@ Changes to `src/ui/stars/components/EventGrid.tsx`:
 ```typescript
 export interface EventGridProps {
   readonly events: readonly StarredEvent[];
-  readonly sortOrder: SortOrder;  // NEW
+  readonly sortOrder: SortOrder; // NEW
   readonly onUnstar: (eventId: string) => void;
   readonly adapter: IBrowserApiAdapter;
   readonly conflictingIds?: ReadonlySet<string>;
@@ -116,51 +116,49 @@ No new data models are introduced. The existing `SortOrder` type and `StarredEve
 
 The key behavioral change is that the Stars Page `sortOrder` is no longer persisted — it lives only in React component state and resets to `'chronological'` on every page load.
 
-
-
 ## Correctness Properties
 
-*A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
+_A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees._
 
 ### Property 1: Stars Page initializes to chronological
 
-*For any* stored sort order value in the `sortOrder` storage key (including absent/invalid values), the Stars Page `useStarredEvents` hook SHALL initialize its sort order state to `'chronological'` without reading the stored value.
+_For any_ stored sort order value in the `sortOrder` storage key (including absent/invalid values), the Stars Page `useStarredEvents` hook SHALL initialize its sort order state to `'chronological'` without reading the stored value.
 
 **Validates: Requirements 1.1, 1.5**
 
 ### Property 2: Stars Page sort change never persists
 
-*For any* sort order value, when `changeSortOrder` is called on the Stars Page hook, the adapter SHALL NOT receive a `SET_SORT_ORDER` message and the `sortOrder` storage key SHALL remain unchanged.
+_For any_ sort order value, when `changeSortOrder` is called on the Stars Page hook, the adapter SHALL NOT receive a `SET_SORT_ORDER` message and the `sortOrder` storage key SHALL remain unchanged.
 
 **Validates: Requirements 1.2**
 
 ### Property 3: Stars Page ignores external sort order changes
 
-*For any* current Stars Page sort order and any external storage change to the `sortOrder` key, the Stars Page hook's sort order state SHALL remain equal to its value before the storage change.
+_For any_ current Stars Page sort order and any external storage change to the `sortOrder` key, the Stars Page hook's sort order state SHALL remain equal to its value before the storage change.
 
 **Validates: Requirements 1.4**
 
 ### Property 4: Popup sort change always persists
 
-*For any* sort order value, when `changeSortOrder` is called on the Popup hook, the adapter SHALL receive a `SET_SORT_ORDER` message with the chosen sort order.
+_For any_ sort order value, when `changeSortOrder` is called on the Popup hook, the adapter SHALL receive a `SET_SORT_ORDER` message with the chosen sort order.
 
 **Validates: Requirements 1.3, 4.3**
 
 ### Property 5: Time-based sort produces correctly ordered day-groups
 
-*For any* array of starred events and any time-based sort order, `groupEventsByDate` applied to the sorted events SHALL produce groups whose date keys are ordered ascending for chronological sort and descending for reverse-chronological sort.
+_For any_ array of starred events and any time-based sort order, `groupEventsByDate` applied to the sorted events SHALL produce groups whose date keys are ordered ascending for chronological sort and descending for reverse-chronological sort.
 
 **Validates: Requirements 2.1, 3.1, 3.2**
 
 ### Property 6: Non-time-based sort produces flat output
 
-*For any* non-time-based sort order, `isTimeBasedSort` SHALL return `false`, indicating that the EventGrid should render events as a flat list without day-group headers.
+_For any_ non-time-based sort order, `isTimeBasedSort` SHALL return `false`, indicating that the EventGrid should render events as a flat list without day-group headers.
 
 **Validates: Requirements 2.2**
 
 ### Property 7: Within-group events ordered by start time ascending with id tiebreaker
 
-*For any* array of starred events and any time-based sort order, within each day-group produced by `groupEventsByDate`, events SHALL be ordered by `startDateTime` ascending, with `id` ascending as a deterministic tiebreaker for identical start times.
+_For any_ array of starred events and any time-based sort order, within each day-group produced by `groupEventsByDate`, events SHALL be ordered by `startDateTime` ascending, with `id` ascending as a deterministic tiebreaker for identical start times.
 
 **Validates: Requirements 3.3, 3.4**
 
@@ -177,6 +175,7 @@ This feature introduces minimal error surface:
 ### Property-Based Tests (fast-check)
 
 Property-based testing is appropriate for this feature because:
+
 - The core logic involves pure functions (`isTimeBasedSort`, `groupEventsByDate`, `sortEvents`)
 - Behavior varies meaningfully with input (different event arrays, different sort orders)
 - 100+ iterations will catch edge cases (events on same day, identical start times, empty arrays)
@@ -190,6 +189,7 @@ Properties 1–4 test hook behavior with mocked adapters. Properties 5–7 test 
 ### Unit Tests (Vitest)
 
 Unit tests complement property tests for:
+
 - Example-based verification of dynamic switching (Requirements 2.3, 2.4)
 - Column headers always rendered (Requirement 2.5)
 - Popup existing behavior unchanged (Requirements 4.1, 4.2, 4.4, 4.5)
@@ -197,14 +197,14 @@ Unit tests complement property tests for:
 
 ### Test File Organization
 
-| Test File | Covers |
-|-----------|--------|
-| `tests/property/stars-sort-init.property.test.ts` | Property 1 |
-| `tests/property/stars-sort-no-persist.property.test.ts` | Property 2 |
-| `tests/property/stars-sort-ignore-storage.property.test.ts` | Property 3 |
-| `tests/property/popup-sort-persists.property.test.ts` | Property 4 |
-| `tests/property/day-group-ordering.property.test.ts` | Property 5 |
-| `tests/property/is-time-based-sort.property.test.ts` | Property 6 |
-| `tests/property/within-group-ordering.property.test.ts` | Property 7 |
-| `tests/unit/stars-event-grid.test.tsx` | Unit tests for EventGrid conditional rendering |
-| `tests/unit/stars-use-starred-events.test.ts` | Unit tests for hook behavior |
+| Test File                                                   | Covers                                         |
+| ----------------------------------------------------------- | ---------------------------------------------- |
+| `tests/property/stars-sort-init.property.test.ts`           | Property 1                                     |
+| `tests/property/stars-sort-no-persist.property.test.ts`     | Property 2                                     |
+| `tests/property/stars-sort-ignore-storage.property.test.ts` | Property 3                                     |
+| `tests/property/popup-sort-persists.property.test.ts`       | Property 4                                     |
+| `tests/property/day-group-ordering.property.test.ts`        | Property 5                                     |
+| `tests/property/is-time-based-sort.property.test.ts`        | Property 6                                     |
+| `tests/property/within-group-ordering.property.test.ts`     | Property 7                                     |
+| `tests/unit/stars-event-grid.test.tsx`                      | Unit tests for EventGrid conditional rendering |
+| `tests/unit/stars-use-starred-events.test.ts`               | Unit tests for hook behavior                   |

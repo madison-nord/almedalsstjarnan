@@ -15,7 +15,11 @@ export interface ExportButtonProps {
   readonly disabled?: boolean;
 }
 
-export function ExportButton({ onExport, adapter, disabled }: ExportButtonProps): React.JSX.Element {
+export function ExportButton({
+  onExport,
+  adapter,
+  disabled,
+}: ExportButtonProps): React.JSX.Element {
   return (
     <button
       type="button"

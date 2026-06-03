@@ -27,8 +27,7 @@ export interface HelpModalProps {
 
 const HELP_MODAL_TITLE_ID = 'help-modal-title';
 
-const FOCUSABLE_SELECTOR =
-  'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export function HelpModal({
   adapter,
@@ -102,9 +101,7 @@ export function HelpModal({
     ? 'mx-2 my-2 max-w-[344px] max-h-[584px] w-full'
     : 'max-w-[640px] w-full max-h-[90vh]';
 
-  const gridClasses = isPopup
-    ? 'grid grid-cols-1 gap-4'
-    : 'grid grid-cols-1 md:grid-cols-2 gap-4';
+  const gridClasses = isPopup ? 'grid grid-cols-1 gap-4' : 'grid grid-cols-1 md:grid-cols-2 gap-4';
 
   return (
     <div ref={modalRef} className="fixed inset-0 z-50 flex items-center justify-center">
@@ -120,10 +117,7 @@ export function HelpModal({
       >
         {/* Header with title and dismiss button */}
         <div className="flex items-start justify-between mb-4">
-          <h2
-            id={HELP_MODAL_TITLE_ID}
-            className="text-lg font-semibold text-gray-900"
-          >
+          <h2 id={HELP_MODAL_TITLE_ID} className="text-lg font-semibold text-gray-900">
             {adapter.getMessage('helpModalTitle')}
           </h2>
 
@@ -134,12 +128,7 @@ export function HelpModal({
             aria-label={adapter.getMessage('helpModalDismiss')}
             className="ml-2 p-1 text-gray-500 hover:text-gray-700 rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
           >
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 24 24"
-              className="w-5 h-5"
-              fill="currentColor"
-            >
+            <svg aria-hidden="true" viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
               <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
             </svg>
           </button>
@@ -148,10 +137,7 @@ export function HelpModal({
         {/* Feature groups grid */}
         <div className={gridClasses}>
           {HELP_FEATURE_GROUPS.map((group) => (
-            <div
-              key={group.headingKey}
-              className="flex gap-3 items-start"
-            >
+            <div key={group.headingKey} className="flex gap-3 items-start">
               <div className="flex-shrink-0 text-gray-700">
                 <group.Icon />
               </div>

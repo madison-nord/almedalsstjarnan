@@ -76,7 +76,15 @@ describe('handleMessage — GET_STAR_STATE (enhanced)', () => {
     });
 
     expect(result.success).toBe(true);
-    const data = (result as { readonly success: true; readonly data: { readonly starred: boolean; readonly storedFields: Record<string, unknown> | null } }).data;
+    const data = (
+      result as {
+        readonly success: true;
+        readonly data: {
+          readonly starred: boolean;
+          readonly storedFields: Record<string, unknown> | null;
+        };
+      }
+    ).data;
     expect(data.storedFields).not.toHaveProperty('id');
     expect(data.storedFields).not.toHaveProperty('starred');
     expect(data.storedFields).not.toHaveProperty('starredAt');

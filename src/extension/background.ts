@@ -47,7 +47,10 @@ let storageMutexPromise: Promise<void> = Promise.resolve();
 function withStorageMutex<T>(fn: () => Promise<T>): Promise<T> {
   const result = storageMutexPromise.then(fn);
   // Chain the next operation after this one completes (success or failure)
-  storageMutexPromise = result.then(() => undefined, () => undefined);
+  storageMutexPromise = result.then(
+    () => undefined,
+    () => undefined,
+  );
   return result;
 }
 
@@ -83,12 +86,11 @@ export async function getValidatedStarredEvents(
     Object.keys(raw as object).length === 0
   ) {
     // Empty object — no corruption, just no entries
-  } else if (
-    Object.keys(validation.valid).length === 0 &&
-    validation.invalidKeys.length === 0
-  ) {
+  } else if (Object.keys(validation.valid).length === 0 && validation.invalidKeys.length === 0) {
     // Top-level value was invalid (not an object/array/primitive)
-    console.warn('[Almedalsstjärnan] Storage corruption detected: starredEvents is not a valid object');
+    console.warn(
+      '[Almedalsstjärnan] Storage corruption detected: starredEvents is not a valid object',
+    );
   }
 
   // Log each invalid key
@@ -171,9 +173,7 @@ async function getAllStarredEvents(
   return { success: true, data: Object.values(starredEvents) };
 }
 
-async function getSortOrder(
-  adapter: IBrowserApiAdapter,
-): Promise<MessageResponse<SortOrder>> {
+async function getSortOrder(adapter: IBrowserApiAdapter): Promise<MessageResponse<SortOrder>> {
   const result = await adapter.storageLocalGet(['sortOrder']);
   const sortOrder = result.sortOrder ?? DEFAULT_SORT_ORDER;
 
@@ -189,9 +189,7 @@ async function setSortOrder(
   return { success: true, data: undefined };
 }
 
-async function getOnboardingState(
-  adapter: IBrowserApiAdapter,
-): Promise<MessageResponse<boolean>> {
+async function getOnboardingState(adapter: IBrowserApiAdapter): Promise<MessageResponse<boolean>> {
   const result = await adapter.storageLocalGet(['onboardingDismissed']);
   const dismissed = result.onboardingDismissed ?? false;
 

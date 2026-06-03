@@ -15,21 +15,21 @@ pnpm install
 
 ## Available Scripts
 
-| Script | Description |
-|---|---|
-| `pnpm dev` | Start Vite dev server with hot reload |
-| `pnpm build` | Production build to `dist/` |
-| `pnpm preview` | Preview production build |
-| `pnpm typecheck` | Run TypeScript type checking |
-| `pnpm lint` | Run ESLint |
-| `pnpm lint:fix` | Run ESLint with auto-fix |
-| `pnpm format` | Format code with Prettier |
-| `pnpm format:check` | Check formatting with Prettier |
-| `pnpm test:unit` | Run unit tests (Vitest) |
-| `pnpm test:property` | Run property-based tests (fast-check) |
-| `pnpm test:e2e` | Run end-to-end tests (Playwright) |
-| `pnpm test` | Run all Vitest tests (unit + property) |
-| `pnpm package` | Build and package extension as .zip |
+| Script               | Description                            |
+| -------------------- | -------------------------------------- |
+| `pnpm dev`           | Start Vite dev server with hot reload  |
+| `pnpm build`         | Production build to `dist/`            |
+| `pnpm preview`       | Preview production build               |
+| `pnpm typecheck`     | Run TypeScript type checking           |
+| `pnpm lint`          | Run ESLint                             |
+| `pnpm lint:fix`      | Run ESLint with auto-fix               |
+| `pnpm format`        | Format code with Prettier              |
+| `pnpm format:check`  | Check formatting with Prettier         |
+| `pnpm test:unit`     | Run unit tests (Vitest)                |
+| `pnpm test:property` | Run property-based tests (fast-check)  |
+| `pnpm test:e2e`      | Run end-to-end tests (Playwright)      |
+| `pnpm test`          | Run all Vitest tests (unit + property) |
+| `pnpm package`       | Build and package extension as .zip    |
 
 ## Development
 
@@ -89,15 +89,15 @@ The extension follows a message-passing architecture with six main modules:
 
 ### Modules
 
-| Module | Path | Description |
-|---|---|---|
-| **Shared Core** | `src/core/` | Pure-logic submodules: browser API adapter, event normalizer, ICS generator, ICS parser, sorter, types |
-| **Content Script** | `src/extension/content-script.ts` | Injected into almedalsveckan.info; observes DOM and injects star buttons |
-| **Background** | `src/extension/background.ts` | Manifest V3 service worker; manages storage and message dispatch |
-| **Star Button** | `src/extension/star-button.ts` | Shadow DOM-isolated star toggle with scoped CSS |
-| **Popup UI** | `src/ui/popup/` | Browser action popup showing starred events summary (React + Tailwind) |
-| **Stars Page** | `src/ui/stars/` | Full-page starred events view with sort and ICS export (React + Tailwind) |
-| **Manifest** | `src/extension/manifest/` | Base manifest + per-browser overrides, merged at build time |
+| Module             | Path                              | Description                                                                                            |
+| ------------------ | --------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| **Shared Core**    | `src/core/`                       | Pure-logic submodules: browser API adapter, event normalizer, ICS generator, ICS parser, sorter, types |
+| **Content Script** | `src/extension/content-script.ts` | Injected into almedalsveckan.info; observes DOM and injects star buttons                               |
+| **Background**     | `src/extension/background.ts`     | Manifest V3 service worker; manages storage and message dispatch                                       |
+| **Star Button**    | `src/extension/star-button.ts`    | Shadow DOM-isolated star toggle with scoped CSS                                                        |
+| **Popup UI**       | `src/ui/popup/`                   | Browser action popup showing starred events summary (React + Tailwind)                                 |
+| **Stars Page**     | `src/ui/stars/`                   | Full-page starred events view with sort and ICS export (React + Tailwind)                              |
+| **Manifest**       | `src/extension/manifest/`         | Base manifest + per-browser overrides, merged at build time                                            |
 
 ### Key Design Decisions
 

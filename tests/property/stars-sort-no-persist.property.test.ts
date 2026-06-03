@@ -21,12 +21,12 @@ import { useStarredEvents } from '#ui/stars/hooks/useStarredEvents';
 
 describe('Property 2: Stars Page sort change never persists', () => {
   // Feature: stars-page-sorting, Property 2: Stars Page sort change never persists
-  it('changeSortOrder does not send SET_SORT_ORDER message for any sort order', { timeout: 60_000 }, async () => {
-    await fc.assert(
-      fc.asyncProperty(
-        starredEventArrayArb,
-        sortOrderArb,
-        async (events, newSortOrder) => {
+  it(
+    'changeSortOrder does not send SET_SORT_ORDER message for any sort order',
+    { timeout: 60_000 },
+    async () => {
+      await fc.assert(
+        fc.asyncProperty(starredEventArrayArb, sortOrderArb, async (events, newSortOrder) => {
           // Setup mock: return events for GET_ALL_STARRED_EVENTS
           const sendMessageMock = mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>;
           sendMessageMock.mockImplementation((message: { command: string }) => {
@@ -57,15 +57,13 @@ describe('Property 2: Stars Page sort change never persists', () => {
 
           // Verify SET_SORT_ORDER was NOT sent
           const allCalls = sendMessageMock.mock.calls as Array<[{ command: string }]>;
-          const setSortOrderCalls = allCalls.filter(
-            ([msg]) => msg.command === 'SET_SORT_ORDER',
-          );
+          const setSortOrderCalls = allCalls.filter(([msg]) => msg.command === 'SET_SORT_ORDER');
           expect(setSortOrderCalls).toHaveLength(0);
 
           unmount();
-        },
-      ),
-      { numRuns: 100 },
-    );
-  });
+        }),
+        { numRuns: 100 },
+      );
+    },
+  );
 });

@@ -20,9 +20,9 @@ const jsonValueArb: fc.Arbitrary<unknown> = fc.letrec((tie) => ({
       maxLength: 5,
     }),
     fc.dictionary(
-      fc.string({ minLength: 1, maxLength: 10 }).filter(
-        (s) => s !== '__proto__' && s !== 'constructor' && s !== 'prototype',
-      ),
+      fc
+        .string({ minLength: 1, maxLength: 10 })
+        .filter((s) => s !== '__proto__' && s !== 'constructor' && s !== 'prototype'),
       tie('value'),
       { maxKeys: 4 },
     ),
@@ -105,9 +105,9 @@ describe('Property 14: Manifest merge precedence', () => {
    */
   it('nested objects are recursively merged', () => {
     const nestedObjectArb = fc.dictionary(
-      fc.string({ minLength: 1, maxLength: 10 }).filter(
-        (s) => s !== '__proto__' && s !== 'constructor' && s !== 'prototype',
-      ),
+      fc
+        .string({ minLength: 1, maxLength: 10 })
+        .filter((s) => s !== '__proto__' && s !== 'constructor' && s !== 'prototype'),
       fc.string(),
       { minKeys: 1, maxKeys: 5 },
     );

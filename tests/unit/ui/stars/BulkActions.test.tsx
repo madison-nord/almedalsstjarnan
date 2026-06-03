@@ -464,7 +464,9 @@ describe('Bulk selection and batch actions', () => {
       });
 
       // Cleanup timers
-      act(() => { vi.advanceTimersByTime(5000); });
+      act(() => {
+        vi.advanceTimersByTime(5000);
+      });
       vi.useRealTimers();
     });
 
@@ -524,7 +526,9 @@ describe('Bulk selection and batch actions', () => {
       });
 
       // Cleanup timers
-      act(() => { vi.advanceTimersByTime(5000); });
+      act(() => {
+        vi.advanceTimersByTime(5000);
+      });
       vi.useRealTimers();
     });
   });

@@ -40,7 +40,10 @@ describe('Property 1: i18n Completeness', () => {
     'helpGroupLanguageDesc',
   ] as const;
 
-  const catalogs: Record<string, Record<string, { readonly message: string; readonly description: string }>> = {
+  const catalogs: Record<
+    string,
+    Record<string, { readonly message: string; readonly description: string }>
+  > = {
     en: enMessages as Record<string, { readonly message: string; readonly description: string }>,
     sv: svMessages as Record<string, { readonly message: string; readonly description: string }>,
   };

@@ -267,21 +267,17 @@ describe('Stars Page App — HelpModal integration', () => {
     });
 
     it('help trigger displays different text when getMessage returns different value', async () => {
-      (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
-        (key: string) => {
-          if (key === 'helpModalTitle') return 'Hjälp & funktioner';
-          return messageMap[key] ?? '';
-        },
-      );
+      (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation((key: string) => {
+        if (key === 'helpModalTitle') return 'Hjälp & funktioner';
+        return messageMap[key] ?? '';
+      });
 
       setupAdapter([makeEvent({ id: 'e1' })]);
       // Override getMessage again after setupAdapter
-      (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
-        (key: string) => {
-          if (key === 'helpModalTitle') return 'Hjälp & funktioner';
-          return messageMap[key] ?? '';
-        },
-      );
+      (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation((key: string) => {
+        if (key === 'helpModalTitle') return 'Hjälp & funktioner';
+        return messageMap[key] ?? '';
+      });
 
       render(<App adapter={adapter} />);
       await waitFor(() => {

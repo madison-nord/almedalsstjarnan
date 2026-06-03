@@ -31,17 +31,16 @@ const urlArb: fc.Arbitrary<string> = fc
   .map((nums) => `https://almedalsveckan.info/event/${nums.map((n) => n.toString(16)).join('')}`);
 
 /** Generates a description that contains the sourceUrl. */
-const descriptionContainingUrlArb: fc.Arbitrary<{ description: string; sourceUrl: string }> =
-  fc
-    .record({
-      prefix: fc.stringMatching(/^[A-Za-z0-9 ]{0,50}$/),
-      suffix: fc.stringMatching(/^[A-Za-z0-9 ]{0,50}$/),
-      sourceUrl: urlArb,
-    })
-    .map(({ prefix, suffix, sourceUrl }) => ({
-      description: `${prefix}${sourceUrl}${suffix}`,
-      sourceUrl,
-    }));
+const descriptionContainingUrlArb: fc.Arbitrary<{ description: string; sourceUrl: string }> = fc
+  .record({
+    prefix: fc.stringMatching(/^[A-Za-z0-9 ]{0,50}$/),
+    suffix: fc.stringMatching(/^[A-Za-z0-9 ]{0,50}$/),
+    sourceUrl: urlArb,
+  })
+  .map(({ prefix, suffix, sourceUrl }) => ({
+    description: `${prefix}${sourceUrl}${suffix}`,
+    sourceUrl,
+  }));
 
 // ─── Property Tests ───────────────────────────────────────────────
 
@@ -69,7 +68,9 @@ describe('Property 3: description URL stripping removes sourceUrl', () => {
   it('returns description unchanged when sourceUrl is not found in description', () => {
     fc.assert(
       fc.property(
-        fc.stringMatching(/^[A-Za-z0-9 ]{1,100}$/).filter((s) => !hasHost(s, 'almedalsveckan.info')),
+        fc
+          .stringMatching(/^[A-Za-z0-9 ]{1,100}$/)
+          .filter((s) => !hasHost(s, 'almedalsveckan.info')),
         urlArb,
         (description, sourceUrl) => {
           // Ensure description does not contain the sourceUrl

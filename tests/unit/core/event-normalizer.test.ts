@@ -366,12 +366,7 @@ describe('deriveEventId', () => {
     });
 
     it('falls back to SHA-256 hash when both URLs are null', () => {
-      const result = deriveEventId(
-        null,
-        null,
-        'Some Title',
-        '2026-06-22T07:30:00+02:00',
-      );
+      const result = deriveEventId(null, null, 'Some Title', '2026-06-22T07:30:00+02:00');
       // SHA-256 hash truncated to 16 hex characters
       expect(result).toMatch(/^[0-9a-f]{16}$/);
     });

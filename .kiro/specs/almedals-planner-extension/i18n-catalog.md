@@ -4,34 +4,34 @@ All user-facing strings are defined in `_locales/{locale}/messages.json`. No har
 
 ## Key Summary
 
-| Key | Swedish (sv) | English (en) | Used By |
-|---|---|---|---|
-| `extensionName` | Almedalsstjärnan | Almedalsstjärnan | Manifest |
-| `extensionDescription` | Stjärnmärk evenemang i Almedalsveckans program och exportera ditt schema som kalenderfil. | Star events in the Almedalsveckan programme and export your schedule as a calendar file. | Manifest |
-| `starEvent` | Stjärnmärk evenemang | Star event | Star Button (aria-label) |
-| `unstarEvent` | Ta bort stjärnmärkning | Unstar event | Star Button (aria-label) |
-| `popupTitle` | Stjärnmärkta evenemang | Starred events | Popup UI |
-| `starsPageTitle` | Alla stjärnmärkta evenemang | All starred events | Stars Page |
-| `openFullList` | Öppna hela listan | Open full list | Popup UI |
-| `exportToCalendar` | Exportera till kalender | Export to calendar | Stars Page |
-| `sortChronological` | Kronologisk | Chronological | Popup UI, Stars Page |
-| `sortReverseChronological` | Omvänd kronologisk | Reverse chronological | Popup UI, Stars Page |
-| `sortAlphabeticalTitle` | Titel A–Ö | Title A–Ö | Popup UI, Stars Page |
-| `sortStarredDesc` | Senast stjärnmärkta | Recently starred | Popup UI, Stars Page |
-| `sortLabel` | Sortera efter | Sort by | Popup UI, Stars Page |
-| `emptyStateTitle` | Inga stjärnmärkta evenemang | No starred events | Popup UI, Stars Page |
-| `emptyStateMessage` | Besök Almedalsveckans program och klicka på stjärnan för att spara evenemang. | Visit the Almedalsveckan programme and click the star to save events. | Popup UI, Stars Page |
-| `unstarAction` | Ta bort | Remove | Stars Page |
-| `icsSourceLabel` | Källa: | Source: | ICS Generator |
-| `errorStorageFailed` | Kunde inte spara. Försök igen. | Could not save. Please try again. | Popup UI, Stars Page, Content Script |
-| `errorExportFailed` | Exporten misslyckades. Försök igen. | Export failed. Please try again. | Stars Page |
-| `successExport` | Kalenderfil exporterad. | Calendar file exported. | Stars Page |
-| `columnTitle` | Titel | Title | Stars Page |
-| `columnOrganiser` | Arrangör | Organiser | Stars Page |
-| `columnDateTime` | Datum & tid | Date & time | Stars Page |
-| `columnLocation` | Plats | Location | Stars Page |
-| `columnTopic` | Ämne | Topic | Stars Page |
-| `columnActions` | Åtgärder | Actions | Stars Page |
+| Key                        | Swedish (sv)                                                                              | English (en)                                                                             | Used By                              |
+| -------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------ |
+| `extensionName`            | Almedalsstjärnan                                                                          | Almedalsstjärnan                                                                         | Manifest                             |
+| `extensionDescription`     | Stjärnmärk evenemang i Almedalsveckans program och exportera ditt schema som kalenderfil. | Star events in the Almedalsveckan programme and export your schedule as a calendar file. | Manifest                             |
+| `starEvent`                | Stjärnmärk evenemang                                                                      | Star event                                                                               | Star Button (aria-label)             |
+| `unstarEvent`              | Ta bort stjärnmärkning                                                                    | Unstar event                                                                             | Star Button (aria-label)             |
+| `popupTitle`               | Stjärnmärkta evenemang                                                                    | Starred events                                                                           | Popup UI                             |
+| `starsPageTitle`           | Alla stjärnmärkta evenemang                                                               | All starred events                                                                       | Stars Page                           |
+| `openFullList`             | Öppna hela listan                                                                         | Open full list                                                                           | Popup UI                             |
+| `exportToCalendar`         | Exportera till kalender                                                                   | Export to calendar                                                                       | Stars Page                           |
+| `sortChronological`        | Kronologisk                                                                               | Chronological                                                                            | Popup UI, Stars Page                 |
+| `sortReverseChronological` | Omvänd kronologisk                                                                        | Reverse chronological                                                                    | Popup UI, Stars Page                 |
+| `sortAlphabeticalTitle`    | Titel A–Ö                                                                                 | Title A–Ö                                                                                | Popup UI, Stars Page                 |
+| `sortStarredDesc`          | Senast stjärnmärkta                                                                       | Recently starred                                                                         | Popup UI, Stars Page                 |
+| `sortLabel`                | Sortera efter                                                                             | Sort by                                                                                  | Popup UI, Stars Page                 |
+| `emptyStateTitle`          | Inga stjärnmärkta evenemang                                                               | No starred events                                                                        | Popup UI, Stars Page                 |
+| `emptyStateMessage`        | Besök Almedalsveckans program och klicka på stjärnan för att spara evenemang.             | Visit the Almedalsveckan programme and click the star to save events.                    | Popup UI, Stars Page                 |
+| `unstarAction`             | Ta bort                                                                                   | Remove                                                                                   | Stars Page                           |
+| `icsSourceLabel`           | Källa:                                                                                    | Source:                                                                                  | ICS Generator                        |
+| `errorStorageFailed`       | Kunde inte spara. Försök igen.                                                            | Could not save. Please try again.                                                        | Popup UI, Stars Page, Content Script |
+| `errorExportFailed`        | Exporten misslyckades. Försök igen.                                                       | Export failed. Please try again.                                                         | Stars Page                           |
+| `successExport`            | Kalenderfil exporterad.                                                                   | Calendar file exported.                                                                  | Stars Page                           |
+| `columnTitle`              | Titel                                                                                     | Title                                                                                    | Stars Page                           |
+| `columnOrganiser`          | Arrangör                                                                                  | Organiser                                                                                | Stars Page                           |
+| `columnDateTime`           | Datum & tid                                                                               | Date & time                                                                              | Stars Page                           |
+| `columnLocation`           | Plats                                                                                     | Location                                                                                 | Stars Page                           |
+| `columnTopic`              | Ämne                                                                                      | Topic                                                                                    | Stars Page                           |
+| `columnActions`            | Åtgärder                                                                                  | Actions                                                                                  | Stars Page                           |
 
 ## Full Locale Files
 

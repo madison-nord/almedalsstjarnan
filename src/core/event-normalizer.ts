@@ -381,12 +381,8 @@ export function normalizeEvent(element: Element): NormalizerResult {
     const sourceUrl = icsFields?.url?.trim() || null;
 
     // Derive event ID
-    const id = domEventId ?? deriveEventId(
-      icsFields?.url ?? null,
-      domDetailUrl,
-      title,
-      startDateTime,
-    );
+    const id =
+      domEventId ?? deriveEventId(icsFields?.url ?? null, domDetailUrl, title, startDateTime);
 
     return {
       ok: true,

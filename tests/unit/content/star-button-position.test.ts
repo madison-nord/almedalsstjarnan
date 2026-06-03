@@ -16,9 +16,7 @@ import { processEventCard } from '#extension/content-script';
 // ─── Helpers ──────────────────────────────────────────────────────
 
 function setupMocks(): void {
-  (mockBrowserApi.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
-    (key: string) => key,
-  );
+  (mockBrowserApi.getMessage as ReturnType<typeof vi.fn>).mockImplementation((key: string) => key);
   (mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>).mockResolvedValue({
     success: true,
     data: false,

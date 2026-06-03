@@ -18,7 +18,10 @@ import { sortEvents } from '#core/sorter';
 import { starredEventArrayArb } from '#test/helpers/event-generators';
 import { groupEventsByDate } from '#ui/stars/components/EventGrid';
 
-const timeBasedSortArb = fc.constantFrom('chronological' as const, 'reverse-chronological' as const);
+const timeBasedSortArb = fc.constantFrom(
+  'chronological' as const,
+  'reverse-chronological' as const,
+);
 
 describe('Property 7: Within-group events ordered by start time ascending with id tiebreaker', () => {
   /**

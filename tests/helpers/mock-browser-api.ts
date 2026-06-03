@@ -29,24 +29,16 @@ export const mockBrowserApi: IBrowserApiAdapter = {
 export function resetMocks(): void {
   mockUnsubscribe.mockClear();
 
-  (mockBrowserApi.storageLocalGet as ReturnType<typeof vi.fn>)
-    .mockReset()
-    .mockResolvedValue({});
+  (mockBrowserApi.storageLocalGet as ReturnType<typeof vi.fn>).mockReset().mockResolvedValue({});
   (mockBrowserApi.storageLocalSet as ReturnType<typeof vi.fn>)
     .mockReset()
     .mockResolvedValue(undefined);
   (mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>)
     .mockReset()
     .mockResolvedValue({ success: true, data: undefined });
-  (mockBrowserApi.getMessage as ReturnType<typeof vi.fn>)
-    .mockReset()
-    .mockReturnValue('');
-  (mockBrowserApi.download as ReturnType<typeof vi.fn>)
-    .mockReset()
-    .mockResolvedValue(1);
-  (mockBrowserApi.createTab as ReturnType<typeof vi.fn>)
-    .mockReset()
-    .mockResolvedValue(undefined);
+  (mockBrowserApi.getMessage as ReturnType<typeof vi.fn>).mockReset().mockReturnValue('');
+  (mockBrowserApi.download as ReturnType<typeof vi.fn>).mockReset().mockResolvedValue(1);
+  (mockBrowserApi.createTab as ReturnType<typeof vi.fn>).mockReset().mockResolvedValue(undefined);
   (mockBrowserApi.onStorageChanged as ReturnType<typeof vi.fn>)
     .mockReset()
     .mockReturnValue(mockUnsubscribe);

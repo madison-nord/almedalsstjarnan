@@ -19,9 +19,7 @@ export function EmptyState({ adapter }: EmptyStateProps): React.JSX.Element {
       <h2 className="text-base font-medium text-gray-700 mb-2">
         {adapter.getMessage('emptyStateTitle')}
       </h2>
-      <p className="text-sm text-gray-500">
-        {adapter.getMessage('emptyStateMessage')}
-      </p>
+      <p className="text-sm text-gray-500">{adapter.getMessage('emptyStateMessage')}</p>
     </div>
   );
 }

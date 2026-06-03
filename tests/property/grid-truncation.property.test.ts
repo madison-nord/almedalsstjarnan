@@ -95,7 +95,6 @@ describe('Property 1: Grid cells constrain content with overflow handling', () =
   });
 });
 
-
 // ─── Property 2: Grid cell tooltips match full content ────────────
 
 describe('Property 2: Grid cell tooltips match full content', () => {

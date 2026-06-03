@@ -109,29 +109,17 @@ describe('formatEventDateTime — English locale', () => {
 
 describe('formatEventDateTime — null endDateTime', () => {
   it('shows only start time when endDateTime is null (Swedish)', () => {
-    const result = formatEventDateTime(
-      '2026-06-22T07:30:00+02:00',
-      null,
-      'sv',
-    );
+    const result = formatEventDateTime('2026-06-22T07:30:00+02:00', null, 'sv');
     expect(result).toBe('Mån 22 juni 07:30');
   });
 
   it('shows only start time when endDateTime is null (English)', () => {
-    const result = formatEventDateTime(
-      '2026-06-22T07:30:00+02:00',
-      null,
-      'en',
-    );
+    const result = formatEventDateTime('2026-06-22T07:30:00+02:00', null, 'en');
     expect(result).toBe('Mon 22 Jun 07:30');
   });
 
   it('does not contain an en-dash when endDateTime is null', () => {
-    const result = formatEventDateTime(
-      '2026-06-24T14:00:00+02:00',
-      null,
-      'sv',
-    );
+    const result = formatEventDateTime('2026-06-24T14:00:00+02:00', null, 'sv');
     expect(result).not.toContain('\u2013');
   });
 });

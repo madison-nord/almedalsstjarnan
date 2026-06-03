@@ -1,11 +1,6 @@
 import { describe, it, expect } from 'vitest';
 
-import {
-  generateICS,
-  foldLine,
-  escapeICSText,
-  generateExportFilename,
-} from '#core/ics-generator';
+import { generateICS, foldLine, escapeICSText, generateExportFilename } from '#core/ics-generator';
 import { parseICS } from '#core/ics-parser';
 import type { StarredEvent } from '#core/types';
 
@@ -190,9 +185,7 @@ describe('generateICS', () => {
       const ics = generateICS([event], 'sv');
       // After unfolding, the content should be intact
       const parsed = parseICS(ics);
-      expect(parsed.events[0]!.description).toContain(
-        'This is a very long description',
-      );
+      expect(parsed.events[0]!.description).toContain('This is a very long description');
     });
 
     it('all content lines are at most 75 octets before CRLF', () => {
@@ -517,9 +510,7 @@ describe('foldLine', () => {
 describe('generateExportFilename', () => {
   it('matches the pattern almedalsstjarnan-starred-events-YYYYMMDD-HHMMSS.ics', () => {
     const filename = generateExportFilename();
-    expect(filename).toMatch(
-      /^almedalsstjarnan-starred-events-\d{8}-\d{6}\.ics$/,
-    );
+    expect(filename).toMatch(/^almedalsstjarnan-starred-events-\d{8}-\d{6}\.ics$/);
   });
 
   it('uses the provided date for the timestamp', () => {

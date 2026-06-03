@@ -112,7 +112,9 @@ export function App({ adapter }: AppProps): React.JSX.Element {
     <div key={locale ?? 'auto'} className="min-h-screen flex flex-col bg-brand-surface">
       <header className="bg-brand-secondary px-4 sm:px-6 lg:px-8 pt-4 pb-3 border-b-[3px] border-brand-primary">
         <div className="flex items-center gap-2 mb-3">
-          <span className="text-brand-accent text-lg" aria-hidden="true">★</span>
+          <span className="text-brand-accent text-lg" aria-hidden="true">
+            ★
+          </span>
           <h1 className="text-lg font-bold text-white">
             {localizedAdapter.getMessage('extensionName')}
           </h1>
@@ -132,11 +134,7 @@ export function App({ adapter }: AppProps): React.JSX.Element {
             adapter={localizedAdapter}
             labelClassName="text-gray-200"
           />
-          <SearchFilter
-            value={filterText}
-            onChange={setFilterText}
-            adapter={localizedAdapter}
-          />
+          <SearchFilter value={filterText} onChange={setFilterText} adapter={localizedAdapter} />
           <ExportButton onExport={exportEvents} adapter={localizedAdapter} />
         </div>
       </header>

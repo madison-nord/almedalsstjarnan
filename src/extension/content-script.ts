@@ -12,7 +12,13 @@
  *              20.1, 20.2, 20.3, 20.4
  */
 
-import type { IBrowserApiAdapter, EventId, NormalizedEvent, StarredEvent, GetStarStateData } from '#core/types';
+import type {
+  IBrowserApiAdapter,
+  EventId,
+  NormalizedEvent,
+  StarredEvent,
+  GetStarStateData,
+} from '#core/types';
 import { normalizeEvent } from '#core/event-normalizer';
 import { compareEventFields } from '#core/event-field-comparator';
 import type { MutableFields } from '#core/event-field-comparator';
@@ -60,10 +66,7 @@ export function findEventCards(root: Element | Document): Element[] {
  * Skips cards that are already initialized or where normalization fails.
  * Never throws — catches and logs warnings.
  */
-export async function processEventCard(
-  card: Element,
-  adapter: IBrowserApiAdapter,
-): Promise<void> {
+export async function processEventCard(card: Element, adapter: IBrowserApiAdapter): Promise<void> {
   try {
     // Skip already-initialized cards
     if (card.getAttribute('data-almedals-planner-initialized') === '1') {
@@ -73,7 +76,6 @@ export async function processEventCard(
     // Normalize event data from the card
     const result = normalizeEvent(card);
     if (!result.ok) {
-       
       console.warn(`[Almedalsstjärnan] Skipping card: ${result.reason}`);
       return;
     }
@@ -180,7 +182,7 @@ export async function processEventCard(
     }
   } catch (error: unknown) {
     // Never throw from content script
-     
+
     console.warn(
       '[Almedalsstjärnan] Error processing event card:',
       error instanceof Error ? error.message : String(error),
@@ -235,20 +237,22 @@ export function initContentScript(adapter: IBrowserApiAdapter): void {
   activeObserver = observer;
 
   // Register cross-tab consistency listener
-  adapter.onStorageChanged((changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => {
-    const starredEventsChange = changes['starredEvents'];
-    if (!starredEventsChange) return;
+  adapter.onStorageChanged(
+    (changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => {
+      const starredEventsChange = changes['starredEvents'];
+      if (!starredEventsChange) return;
 
-    const newStarredEvents = (starredEventsChange.newValue ?? {}) as Record<string, StarredEvent>;
+      const newStarredEvents = (starredEventsChange.newValue ?? {}) as Record<string, StarredEvent>;
 
-    // Update all tracked star buttons based on new storage state
-    for (const [eventId, buttons] of starButtonMap) {
-      const isStarred = eventId in newStarredEvents;
-      for (const button of buttons) {
-        button.update(isStarred);
+      // Update all tracked star buttons based on new storage state
+      for (const [eventId, buttons] of starButtonMap) {
+        const isStarred = eventId in newStarredEvents;
+        for (const button of buttons) {
+          button.update(isStarred);
+        }
       }
-    }
-  });
+    },
+  );
 }
 
 // ─── Internal Helpers ─────────────────────────────────────────────

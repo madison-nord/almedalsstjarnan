@@ -74,10 +74,9 @@ export function useStarredEvents(
     async (order: SortOrder): Promise<void> => {
       const generation = ++fetchGenerationRef.current;
 
-      const response =
-        await adapter.sendMessage<StarredEvent[]>({
-          command: 'GET_ALL_STARRED_EVENTS',
-        }) as GetAllStarredEventsResponse;
+      const response = (await adapter.sendMessage<StarredEvent[]>({
+        command: 'GET_ALL_STARRED_EVENTS',
+      })) as GetAllStarredEventsResponse;
 
       // Discard stale responses — only the latest fetch should set state
       if (generation !== fetchGenerationRef.current) return;
@@ -92,9 +91,10 @@ export function useStarredEvents(
               pendingIds.delete(id);
             }
           }
-          const filtered = pendingIds.size > 0
-            ? response.data.filter((e) => !pendingIds.has(e.id))
-            : response.data;
+          const filtered =
+            pendingIds.size > 0
+              ? response.data.filter((e) => !pendingIds.has(e.id))
+              : response.data;
           const sorted = sortEvents(filtered, order);
           setEvents(sorted);
         } else {
@@ -110,10 +110,9 @@ export function useStarredEvents(
     let cancelled = false;
 
     async function init(): Promise<void> {
-      const eventsResponse =
-        await adapter.sendMessage<StarredEvent[]>({
-          command: 'GET_ALL_STARRED_EVENTS',
-        }) as GetAllStarredEventsResponse;
+      const eventsResponse = (await adapter.sendMessage<StarredEvent[]>({
+        command: 'GET_ALL_STARRED_EVENTS',
+      })) as GetAllStarredEventsResponse;
 
       if (cancelled) return;
 
@@ -142,15 +141,12 @@ export function useStarredEvents(
     return unsubscribe;
   }, [adapter, fetchEvents]);
 
-  const changeSortOrder = useCallback(
-    (order: SortOrder): void => {
-      setSortOrder(order);
-      sortOrderRef.current = order;
+  const changeSortOrder = useCallback((order: SortOrder): void => {
+    setSortOrder(order);
+    sortOrderRef.current = order;
 
-      setEvents((prev) => sortEvents([...prev], order));
-    },
-    [],
-  );
+    setEvents((prev) => sortEvents([...prev], order));
+  }, []);
 
   const unstarEvent = useCallback(
     (eventId: string): void => {
@@ -176,9 +172,7 @@ export function useStarredEvents(
         const event = prev.find((e) => e.id === eventId);
         if (event) {
           // Re-add to displayed events and re-sort
-          setEvents((currentEvents) =>
-            sortEvents([...currentEvents, event], sortOrderRef.current),
-          );
+          setEvents((currentEvents) => sortEvents([...currentEvents, event], sortOrderRef.current));
           // Re-star in storage (reverses the immediate UNSTAR_EVENT)
           void adapter.sendMessage({ command: 'STAR_EVENT', event });
         }
@@ -188,15 +182,12 @@ export function useStarredEvents(
     [adapter],
   );
 
-  const confirmUnstar = useCallback(
-    (eventId: string): void => {
-      // Event was already removed from storage in unstarEvent.
-      // Keep ID in pendingDeletionsRef — fetchEvents will clean it up
-      // once it confirms the event is gone from storage.
-      setPendingDeletions((prev) => prev.filter((e) => e.id !== eventId));
-    },
-    [],
-  );
+  const confirmUnstar = useCallback((eventId: string): void => {
+    // Event was already removed from storage in unstarEvent.
+    // Keep ID in pendingDeletionsRef — fetchEvents will clean it up
+    // once it confirms the event is gone from storage.
+    setPendingDeletions((prev) => prev.filter((e) => e.id !== eventId));
+  }, []);
 
   const exportEvents = useCallback((): void => {
     const effectiveLocale = resolveEffectiveLocale(languagePreference);
@@ -246,20 +237,17 @@ export function useStarredEvents(
     return map;
   }, [events]);
 
-  const toggleSelection = useCallback(
-    (eventId: string): void => {
-      setSelectedIds((prev) => {
-        const next = new Set(prev);
-        if (next.has(eventId)) {
-          next.delete(eventId);
-        } else {
-          next.add(eventId);
-        }
-        return next;
-      });
-    },
-    [],
-  );
+  const toggleSelection = useCallback((eventId: string): void => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(eventId)) {
+        next.delete(eventId);
+      } else {
+        next.add(eventId);
+      }
+      return next;
+    });
+  }, []);
 
   const selectAll = useCallback((): void => {
     setSelectedIds(new Set(filteredEvents.map((e) => e.id)));

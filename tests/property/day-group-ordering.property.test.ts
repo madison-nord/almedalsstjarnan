@@ -17,7 +17,10 @@ import { starredEventArrayArb } from '#test/helpers/event-generators';
  * descending for reverse-chronological sort.
  */
 
-const timeBasedSortOrderArb = fc.constantFrom('chronological' as const, 'reverse-chronological' as const);
+const timeBasedSortOrderArb = fc.constantFrom(
+  'chronological' as const,
+  'reverse-chronological' as const,
+);
 
 describe('Property 5: Time-based sort produces correctly ordered day-groups', () => {
   it('chronological sort produces day-groups in ascending date order', () => {

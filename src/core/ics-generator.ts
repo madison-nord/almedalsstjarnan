@@ -89,10 +89,7 @@ export function foldLine(line: string): string {
  */
 function toICSDateTime(iso: string): string {
   // Remove dashes, colons, and timezone offset
-  return iso
-    .replace(/[-:]/g, '')
-    .replace(/\+.*$/, '')
-    .slice(0, 15);
+  return iso.replace(/[-:]/g, '').replace(/\+.*$/, '').slice(0, 15);
 }
 
 /**
@@ -142,10 +139,7 @@ function buildDescription(
  * @param locale - 'sv' or 'en' for source label localization
  * @returns Complete ICS file content as a string
  */
-export function generateICS(
-  events: readonly StarredEvent[],
-  locale: 'sv' | 'en',
-): string {
+export function generateICS(events: readonly StarredEvent[], locale: 'sv' | 'en'): string {
   const now = new Date();
   const dtstamp = toICSTimestamp(now);
 

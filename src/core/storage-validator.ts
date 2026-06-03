@@ -24,10 +24,7 @@ export interface StorageValidationResult {
  * @param entry - The raw entry value
  * @returns true if the entry is a valid StarredEvent
  */
-export function isValidStarredEntry(
-  key: string,
-  entry: unknown,
-): entry is StarredEvent {
+export function isValidStarredEntry(key: string, entry: unknown): entry is StarredEvent {
   if (typeof entry !== 'object' || entry === null || Array.isArray(entry)) {
     return false;
   }
@@ -65,9 +62,7 @@ export function isValidStarredEntry(
  * @param raw - The raw value from storage (could be anything)
  * @returns StorageValidationResult with valid entries and list of rejected keys
  */
-export function validateStarredEvents(
-  raw: unknown,
-): StorageValidationResult {
+export function validateStarredEvents(raw: unknown): StorageValidationResult {
   if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
     return { valid: {}, invalidKeys: [] };
   }

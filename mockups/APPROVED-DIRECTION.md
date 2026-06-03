@@ -3,6 +3,7 @@
 ## Color Palette
 
 **Default theme: Palette A "Gotland Sunset"** — Warm amber/gold tones
+
 - Primary: `#d97706` (amber-600)
 - Secondary: `#1e3a5f` (deep navy)
 - Accent: `#f59e0b` (amber-500)
@@ -12,6 +13,7 @@
 - Muted text: `#6b7280` (gray-500)
 
 **Selectable themes (user can switch):**
+
 - Palette B "Baltic Blue" — teal/blue
 - Palette C "Almedalen Rose" — rose/plum
 - Light theme — mostly white and very light colors
@@ -20,6 +22,7 @@
 ## Card Layout
 
 **Layout A: "Compact Card"**
+
 - Rounded corners (8px), subtle box-shadow
 - Title bold on first line, organiser + formatted date on second line
 - Star toggle (filled star icon) in top-right corner
@@ -29,6 +32,7 @@
 ## Header
 
 **Header B style ("Clean Minimal") with Header C colors ("Dark Header")**
+
 - Solid dark background (`#1e3a5f` secondary color)
 - "Almedalsstjärnan" in white text, bold
 - Accent-colored star icon (`#f59e0b`)
@@ -39,6 +43,7 @@
 ## Icon
 
 **Concept 3: "Bare Star"**
+
 - Just the star shape — no background circle or square
 - Bold amber (#f59e0b) fill with thick navy (#1e3a5f) stroke
 - Stroke-linejoin: round for softer points

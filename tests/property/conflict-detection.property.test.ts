@@ -25,10 +25,7 @@ const conflictEventArb: fc.Arbitrary<ConflictTestEvent> = fc
     id: hexStringArb(8),
     startHour: fc.integer({ min: 0, max: 23 }),
     startMinute: fc.integer({ min: 0, max: 59 }),
-    durationMinutes: fc.oneof(
-      fc.constant(null as number | null),
-      fc.integer({ min: 1, max: 180 }),
-    ),
+    durationMinutes: fc.oneof(fc.constant(null as number | null), fc.integer({ min: 1, max: 180 })),
   })
   .map(({ id, startHour, startMinute, durationMinutes }) => {
     const start = `2026-06-22T${String(startHour).padStart(2, '0')}:${String(startMinute).padStart(2, '0')}:00+02:00`;
@@ -72,11 +69,7 @@ function eventsOverlapReference(a: ConflictTestEvent, b: ConflictTestEvent): boo
   const bEnd = getEffectiveEnd(b);
 
   // Special case: two zero-duration events at the same start time
-  if (
-    a.endDateTime === null &&
-    b.endDateTime === null &&
-    a.startDateTime === b.startDateTime
-  ) {
+  if (a.endDateTime === null && b.endDateTime === null && a.startDateTime === b.startDateTime) {
     return true;
   }
 
@@ -120,9 +113,7 @@ describe('Property 7: conflict detection correctness', () => {
         const expected = detectConflictsReference(events);
 
         // Sort both for comparison
-        const sortPairs = (
-          pairs: Array<{ eventIdA: string; eventIdB: string }>,
-        ) =>
+        const sortPairs = (pairs: Array<{ eventIdA: string; eventIdB: string }>) =>
           [...pairs].sort((a, b) => {
             const cmp = a.eventIdA.localeCompare(b.eventIdA);
             if (cmp !== 0) return cmp;

@@ -85,7 +85,11 @@ const messageMap: Record<string, string> = {
 // ─── Helpers ──────────────────────────────────────────────────────
 
 let adapter: IBrowserApiAdapter;
-let storageChangedCallback: ((changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => void) | null;
+let storageChangedCallback:
+  | ((
+      changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
+    ) => void)
+  | null;
 
 function setupAdapter(events: StarredEvent[] = [], sortOrder: SortOrder = 'chronological'): void {
   storageChangedCallback = null;
@@ -112,14 +116,21 @@ function setupAdapter(events: StarredEvent[] = [], sortOrder: SortOrder = 'chron
   );
 
   (adapter.onStorageChanged as ReturnType<typeof vi.fn>).mockImplementation(
-    (cb: (changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => void) => {
+    (
+      cb: (
+        changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
+      ) => void,
+    ) => {
       storageChangedCallback = cb;
       return vi.fn();
     },
   );
 }
 
-async function renderApp(events: StarredEvent[] = [], sortOrder: SortOrder = 'chronological'): Promise<void> {
+async function renderApp(
+  events: StarredEvent[] = [],
+  sortOrder: SortOrder = 'chronological',
+): Promise<void> {
   setupAdapter(events, sortOrder);
   render(<App adapter={adapter} />);
   await waitFor(() => {
@@ -155,10 +166,10 @@ describe('Popup App', () => {
     it('sends both messages concurrently on mount', async () => {
       await renderApp();
 
-      const calls = (adapter.sendMessage as ReturnType<typeof vi.fn>).mock.calls as [MessagePayload][];
-      const commands = calls.map(
-        (call) => call[0].command,
-      );
+      const calls = (adapter.sendMessage as ReturnType<typeof vi.fn>).mock.calls as [
+        MessagePayload,
+      ][];
+      const commands = calls.map((call) => call[0].command);
       expect(commands).toContain('GET_ALL_STARRED_EVENTS');
       expect(commands).toContain('GET_SORT_ORDER');
     });
@@ -197,7 +208,13 @@ describe('Popup App', () => {
     });
 
     it('displays each event with date-time', async () => {
-      const events = [makeEvent({ id: 'e1', startDateTime: '2026-06-28T10:00:00+02:00', endDateTime: '2026-06-28T11:00:00+02:00' })];
+      const events = [
+        makeEvent({
+          id: 'e1',
+          startDateTime: '2026-06-28T10:00:00+02:00',
+          endDateTime: '2026-06-28T11:00:00+02:00',
+        }),
+      ];
       await renderApp(events);
 
       expect(screen.getByText('Sön 28 juni 10:00\u201311:00')).toBeInTheDocument();
@@ -295,9 +312,7 @@ describe('Popup App', () => {
 
       expect(screen.getByText('No starred events')).toBeInTheDocument();
       expect(
-        screen.getByText(
-          'Visit the Almedalsveckan programme and click the star to save events.',
-        ),
+        screen.getByText('Visit the Almedalsveckan programme and click the star to save events.'),
       ).toBeInTheDocument();
     });
 
@@ -559,7 +574,11 @@ describe('Popup App', () => {
       const mockUnsubscribe = vi.fn();
       setupAdapter(makeEvents(1));
       (adapter.onStorageChanged as ReturnType<typeof vi.fn>).mockImplementation(
-        (cb: (changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => void) => {
+        (
+          cb: (
+            changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>,
+          ) => void,
+        ) => {
           storageChangedCallback = cb;
           return mockUnsubscribe;
         },

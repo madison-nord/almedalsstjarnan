@@ -41,11 +41,7 @@ describe('SortSelector', () => {
 
   function renderSelector(currentOrder: SortOrder = 'chronological') {
     return render(
-      <SortSelector
-        currentOrder={currentOrder}
-        onOrderChange={onOrderChange}
-        adapter={adapter}
-      />,
+      <SortSelector currentOrder={currentOrder} onOrderChange={onOrderChange} adapter={adapter} />,
     );
   }
 

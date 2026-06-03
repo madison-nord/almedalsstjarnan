@@ -26,6 +26,7 @@ This design addresses two bugs in the Almedalsstjärnan browser extension:
 The bug manifests when any text cell in the Stars Page table contains a comma or long text. The `<td>` elements have no `max-width`, `overflow`, or `text-overflow` constraints, so content pushes the column wider and misaligns adjacent columns.
 
 **Formal Specification:**
+
 ```
 FUNCTION isBugCondition_Grid(input)
   INPUT: input of type StarredEvent
@@ -47,6 +48,7 @@ END FUNCTION
 The bug manifests when an event has a non-null `sourceUrl`. The `buildDescription` function appends a "Källa:/Source:" line to the DESCRIPTION field. This source URL should instead be a dedicated ICS `URL` property.
 
 **Formal Specification:**
+
 ```
 FUNCTION isBugCondition_ICS(input)
   INPUT: input of type { event: StarredEvent, locale: 'sv' | 'en' }
@@ -73,6 +75,7 @@ END FUNCTION
 ### Preservation Requirements
 
 **Unchanged Behaviors:**
+
 - Events with short text and no commas render with all six columns properly aligned (Req 3.1)
 - Events with null optional fields (organiser, location, topic) render empty cells without layout issues (Req 3.2)
 - Clicking the unstar action removes the event from the displayed list (Req 3.3)
@@ -136,6 +139,7 @@ _For any_ StarredEvent with a null sourceUrl, the generated ICS output SHALL NOT
 **File**: `src/ui/stars/components/EventGrid.tsx`
 
 **Specific Changes**:
+
 1. **Add `table-fixed` to `<table>`**: Change `className="w-full border-collapse"` to `className="w-full border-collapse table-fixed"` so the browser uses fixed layout algorithm.
 2. **Add width hints to `<th>` elements**: Assign proportional widths to columns so they don't collapse or expand based on content. Suggested distribution:
    - Title: ~25% (wider for links)
@@ -148,6 +152,7 @@ _For any_ StarredEvent with a null sourceUrl, the generated ICS output SHALL NOT
 **File**: `src/ui/stars/components/EventRow.tsx`
 
 **Specific Changes**:
+
 1. **Add `truncate` class to text `<td>` elements**: Add `truncate` (which applies `overflow-hidden`, `text-overflow: ellipsis`, `white-space: nowrap`) to the title, organiser, location, and topic cells.
 2. **Add `title` attribute for truncated content**: Add a `title` attribute to truncated cells so users can see the full text on hover.
 
@@ -158,6 +163,7 @@ _For any_ StarredEvent with a null sourceUrl, the generated ICS output SHALL NOT
 **Function**: `buildDescription`
 
 **Specific Changes**:
+
 1. **Remove source URL from `buildDescription`**: Remove the `sourceUrl` parameter and the logic that appends the localized source label. The function should return only the event description (or null if description is null).
 2. **Simplify `buildDescription` signature**: Change from `(description, sourceUrl, locale)` to `(description)` — it now just returns the description or null.
 3. **Add `URL` property to VEVENT output**: In `generateICS`, after the DESCRIPTION line, add `URL:{sourceUrl}` when `event.sourceUrl` is not null. The URL value does not need ICS text escaping (it's a URI, not a text value).
@@ -165,11 +171,13 @@ _For any_ StarredEvent with a null sourceUrl, the generated ICS output SHALL NOT
 **File**: `src/core/ics-parser.ts`
 
 **Specific Changes**:
+
 1. **Parse `URL` property**: Add a `url` field to `ICSEvent` and extract it from `URL:` lines in the VEVENT parser.
 
 **File**: `src/core/types.ts`
 
 **Specific Changes**:
+
 1. **Add `url` field to `ICSEvent`**: Add `readonly url: string | null` to the `ICSEvent` interface.
 
 ## Testing Strategy
@@ -186,6 +194,7 @@ The testing strategy follows a two-phase approach: first, surface counterexample
 Write unit tests that render `EventRow` and `EventGrid` with comma-containing fields and assert overflow handling. Run on unfixed code to observe failures.
 
 **Test Cases**:
+
 1. **Comma in organiser**: Render EventRow with `organiser: "Org A, Org B"` — assert truncation class present (will fail on unfixed code)
 2. **Long organiser**: Render EventRow with a 100-character organiser — assert truncation (will fail on unfixed code)
 3. **Comma in location**: Render EventRow with `location: "Donners plats, Visby"` — assert truncation (will fail on unfixed code)
@@ -195,11 +204,13 @@ Write unit tests that render `EventRow` and `EventGrid` with comma-containing fi
 Write unit tests that generate ICS for events with sourceUrl and assert the URL property exists and DESCRIPTION is clean. Run on unfixed code to observe failures.
 
 **Test Cases**:
+
 1. **URL property present**: Generate ICS for event with sourceUrl — assert `URL:` line in output (will fail on unfixed code)
 2. **DESCRIPTION without source label**: Generate ICS for event with description and sourceUrl — assert DESCRIPTION does not contain "Källa:" or "Source:" (will fail on unfixed code)
 3. **Description-only DESCRIPTION**: Generate ICS for event with description and sourceUrl — assert DESCRIPTION equals just the description text (will fail on unfixed code)
 
 **Expected Counterexamples**:
+
 - Grid: `<td>` elements lack truncation classes, table lacks `table-fixed`
 - ICS: DESCRIPTION contains source URL, no `URL:` property line exists
 
@@ -208,6 +219,7 @@ Write unit tests that generate ICS for events with sourceUrl and assert the URL 
 **Goal**: Verify that for all inputs where the bug condition holds, the fixed code produces the expected behavior.
 
 **Pseudocode — Bug 1:**
+
 ```
 FOR ALL event WHERE event has comma-containing or long text fields DO
   rendered := renderEventRow(event)
@@ -218,6 +230,7 @@ END FOR
 ```
 
 **Pseudocode — Bug 2:**
+
 ```
 FOR ALL event WHERE event.sourceUrl IS NOT NULL DO
   ics := generateICS_fixed([event], locale)
@@ -233,6 +246,7 @@ END FOR
 **Goal**: Verify that for all inputs where the bug condition does NOT hold, the fixed code produces the same result as the original.
 
 **Pseudocode — Bug 1:**
+
 ```
 FOR ALL event WHERE event fields are short and contain no commas DO
   ASSERT renderEventRow_fixed(event) renders all six columns correctly
@@ -241,6 +255,7 @@ END FOR
 ```
 
 **Pseudocode — Bug 2:**
+
 ```
 FOR ALL event WHERE event.sourceUrl IS NULL DO
   ASSERT generateICS_fixed([event], locale) produces same output as generateICS_original([event], locale)
@@ -249,6 +264,7 @@ END FOR
 ```
 
 **Testing Approach**: Property-based testing is recommended for ICS preservation checking because:
+
 - It generates many event combinations automatically across the input domain
 - It catches edge cases with null/non-null field combinations
 - It provides strong guarantees that behavior is unchanged for events without sourceUrl

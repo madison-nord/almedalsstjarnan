@@ -20,9 +20,7 @@ import { EventRow } from '#ui/stars/components/EventRow';
 // ─── Helpers ──────────────────────────────────────────────────────
 
 function setupAdapter(): IBrowserApiAdapter {
-  (mockBrowserApi.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
-    (key: string) => key,
-  );
+  (mockBrowserApi.getMessage as ReturnType<typeof vi.fn>).mockImplementation((key: string) => key);
   return mockBrowserApi;
 }
 

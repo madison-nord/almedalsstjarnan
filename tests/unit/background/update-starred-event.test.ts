@@ -130,9 +130,7 @@ describe('handleMessage — UPDATE_STARRED_EVENT', () => {
   // ─── UPDATE_STARRED_EVENT — Storage Error ────────────────────────
 
   it('returns MessageResponseError when storageLocalGet throws', async () => {
-    (mockBrowserApi.storageLocalGet as Mock).mockRejectedValue(
-      new Error('Storage quota exceeded'),
-    );
+    (mockBrowserApi.storageLocalGet as Mock).mockRejectedValue(new Error('Storage quota exceeded'));
 
     const result = await handleMessage(mockBrowserApi, {
       command: 'UPDATE_STARRED_EVENT',
@@ -155,9 +153,7 @@ describe('handleMessage — UPDATE_STARRED_EVENT', () => {
     (mockBrowserApi.storageLocalGet as Mock).mockResolvedValue({
       starredEvents: { 'event-1': starredEvent },
     });
-    (mockBrowserApi.storageLocalSet as Mock).mockRejectedValue(
-      new Error('Write failed'),
-    );
+    (mockBrowserApi.storageLocalSet as Mock).mockRejectedValue(new Error('Write failed'));
 
     const result = await handleMessage(mockBrowserApi, {
       command: 'UPDATE_STARRED_EVENT',

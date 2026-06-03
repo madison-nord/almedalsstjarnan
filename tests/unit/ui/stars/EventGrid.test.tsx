@@ -58,7 +58,12 @@ describe('EventGrid header styling (Requirement 16)', () => {
   it('header row uses border-b-2 border-brand-secondary', () => {
     const adapter = setupAdapter();
     render(
-      <EventGrid events={[makeEvent({ id: 'e1' })]} sortOrder="chronological" onUnstar={vi.fn()} adapter={adapter} />,
+      <EventGrid
+        events={[makeEvent({ id: 'e1' })]}
+        sortOrder="chronological"
+        onUnstar={vi.fn()}
+        adapter={adapter}
+      />,
     );
 
     const headerRow = screen.getAllByRole('row')[0];
@@ -69,7 +74,12 @@ describe('EventGrid header styling (Requirement 16)', () => {
   it('header cells use text-brand-secondary font-semibold', () => {
     const adapter = setupAdapter();
     render(
-      <EventGrid events={[makeEvent({ id: 'e1' })]} sortOrder="chronological" onUnstar={vi.fn()} adapter={adapter} />,
+      <EventGrid
+        events={[makeEvent({ id: 'e1' })]}
+        sortOrder="chronological"
+        onUnstar={vi.fn()}
+        adapter={adapter}
+      />,
     );
 
     const titleHeader = screen.getByText('Title').closest('th');
@@ -110,7 +120,12 @@ describe('EventGrid table-fixed layout', () => {
   it('assigns width class to Title column header (~25%)', () => {
     const adapter = setupAdapter();
     render(
-      <EventGrid events={[makeEvent({ id: 'e1' })]} sortOrder="chronological" onUnstar={vi.fn()} adapter={adapter} />,
+      <EventGrid
+        events={[makeEvent({ id: 'e1' })]}
+        sortOrder="chronological"
+        onUnstar={vi.fn()}
+        adapter={adapter}
+      />,
     );
 
     const titleHeader = screen.getByText('Title').closest('th');
@@ -121,7 +136,12 @@ describe('EventGrid table-fixed layout', () => {
   it('assigns width class to Organiser column header (~20%)', () => {
     const adapter = setupAdapter();
     render(
-      <EventGrid events={[makeEvent({ id: 'e1' })]} sortOrder="chronological" onUnstar={vi.fn()} adapter={adapter} />,
+      <EventGrid
+        events={[makeEvent({ id: 'e1' })]}
+        sortOrder="chronological"
+        onUnstar={vi.fn()}
+        adapter={adapter}
+      />,
     );
 
     const header = screen.getByText('Organiser').closest('th');
@@ -132,7 +152,12 @@ describe('EventGrid table-fixed layout', () => {
   it('assigns width class to Date & time column header (~20%)', () => {
     const adapter = setupAdapter();
     render(
-      <EventGrid events={[makeEvent({ id: 'e1' })]} sortOrder="chronological" onUnstar={vi.fn()} adapter={adapter} />,
+      <EventGrid
+        events={[makeEvent({ id: 'e1' })]}
+        sortOrder="chronological"
+        onUnstar={vi.fn()}
+        adapter={adapter}
+      />,
     );
 
     const header = screen.getByText('Date & time').closest('th');
@@ -143,7 +168,12 @@ describe('EventGrid table-fixed layout', () => {
   it('assigns width class to Location column header (~15%)', () => {
     const adapter = setupAdapter();
     render(
-      <EventGrid events={[makeEvent({ id: 'e1' })]} sortOrder="chronological" onUnstar={vi.fn()} adapter={adapter} />,
+      <EventGrid
+        events={[makeEvent({ id: 'e1' })]}
+        sortOrder="chronological"
+        onUnstar={vi.fn()}
+        adapter={adapter}
+      />,
     );
 
     const header = screen.getByText('Location').closest('th');
@@ -154,7 +184,12 @@ describe('EventGrid table-fixed layout', () => {
   it('assigns width class to Topic column header (~10%)', () => {
     const adapter = setupAdapter();
     render(
-      <EventGrid events={[makeEvent({ id: 'e1' })]} sortOrder="chronological" onUnstar={vi.fn()} adapter={adapter} />,
+      <EventGrid
+        events={[makeEvent({ id: 'e1' })]}
+        sortOrder="chronological"
+        onUnstar={vi.fn()}
+        adapter={adapter}
+      />,
     );
 
     const header = screen.getByText('Topic').closest('th');
@@ -165,7 +200,12 @@ describe('EventGrid table-fixed layout', () => {
   it('assigns width class to Actions column header (~10%)', () => {
     const adapter = setupAdapter();
     render(
-      <EventGrid events={[makeEvent({ id: 'e1' })]} sortOrder="chronological" onUnstar={vi.fn()} adapter={adapter} />,
+      <EventGrid
+        events={[makeEvent({ id: 'e1' })]}
+        sortOrder="chronological"
+        onUnstar={vi.fn()}
+        adapter={adapter}
+      />,
     );
 
     const header = screen.getByText('Actions').closest('th');
@@ -176,7 +216,12 @@ describe('EventGrid table-fixed layout', () => {
   it('visually hides the Actions column header text with sr-only', () => {
     const adapter = setupAdapter();
     render(
-      <EventGrid events={[makeEvent({ id: 'e1' })]} sortOrder="chronological" onUnstar={vi.fn()} adapter={adapter} />,
+      <EventGrid
+        events={[makeEvent({ id: 'e1' })]}
+        sortOrder="chronological"
+        onUnstar={vi.fn()}
+        adapter={adapter}
+      />,
     );
 
     const actionsText = screen.getByText('Actions');

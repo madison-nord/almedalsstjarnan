@@ -48,9 +48,7 @@ export function BulkActions({
         onClick={allSelected ? onClearSelection : onSelectAll}
         className="text-sm underline hover:text-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-white"
       >
-        {allSelected
-          ? '✕'
-          : adapter.getMessage('selectAll')}
+        {allSelected ? '✕' : adapter.getMessage('selectAll')}
       </button>
 
       <button

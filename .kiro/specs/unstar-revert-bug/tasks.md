@@ -37,7 +37,6 @@
   - _Requirements: 3.1, 3.2, 3.3, 3.4_
 
 - [x] 3. Fix for unstar revert bug — pending-deletion events reappear on storage refresh
-
   - [x] 3.1 Implement the fix in `src/ui/popup/hooks/useStarredEvents.ts`
     - Add `pendingDeletionsRef = useRef<Set<string>>(new Set())` to track pending-deletion IDs
     - Update `unstarEvent`: add `eventId` to `pendingDeletionsRef.current` before filtering state

@@ -42,10 +42,7 @@ export function normalizeFieldValue(value: string | null): string | null {
  * Both inputs are normalized before comparison: whitespace-trimmed,
  * empty/whitespace-only strings converted to null, then strict equality.
  */
-export function compareEventFields(
-  fresh: MutableFields,
-  stored: MutableFields,
-): ComparisonResult {
+export function compareEventFields(fresh: MutableFields, stored: MutableFields): ComparisonResult {
   const changedFields: MutableFieldName[] = [];
 
   for (const field of MUTABLE_FIELDS) {

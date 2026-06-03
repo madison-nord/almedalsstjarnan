@@ -125,7 +125,8 @@ describe('EventRow truncation', () => {
     });
 
     it('title attribute equals event.title for long titles (Requirement 9.2)', () => {
-      const longTitle = 'Tillräcklighet krävs för att klara klimatkrisen – en paneldiskussion om framtidens hållbara samhälle';
+      const longTitle =
+        'Tillräcklighet krävs för att klara klimatkrisen – en paneldiskussion om framtidens hållbara samhälle';
       const event = makeEvent({ title: longTitle });
       renderRow(event);
 

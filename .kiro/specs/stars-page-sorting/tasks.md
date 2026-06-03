@@ -95,7 +95,10 @@ Decouple the Stars Page sort state from the shared persisted storage key and add
 ```json
 {
   "waves": [
-    { "tasks": [1, 2], "description": "Add isTimeBasedSort utility and refactor Stars Page hook (independent, can be parallel)" },
+    {
+      "tasks": [1, 2],
+      "description": "Add isTimeBasedSort utility and refactor Stars Page hook (independent, can be parallel)"
+    },
     { "tasks": [3], "description": "Checkpoint - verify tests pass" },
     { "tasks": [4], "description": "Update EventGrid for conditional day-grouping" },
     { "tasks": [5], "description": "Final checkpoint - verify all tests pass" }

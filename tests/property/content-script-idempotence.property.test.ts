@@ -7,7 +7,7 @@
  * Running injection twice produces the same number of Star_Buttons as once.
  */
 
-import type { vi} from 'vitest';
+import type { vi } from 'vitest';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import fc from 'fast-check';
 
@@ -20,13 +20,11 @@ import { createMockEventCard } from '#test/helpers/dom-helpers';
 
 function setupAdapter(): IBrowserApiAdapter {
   const adapter = mockBrowserApi;
-  (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
-    (key: string) => {
-      if (key === 'starEvent') return 'Star event';
-      if (key === 'unstarEvent') return 'Unstar event';
-      return '';
-    },
-  );
+  (adapter.getMessage as ReturnType<typeof vi.fn>).mockImplementation((key: string) => {
+    if (key === 'starEvent') return 'Star event';
+    if (key === 'unstarEvent') return 'Unstar event';
+    return '';
+  });
   (adapter.sendMessage as ReturnType<typeof vi.fn>).mockImplementation(
     (message: MessagePayload): Promise<MessageResponse<boolean>> => {
       if (message.command === 'GET_STAR_STATE') {
@@ -56,45 +54,42 @@ describe('Property 12: Content script injection idempotence', () => {
 
   it('running initContentScript twice produces same number of Star_Buttons as once', async () => {
     await fc.assert(
-      fc.asyncProperty(
-        fc.integer({ min: 1, max: 20 }),
-        async (numCards: number) => {
-          // Clean up from previous iteration
-          document.body.innerHTML = '';
-          resetMocks();
-          const adapter = setupAdapter();
+      fc.asyncProperty(fc.integer({ min: 1, max: 20 }), async (numCards: number) => {
+        // Clean up from previous iteration
+        document.body.innerHTML = '';
+        resetMocks();
+        const adapter = setupAdapter();
 
-          // Create N event cards with unique IDs
-          for (let i = 0; i < numCards; i++) {
-            const card = createMockEventCard({
-              eventId: String(50000 + i),
-              liId: `item_4_prop${i}`,
-              divId: `item4_prop${i}`,
-            });
-            document.body.appendChild(card);
-          }
+        // Create N event cards with unique IDs
+        for (let i = 0; i < numCards; i++) {
+          const card = createMockEventCard({
+            eventId: String(50000 + i),
+            liId: `item_4_prop${i}`,
+            divId: `item4_prop${i}`,
+          });
+          document.body.appendChild(card);
+        }
 
-          // First injection
-          initContentScript(adapter);
-          await flushAsync();
+        // First injection
+        initContentScript(adapter);
+        await flushAsync();
 
-          const countAfterFirst = document.querySelectorAll('.almedals-star-host').length;
+        const countAfterFirst = document.querySelectorAll('.almedals-star-host').length;
 
-          // Second injection (simulates re-running content script)
-          // Reset the adapter mocks but keep the DOM state
-          resetMocks();
-          const adapter2 = setupAdapter();
-          initContentScript(adapter2);
-          await flushAsync();
+        // Second injection (simulates re-running content script)
+        // Reset the adapter mocks but keep the DOM state
+        resetMocks();
+        const adapter2 = setupAdapter();
+        initContentScript(adapter2);
+        await flushAsync();
 
-          const countAfterSecond = document.querySelectorAll('.almedals-star-host').length;
+        const countAfterSecond = document.querySelectorAll('.almedals-star-host').length;
 
-          // Idempotence: same number of star buttons after second injection
-          expect(countAfterSecond).toBe(countAfterFirst);
-          // And the count should equal the number of cards
-          expect(countAfterFirst).toBe(numCards);
-        },
-      ),
+        // Idempotence: same number of star buttons after second injection
+        expect(countAfterSecond).toBe(countAfterFirst);
+        // And the count should equal the number of cards
+        expect(countAfterFirst).toBe(numCards);
+      }),
       { numRuns: 100 },
     );
   }, 30000);
