@@ -1,4 +1,4 @@
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import { existsSync, unlinkSync } from 'node:fs';
 import { resolve } from 'node:path';
 
@@ -13,12 +13,20 @@ if (existsSync(ZIP_PATH)) {
 
 // 2. Create zip from dist/
 if (process.platform === 'win32') {
-  execSync(
-    `powershell Compress-Archive -Path "${DIST_PATH}\\*" -DestinationPath "${ZIP_PATH}" -Force`,
+  execFileSync(
+    'powershell',
+    [
+      '-NoProfile',
+      '-Command',
+      'Compress-Archive -Path $args[0] -DestinationPath $args[1] -Force',
+      `${DIST_PATH}\\*`,
+      ZIP_PATH,
+    ],
     { stdio: 'inherit' },
   );
 } else {
-  execSync(`cd "${DIST_PATH}" && zip -r "${ZIP_PATH}" .`, {
+  execFileSync('zip', ['-r', ZIP_PATH, '.'], {
+    cwd: DIST_PATH,
     stdio: 'inherit',
   });
 }
