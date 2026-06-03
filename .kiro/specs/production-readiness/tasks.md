@@ -88,7 +88,7 @@ Harden the Almedalsstjärnan extension for public release through code correctne
     - If `mismatch` is true, log `console.warn` with expected and actual year
     - _Requirements: 6.5, 6.6_
 
-- [ ] 5. ICS export locale threading (TDD)
+- [x] 5. ICS export locale threading (TDD)
   - [x] 5.1 Update `buildDescription` in `src/core/ics-generator.ts` to accept and use locale
     - Change `buildDescription` signature to `(description: string | null, sourceUrl: string | null, locale: 'sv' | 'en')`
     - If `sourceUrl` is non-null, append `"\n{label} {sourceUrl}"` where label is `"Källa:"` for `'sv'` or `"Source:"` for `'en'`
@@ -108,13 +108,13 @@ Harden the Almedalsstjärnan extension for public release through code correctne
     - Assert DESCRIPTION contains locale-appropriate label followed by sourceUrl
     - **Validates: Requirements 7.1, 7.2**
 
-  - [~] 5.4 Thread locale through UI export buttons
+  - [x] 5.4 Thread locale through UI export buttons
     - Update `src/ui/popup/components/ExportButton.tsx` (or relevant hook) to resolve effective locale from `languagePreference` in storage and pass to `generateICS`
     - Update `src/ui/stars/components/ExportButton.tsx` (or relevant hook) to do the same
     - Fallback: if `languagePreference` is null, use browser default language (fall back to `'sv'` if neither `'sv'` nor `'en'`)
     - _Requirements: 7.3, 7.4_
 
-  - [~] 5.5 Write property test for fnv1aHex deterministic consistency in `tests/property/fnv1a-consistency.property.test.ts`
+  - [x] 5.5 Write property test for fnv1aHex deterministic consistency in `tests/property/fnv1a-consistency.property.test.ts`
     - **Property 1: fnv1aHex deterministic consistency**
     - Generate arbitrary input strings
     - Assert `fnv1aHex(input)` produces same result on repeated calls
@@ -124,12 +124,12 @@ Harden the Almedalsstjärnan extension for public release through code correctne
 - [~] 6. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 7. Coverage thresholds and script cleanup
-  - [~] 7.1 Add coverage thresholds to `vitest.config.ts`
+- [x] 7. Coverage thresholds and script cleanup
+  - [x] 7.1 Add coverage thresholds to `vitest.config.ts`
     - Add `thresholds: { statements: 80, branches: 75 }` inside `coverage` config
     - _Requirements: 4.1, 4.2, 4.3_
 
-  - [~] 7.2 Remove `--passWithNoTests` from package.json scripts
+  - [x] 7.2 Remove `--passWithNoTests` from package.json scripts
     - Remove `--passWithNoTests` from `test:unit`, `test:property`, and `test` scripts
     - _Requirements: 4.4, 4.5, 4.6_
 

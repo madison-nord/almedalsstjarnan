@@ -37,6 +37,10 @@ export interface AppProps {
 }
 
 export function App({ adapter }: AppProps): React.JSX.Element {
+  const [locale, setLocale] = useState<'sv' | 'en' | null>(null);
+  const [showHelp, setShowHelp] = useState(false);
+  const helpTriggerRef = useRef<HTMLButtonElement>(null);
+
   const {
     events: _events,
     sortOrder,
@@ -58,11 +62,7 @@ export function App({ adapter }: AppProps): React.JSX.Element {
     clearSelection,
     unstarSelected,
     exportSelected,
-  } = useStarredEvents(adapter);
-
-  const [locale, setLocale] = useState<'sv' | 'en' | null>(null);
-  const [showHelp, setShowHelp] = useState(false);
-  const helpTriggerRef = useRef<HTMLButtonElement>(null);
+  } = useStarredEvents(adapter, locale);
 
   useEffect(() => {
     let cancelled = false;

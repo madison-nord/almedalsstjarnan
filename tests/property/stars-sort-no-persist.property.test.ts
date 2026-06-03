@@ -40,7 +40,7 @@ describe('Property 2: Stars Page sort change never persists', () => {
           onStorageChangedMock.mockImplementation(() => () => {});
 
           // Render the Stars Page hook
-          const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi));
+          const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
 
           // Wait for initial load to complete
           await waitFor(() => {

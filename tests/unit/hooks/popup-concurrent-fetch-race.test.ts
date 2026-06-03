@@ -94,7 +94,7 @@ describe('Concurrent fetchEvents race — stale responses overwrite newer state'
       },
     );
 
-    const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi));
+    const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);

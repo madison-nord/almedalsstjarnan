@@ -30,6 +30,8 @@ import { sortEvents } from '#core/sorter';
 import { generateICS, generateExportFilename } from '#core/ics-generator';
 import { detectConflicts } from '#core/conflict-detector';
 import { filterEvents } from '#core/event-filter';
+import type { SupportedLocale } from '#core/locale-messages';
+import { resolveEffectiveLocale } from '#core/locale-messages';
 
 export interface UseStarredEventsResult {
   readonly events: readonly StarredEvent[];
@@ -56,6 +58,7 @@ export interface UseStarredEventsResult {
 
 export function useStarredEvents(
   adapter: IBrowserApiAdapter,
+  languagePreference: SupportedLocale | null,
 ): UseStarredEventsResult {
   const [events, setEvents] = useState<readonly StarredEvent[]>([]);
   const [sortOrder, setSortOrder] = useState<SortOrder>(DEFAULT_SORT_ORDER);
@@ -196,7 +199,8 @@ export function useStarredEvents(
   );
 
   const exportEvents = useCallback((): void => {
-    const icsContent = generateICS([...events], 'sv');
+    const effectiveLocale = resolveEffectiveLocale(languagePreference);
+    const icsContent = generateICS([...events], effectiveLocale);
     const blob = new Blob([icsContent], { type: 'text/calendar' });
     const blobUrl = URL.createObjectURL(blob);
     const filename = generateExportFilename();
@@ -204,7 +208,7 @@ export function useStarredEvents(
     void adapter.download({ url: blobUrl, filename }).then(() => {
       URL.revokeObjectURL(blobUrl);
     });
-  }, [adapter, events]);
+  }, [adapter, events, languagePreference]);
 
   const filteredEvents = useMemo<readonly StarredEvent[]>(
     () => filterEvents(events, filterText),
@@ -280,7 +284,8 @@ export function useStarredEvents(
     const selectedEvents = events.filter((e) => selectedIds.has(e.id));
     if (selectedEvents.length === 0) return;
 
-    const icsContent = generateICS([...selectedEvents], 'sv');
+    const effectiveLocale = resolveEffectiveLocale(languagePreference);
+    const icsContent = generateICS([...selectedEvents], effectiveLocale);
     const blob = new Blob([icsContent], { type: 'text/calendar' });
     const blobUrl = URL.createObjectURL(blob);
     const filename = generateExportFilename();
@@ -288,7 +293,7 @@ export function useStarredEvents(
     void adapter.download({ url: blobUrl, filename }).then(() => {
       URL.revokeObjectURL(blobUrl);
     });
-  }, [adapter, events, selectedIds]);
+  }, [adapter, events, selectedIds, languagePreference]);
 
   return {
     events,

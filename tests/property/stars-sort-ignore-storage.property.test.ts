@@ -56,7 +56,7 @@ describe('Property 3: Stars Page ignores external sort order changes', () => {
           );
 
           // Render the hook
-          const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi));
+          const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
 
           // Wait for initial load to complete
           await waitFor(() => {

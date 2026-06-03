@@ -64,4 +64,4 @@ export {
 } from './event-field-comparator';
 
 export type { SupportedLocale } from './locale-messages';
-export { getLocalizedMessage } from './locale-messages';
+export { getLocalizedMessage, resolveEffectiveLocale } from './locale-messages';

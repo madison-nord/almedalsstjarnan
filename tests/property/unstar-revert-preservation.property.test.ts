@@ -55,7 +55,7 @@ describe('Property 2: Preservation — Non-pending events and undo behavior unch
           );
 
           // Render the hook
-          const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi));
+          const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
 
           // Wait for initial load to complete
           await waitFor(() => {
@@ -115,7 +115,7 @@ describe('Property 2: Preservation — Non-pending events and undo behavior unch
           onStorageChangedMock.mockImplementation(() => () => {});
 
           // Render the hook
-          const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi));
+          const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
 
           // Wait for initial load
           await waitFor(() => {
@@ -197,7 +197,7 @@ describe('Property 2: Preservation — Non-pending events and undo behavior unch
           onStorageChangedMock.mockImplementation(() => () => {});
 
           // Render the hook
-          const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi));
+          const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
 
           // Wait for initial load
           await waitFor(() => {

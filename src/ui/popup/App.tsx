@@ -38,6 +38,10 @@ export interface AppProps {
 }
 
 export function App({ adapter }: AppProps): React.JSX.Element {
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingLoaded, setOnboardingLoaded] = useState(false);
+  const [locale, setLocale] = useState<'sv' | 'en' | null>(null);
+
   const {
     events,
     sortOrder,
@@ -50,13 +54,9 @@ export function App({ adapter }: AppProps): React.JSX.Element {
     loading,
     conflictingIds,
     conflictTitlesMap,
-  } = useStarredEvents(adapter);
+  } = useStarredEvents(adapter, locale);
 
   const helpLinkRef = useRef<HTMLButtonElement>(null);
-
-  const [showOnboarding, setShowOnboarding] = useState(false);
-  const [onboardingLoaded, setOnboardingLoaded] = useState(false);
-  const [locale, setLocale] = useState<'sv' | 'en' | null>(null);
 
   useEffect(() => {
     let cancelled = false;

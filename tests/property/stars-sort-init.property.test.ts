@@ -45,7 +45,7 @@ describe('Property 1: Stars Page initializes to chronological', () => {
         onStorageChangedMock.mockImplementation(() => () => {});
 
         // Render the hook
-        const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi));
+        const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
 
         // Wait for initial load to complete
         await waitFor(() => {
@@ -101,7 +101,7 @@ describe('Property 1: Stars Page initializes to chronological', () => {
           onStorageChangedMock.mockImplementation(() => () => {});
 
           // Render the hook
-          const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi));
+          const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
 
           // Wait for initial load to complete
           await waitFor(() => {

@@ -65,7 +65,7 @@ describe('confirmUnstar race condition — event reappears after toast expires',
       },
     );
 
-    const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi));
+    const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -155,7 +155,7 @@ describe('confirmUnstar race condition — event reappears after toast expires',
       },
     );
 
-    const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi));
+    const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);

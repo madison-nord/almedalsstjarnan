@@ -64,7 +64,7 @@ describe('Stars Page: unstarSelected sends UNSTAR_EVENT immediately', () => {
     const onStorageChangedMock = mockBrowserApi.onStorageChanged as ReturnType<typeof vi.fn>;
     onStorageChangedMock.mockImplementation(() => () => {});
 
-    const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi));
+    const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -119,7 +119,7 @@ describe('Stars Page: unstarSelected sends UNSTAR_EVENT immediately', () => {
     const onStorageChangedMock = mockBrowserApi.onStorageChanged as ReturnType<typeof vi.fn>;
     onStorageChangedMock.mockImplementation(() => () => {});
 
-    const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi));
+    const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);

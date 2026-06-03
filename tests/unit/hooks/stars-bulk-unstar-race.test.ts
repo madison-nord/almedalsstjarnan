@@ -83,7 +83,7 @@ describe('Bulk unstar on Stars Page — all events removed at once', () => {
       },
     );
 
-    const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi));
+    const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -165,7 +165,7 @@ describe('Bulk unstar on Stars Page — all events removed at once', () => {
       },
     );
 
-    const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi));
+    const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);

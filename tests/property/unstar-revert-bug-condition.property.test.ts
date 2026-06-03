@@ -58,7 +58,7 @@ describe('Property 1: Bug Condition — Pending-deletion events reappear on stor
           );
 
           // Render the hook
-          const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi));
+          const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
 
           // Wait for initial load to complete
           await waitFor(() => {

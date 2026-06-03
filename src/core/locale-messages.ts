@@ -63,3 +63,35 @@ export function getLocalizedMessage(
 
   return result;
 }
+
+/**
+ * Resolves the effective locale for ICS export.
+ *
+ * If `languagePreference` is set ('sv' or 'en'), uses that directly.
+ * Otherwise, checks the browser's default language via `navigator.language`:
+ * - If it starts with 'sv', returns 'sv'
+ * - If it starts with 'en', returns 'en'
+ * - Otherwise, defaults to 'sv'
+ *
+ * @param languagePreference - The stored language preference (null means auto)
+ * @returns The resolved locale to use for ICS generation
+ */
+export function resolveEffectiveLocale(
+  languagePreference: 'sv' | 'en' | null,
+): SupportedLocale {
+  if (languagePreference !== null) {
+    return languagePreference;
+  }
+
+  const browserLang = navigator.language.toLowerCase();
+
+  if (browserLang.startsWith('sv')) {
+    return 'sv';
+  }
+
+  if (browserLang.startsWith('en')) {
+    return 'en';
+  }
+
+  return 'sv';
+}
