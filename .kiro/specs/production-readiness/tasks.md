@@ -30,7 +30,7 @@ Harden the Almedalsstjärnan extension for public release through code correctne
     - Mention that `pnpm run dev` starts a development build with hot reload
     - _Requirements: 11.1, 11.2, 11.3, 11.4_
 
-- [~] 2. Checkpoint — Ensure all tests pass
+- [x] 2. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 3. Storage validator module (TDD)
