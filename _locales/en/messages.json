@@ -232,5 +232,85 @@
   "conflictIndicator": {
     "message": "Time conflict",
     "description": "Label shown in tooltip for the conflict dot indicator on overlapping events"
+  },
+  "helpModalTitle": {
+    "message": "What can Almedalsstjärnan do?",
+    "description": "Help modal title heading displayed at the top of the help overlay"
+  },
+  "helpModalDismiss": {
+    "message": "Close",
+    "description": "Dismiss button label to close the help modal"
+  },
+  "helpGroupStarEventsHeading": {
+    "message": "Star events",
+    "description": "Heading for the star events feature group in the help modal"
+  },
+  "helpGroupStarEventsDesc": {
+    "message": "Visit the Almedalsveckan programme and click the star on any event to save it. Starred events are synced across tabs.",
+    "description": "Description for the star events feature group in the help modal"
+  },
+  "helpGroupPopupViewHeading": {
+    "message": "Popup view",
+    "description": "Heading for the popup view feature group in the help modal"
+  },
+  "helpGroupPopupViewDesc": {
+    "message": "Click the extension icon to see your starred events in a compact popup. Events are shown with title, time, and location.",
+    "description": "Description for the popup view feature group in the help modal"
+  },
+  "helpGroupStarsPageHeading": {
+    "message": "Stars page",
+    "description": "Heading for the stars page feature group in the help modal"
+  },
+  "helpGroupStarsPageDesc": {
+    "message": "Open the full list for a dedicated page with all your starred events in a sortable, searchable grid.",
+    "description": "Description for the stars page feature group in the help modal"
+  },
+  "helpGroupSortingHeading": {
+    "message": "Sorting",
+    "description": "Heading for the sorting feature group in the help modal"
+  },
+  "helpGroupSortingDesc": {
+    "message": "Sort your events by date, title, or when you starred them. The sort preference is remembered between sessions.",
+    "description": "Description for the sorting feature group in the help modal"
+  },
+  "helpGroupConflictHeading": {
+    "message": "Conflict detection",
+    "description": "Heading for the conflict detection feature group in the help modal"
+  },
+  "helpGroupConflictDesc": {
+    "message": "Events with overlapping times are flagged so you can spot scheduling conflicts at a glance.",
+    "description": "Description for the conflict detection feature group in the help modal"
+  },
+  "helpGroupSearchFilterHeading": {
+    "message": "Search & filter",
+    "description": "Heading for the search and filter feature group in the help modal"
+  },
+  "helpGroupSearchFilterDesc": {
+    "message": "Use the filter on the stars page to quickly find events by title, organiser, or topic.",
+    "description": "Description for the search and filter feature group in the help modal"
+  },
+  "helpGroupBulkActionsHeading": {
+    "message": "Bulk actions",
+    "description": "Heading for the bulk actions feature group in the help modal"
+  },
+  "helpGroupBulkActionsDesc": {
+    "message": "Select multiple events to unstar or export them all at once from the stars page.",
+    "description": "Description for the bulk actions feature group in the help modal"
+  },
+  "helpGroupIcsExportHeading": {
+    "message": "Calendar export",
+    "description": "Heading for the ICS export feature group in the help modal"
+  },
+  "helpGroupIcsExportDesc": {
+    "message": "Export starred events as an ICS file you can import into Google Calendar, Outlook, or any calendar app.",
+    "description": "Description for the ICS export feature group in the help modal"
+  },
+  "helpGroupLanguageHeading": {
+    "message": "Language toggle",
+    "description": "Heading for the language toggle feature group in the help modal"
+  },
+  "helpGroupLanguageDesc": {
+    "message": "Switch between Swedish and English at any time. The extension follows your browser language by default.",
+    "description": "Description for the language toggle feature group in the help modal"
   }
 }

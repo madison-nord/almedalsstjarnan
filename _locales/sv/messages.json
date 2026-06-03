@@ -232,5 +232,85 @@
   "conflictIndicator": {
     "message": "Tidskonflikt",
     "description": "Label shown in tooltip for the conflict dot indicator on overlapping events"
+  },
+  "helpModalTitle": {
+    "message": "Snabbguide",
+    "description": "Title heading displayed at the top of the help modal"
+  },
+  "helpModalDismiss": {
+    "message": "Stäng",
+    "description": "Label for the dismiss button in the help modal"
+  },
+  "helpGroupStarEventsHeading": {
+    "message": "Stjärnmärk evenemang",
+    "description": "Heading for the star events feature group in help modal"
+  },
+  "helpGroupStarEventsDesc": {
+    "message": "Klicka på stjärnan bredvid ett evenemang i Almedalsveckans program för att spara det. Stjärnan blir ifylld när eventet är sparat.",
+    "description": "Description for the star events feature group in help modal"
+  },
+  "helpGroupPopupViewHeading": {
+    "message": "Popup-vy",
+    "description": "Heading for the popup view feature group in help modal"
+  },
+  "helpGroupPopupViewDesc": {
+    "message": "Klicka på tilläggets ikon för att se dina sparade evenemang i en kompakt lista. Härifrån kan du snabbt exportera eller öppna hela listan.",
+    "description": "Description for the popup view feature group in help modal"
+  },
+  "helpGroupStarsPageHeading": {
+    "message": "Stjärnsidan",
+    "description": "Heading for the stars page feature group in help modal"
+  },
+  "helpGroupStarsPageDesc": {
+    "message": "En helsidesvy med alla dina stjärnmärkta evenemang i ett överskådligt rutnät. Öppna via länken i popupen.",
+    "description": "Description for the stars page feature group in help modal"
+  },
+  "helpGroupSortingHeading": {
+    "message": "Sortering",
+    "description": "Heading for the sorting feature group in help modal"
+  },
+  "helpGroupSortingDesc": {
+    "message": "Sortera dina evenemang kronologiskt, omvänt kronologiskt, efter titel eller efter när de stjärnmärktes.",
+    "description": "Description for the sorting feature group in help modal"
+  },
+  "helpGroupConflictHeading": {
+    "message": "Konfliktvarning",
+    "description": "Heading for the conflict detection feature group in help modal"
+  },
+  "helpGroupConflictDesc": {
+    "message": "Evenemang som överlappar i tid markeras automatiskt så att du kan undvika dubbelbokningar i ditt schema.",
+    "description": "Description for the conflict detection feature group in help modal"
+  },
+  "helpGroupSearchFilterHeading": {
+    "message": "Sök och filtrera",
+    "description": "Heading for the search and filter feature group in help modal"
+  },
+  "helpGroupSearchFilterDesc": {
+    "message": "Filtrera listan på stjärnsidan genom att söka på titel, arrangör eller ämne.",
+    "description": "Description for the search and filter feature group in help modal"
+  },
+  "helpGroupBulkActionsHeading": {
+    "message": "Massåtgärder",
+    "description": "Heading for the bulk actions feature group in help modal"
+  },
+  "helpGroupBulkActionsDesc": {
+    "message": "Markera flera evenemang på stjärnsidan för att ta bort eller exportera dem samtidigt.",
+    "description": "Description for the bulk actions feature group in help modal"
+  },
+  "helpGroupIcsExportHeading": {
+    "message": "Kalenderexport (ICS)",
+    "description": "Heading for the ICS export feature group in help modal"
+  },
+  "helpGroupIcsExportDesc": {
+    "message": "Exportera valda evenemang som en ICS-fil som du kan importera i Google Kalender, Outlook eller Apple Kalender.",
+    "description": "Description for the ICS export feature group in help modal"
+  },
+  "helpGroupLanguageHeading": {
+    "message": "Språkväxling",
+    "description": "Heading for the language toggle feature group in help modal"
+  },
+  "helpGroupLanguageDesc": {
+    "message": "Växla mellan svenska och engelska via språkmenyn. Ändringen gäller för hela tilläggets gränssnitt.",
+    "description": "Description for the language toggle feature group in help modal"
   }
 }
