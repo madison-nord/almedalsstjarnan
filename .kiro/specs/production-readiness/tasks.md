@@ -156,7 +156,7 @@ Harden the Almedalsstjärnan extension for public release through code correctne
     - Add artifact upload step using `actions/upload-artifact@v4` with `if: failure()`, path `test-results/`, retention 7 days
     - _Requirements: 5.1, 5.2, 5.3, 5.5, 5.6_
 
-- [~] 10. Final checkpoint — Ensure all tests pass
+- [x] 10. Final checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes
