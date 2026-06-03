@@ -134,7 +134,7 @@ Harden the Almedalsstjärnan extension for public release through code correctne
     - _Requirements: 4.4, 4.5, 4.6_
 
 - [ ] 8. Dedicated package script
-  - [~] 8.1 Create `scripts/package.ts`
+  - [x] 8.1 Create `scripts/package.ts`
     - Implement cross-platform packaging: remove existing zip, create zip from `dist/`
     - Use `node:child_process` execSync with platform detection (PowerShell on Windows, zip on Unix)
     - Use `node:fs` for existsSync/unlinkSync
@@ -145,12 +145,12 @@ Harden the Almedalsstjärnan extension for public release through code correctne
     - Ensure `tsx` is available (add as devDependency if needed)
     - _Requirements: 8.2_
 
-- [ ] 9. CI pipeline enhancements
-  - [~] 9.1 Add security audit step to `.github/workflows/ci.yml`
+- [x] 9. CI pipeline enhancements
+  - [x] 9.1 Add security audit step to `.github/workflows/ci.yml`
     - Add `pnpm audit --prod --audit-level=high` step after install, before lint
     - _Requirements: 9.1, 9.2, 9.3_
 
-  - [~] 9.2 Add E2E test steps to `.github/workflows/ci.yml`
+  - [x] 9.2 Add E2E test steps to `.github/workflows/ci.yml`
     - Add `npx playwright install chromium` step after build
     - Add `pnpm run test:e2e` step after Playwright install
     - Add artifact upload step using `actions/upload-artifact@v4` with `if: failure()`, path `test-results/`, retention 7 days

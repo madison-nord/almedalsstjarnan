@@ -19,6 +19,7 @@
     "vitest.config.ts",
     "tailwind.config.ts",
     "postcss.config.cjs",
-    "playwright.config.ts"
+    "playwright.config.ts",
+    "scripts/**/*.ts"
   ]
 }
