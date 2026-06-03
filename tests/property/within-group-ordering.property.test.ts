@@ -37,7 +37,12 @@ describe('Property 7: Within-group events ordered by start time ascending with i
           for (let i = 1; i < group.events.length; i++) {
             const prev = group.events[i - 1]!;
             const curr = group.events[i]!;
-            expect(prev.startDateTime <= curr.startDateTime).toBe(true);
+            if (order === 'chronological') {
+              expect(prev.startDateTime <= curr.startDateTime).toBe(true);
+            } else {
+              // reverse-chronological: within same day, events are descending
+              expect(prev.startDateTime >= curr.startDateTime).toBe(true);
+            }
           }
         }
       }),
