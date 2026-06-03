@@ -242,6 +242,8 @@ export async function handleMessage(
         return await getLanguagePreference(adapter);
       case 'SET_LANGUAGE_PREFERENCE':
         return await setLanguagePreference(adapter, message.locale);
+      case 'UPDATE_STARRED_EVENT':
+        return await updateStarredEvent(adapter, message);
       default:
         return {
           success: false,
