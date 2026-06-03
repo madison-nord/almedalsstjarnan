@@ -64,9 +64,21 @@ describe('Property 1: ICS round-trip preservation', () => {
               expect(roundTripped.organizer).toBeNull();
             }
 
-            // DESCRIPTION contains original description if present
-            if (original.description !== null) {
+            // DESCRIPTION contains original description if present, plus source label if sourceUrl is present
+            if (original.description !== null && original.sourceUrl !== null) {
+              const expectedLabel = locale === 'sv' ? 'Källa:' : 'Source:';
+              expect(roundTripped.description).toBe(
+                `${original.description}\n${expectedLabel} ${original.sourceUrl}`,
+              );
+            } else if (original.description !== null && original.sourceUrl === null) {
               expect(roundTripped.description).toBe(original.description);
+            } else if (original.description === null && original.sourceUrl !== null) {
+              const expectedLabel = locale === 'sv' ? 'Källa:' : 'Source:';
+              expect(roundTripped.description).toBe(
+                `\n${expectedLabel} ${original.sourceUrl}`,
+              );
+            } else {
+              expect(roundTripped.description).toBeNull();
             }
 
             // URL round-trips correctly

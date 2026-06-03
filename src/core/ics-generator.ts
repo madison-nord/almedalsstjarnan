@@ -109,13 +109,30 @@ function toICSTimestamp(date: Date): string {
 }
 
 /**
- * Builds the DESCRIPTION field value from event description.
- * Returns null if description is absent.
+ * Builds the DESCRIPTION field value from event description and source URL.
+ * Returns null if both description and sourceUrl are absent.
  */
 function buildDescription(
   description: string | null,
+  sourceUrl: string | null,
+  locale: 'sv' | 'en',
 ): string | null {
-  return description;
+  if (description === null && sourceUrl === null) {
+    return null;
+  }
+
+  const parts: string[] = [];
+
+  if (description !== null) {
+    parts.push(description);
+  }
+
+  if (sourceUrl !== null) {
+    const label = locale === 'sv' ? 'Källa:' : 'Source:';
+    parts.push(`\n${label} ${sourceUrl}`);
+  }
+
+  return parts.join('');
 }
 
 /**
@@ -127,7 +144,7 @@ function buildDescription(
  */
 export function generateICS(
   events: readonly StarredEvent[],
-  _locale: 'sv' | 'en',
+  locale: 'sv' | 'en',
 ): string {
   const now = new Date();
   const dtstamp = toICSTimestamp(now);
@@ -156,7 +173,7 @@ export function generateICS(
       lines.push(`LOCATION:${escapeICSText(event.location)}`);
     }
 
-    const desc = buildDescription(event.description);
+    const desc = buildDescription(event.description, event.sourceUrl, locale);
     if (desc !== null) {
       lines.push(`DESCRIPTION:${escapeICSText(desc)}`);
     }

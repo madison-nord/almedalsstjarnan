@@ -30,7 +30,7 @@ const eventWithNullSourceUrlArb: fc.Arbitrary<StarredEvent> = starredEventArb.ma
 // ─── Property 3 ───────────────────────────────────────────────────
 
 describe('Property 3: Source URL as dedicated ICS URL property', () => {
-  it('for any StarredEvent with non-null sourceUrl, ICS output has URL property and DESCRIPTION does not contain sourceUrl', () => {
+  it('for any StarredEvent with non-null sourceUrl, ICS output has URL property and DESCRIPTION contains locale-aware source label', () => {
     fc.assert(
       fc.property(
         eventWithSourceUrlArb,
@@ -43,16 +43,11 @@ describe('Property 3: Source URL as dedicated ICS URL property', () => {
           // URL property should be present and match sourceUrl
           expect(parsedEvent.url).toBe(event.sourceUrl);
 
-          // DESCRIPTION should NOT contain the sourceUrl
-          if (parsedEvent.description !== null) {
-            expect(parsedEvent.description).not.toContain(event.sourceUrl);
-          }
-
-          // DESCRIPTION should NOT contain localized source labels
-          if (parsedEvent.description !== null) {
-            expect(parsedEvent.description).not.toContain('Källa:');
-            expect(parsedEvent.description).not.toContain('Source:');
-          }
+          // DESCRIPTION should contain locale-aware source label with sourceUrl
+          expect(parsedEvent.description).not.toBeNull();
+          const expectedLabel = locale === 'sv' ? 'Källa:' : 'Source:';
+          expect(parsedEvent.description).toContain(expectedLabel);
+          expect(parsedEvent.description).toContain(event.sourceUrl);
         },
       ),
       { numRuns: 100 },

@@ -1,6 +1,12 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-import { DAY_TO_DATE, SWEDISH_DAYS, STOCKHOLM_SUMMER_OFFSET } from '#core/date-config';
+import {
+  DAY_TO_DATE,
+  SWEDISH_DAYS,
+  STOCKHOLM_SUMMER_OFFSET,
+  YEAR,
+  checkYearMismatch,
+} from '#core/date-config';
 
 // ─── STOCKHOLM_SUMMER_OFFSET ──────────────────────────────────────
 
@@ -87,5 +93,41 @@ describe('DAY_TO_DATE', () => {
     for (const [day, date] of Object.entries(expectedDates)) {
       expect(DAY_TO_DATE[day]).toBe(date);
     }
+  });
+});
+
+// ─── YEAR ─────────────────────────────────────────────────────────
+
+describe('YEAR', () => {
+  it('exports the value 2026', () => {
+    expect(YEAR).toBe(2026);
+  });
+});
+
+// ─── checkYearMismatch ────────────────────────────────────────────
+
+describe('checkYearMismatch', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('returns mismatch: false when system year matches YEAR (2026)', () => {
+    vi.setSystemTime(new Date(2026, 0, 1));
+
+    const result = checkYearMismatch();
+
+    expect(result).toEqual({ mismatch: false, expected: 2026, actual: 2026 });
+  });
+
+  it('returns mismatch: true when system year does not match YEAR (2025)', () => {
+    vi.setSystemTime(new Date(2025, 5, 15));
+
+    const result = checkYearMismatch();
+
+    expect(result).toEqual({ mismatch: true, expected: 2026, actual: 2025 });
   });
 });

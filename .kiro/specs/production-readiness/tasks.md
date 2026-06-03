@@ -41,7 +41,7 @@ Harden the Almedalsstjärnan extension for public release through code correctne
     - Pure function, no side effects (logging is caller's responsibility)
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6_
 
-  - [~] 3.2 Write unit tests for storage validator in `tests/unit/core/storage-validator.test.ts`
+  - [x] 3.2 Write unit tests for storage validator in `tests/unit/core/storage-validator.test.ts`
     - Test: non-object values (null, array, string, number, boolean) return empty valid record
     - Test: valid entries are preserved unchanged
     - Test: entries with missing/wrong fields are excluded
@@ -49,7 +49,7 @@ Harden the Almedalsstjärnan extension for public release through code correctne
     - Test: invalidKeys lists rejected keys
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6_
 
-  - [~] 3.3 Write property test: invalid top-level rejection in `tests/property/storage-validator-toplevel.property.test.ts`
+  - [x] 3.3 Write property test: invalid top-level rejection in `tests/property/storage-validator-toplevel.property.test.ts`
     - **Property 2: Storage validator rejects invalid top-level values**
     - Generate arbitrary non-object values (null, arrays, strings, numbers, booleans)
     - Assert `validateStarredEvents` returns `{ valid: {}, invalidKeys: [] }`
@@ -77,7 +77,7 @@ Harden the Almedalsstjärnan extension for public release through code correctne
     - Add JSDoc preceding `DAY_TO_DATE` stating the year and instructing developers to update annually
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.7_
 
-  - [~] 4.2 Write unit tests for `checkYearMismatch` in `tests/unit/core/date-config.test.ts`
+  - [x] 4.2 Write unit tests for `checkYearMismatch` in `tests/unit/core/date-config.test.ts`
     - Test match scenario (mock Date to 2026): returns `{ mismatch: false, expected: 2026, actual: 2026 }`
     - Test mismatch scenario (mock Date to 2025): returns `{ mismatch: true, expected: 2026, actual: 2025 }`
     - _Requirements: 6.3, 6.4_
@@ -89,7 +89,7 @@ Harden the Almedalsstjärnan extension for public release through code correctne
     - _Requirements: 6.5, 6.6_
 
 - [ ] 5. ICS export locale threading (TDD)
-  - [~] 5.1 Update `buildDescription` in `src/core/ics-generator.ts` to accept and use locale
+  - [x] 5.1 Update `buildDescription` in `src/core/ics-generator.ts` to accept and use locale
     - Change `buildDescription` signature to `(description: string | null, sourceUrl: string | null, locale: 'sv' | 'en')`
     - If `sourceUrl` is non-null, append `"\n{label} {sourceUrl}"` where label is `"Källa:"` for `'sv'` or `"Source:"` for `'en'`
     - Update `generateICS` to pass `sourceUrl` and the `locale` parameter (rename `_locale` to `locale`) to `buildDescription`
