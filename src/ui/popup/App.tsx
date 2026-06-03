@@ -10,7 +10,7 @@
  * - Renders "Open full list" button (opens stars.html via createTab)
  * - Renders empty state when no events
  * - Renders UndoToast for each pending deletion
- * - Renders OnboardingView on first run (before dismissal)
+ * - Renders HelpModal on first run (before dismissal)
  * - Renders "How it works" help link in footer
  * - Registers adapter.onStorageChanged for live updates, cleans up on unmount
  * - All strings via i18n
@@ -26,11 +26,11 @@ import { getLocalizedMessage } from '#core/locale-messages';
 import { SortSelector } from '#ui/shared/SortSelector';
 import { UndoToast } from '#ui/shared/UndoToast';
 import { LanguageToggle } from '#ui/shared/LanguageToggle';
+import { HelpModal } from '#ui/shared/HelpModal';
 
 import { EventList } from './components/EventList';
 import { EmptyState } from './components/EmptyState';
 import { ExportButton } from './components/ExportButton';
-import { OnboardingView } from './components/OnboardingView';
 import { useStarredEvents } from './hooks/useStarredEvents';
 
 export interface AppProps {
@@ -170,7 +170,7 @@ export function App({ adapter }: AppProps): React.JSX.Element {
       </header>
 
       {showOnboarding && (
-        <OnboardingView adapter={localizedAdapter} onDismiss={handleDismissOnboarding} triggerRef={helpLinkRef} />
+        <HelpModal adapter={localizedAdapter} onDismiss={handleDismissOnboarding} triggerRef={helpLinkRef} layoutMode="popup" />
       )}
 
       <div className="flex-1 overflow-y-auto">
