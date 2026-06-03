@@ -133,14 +133,14 @@ Harden the Almedalsstjärnan extension for public release through code correctne
     - Remove `--passWithNoTests` from `test:unit`, `test:property`, and `test` scripts
     - _Requirements: 4.4, 4.5, 4.6_
 
-- [ ] 8. Dedicated package script
+- [x] 8. Dedicated package script
   - [x] 8.1 Create `scripts/package.ts`
     - Implement cross-platform packaging: remove existing zip, create zip from `dist/`
     - Use `node:child_process` execSync with platform detection (PowerShell on Windows, zip on Unix)
     - Use `node:fs` for existsSync/unlinkSync
     - _Requirements: 8.1, 8.3, 8.4, 8.5_
 
-  - [~] 8.2 Update `package` script in `package.json` to invoke `scripts/package.ts`
+  - [x] 8.2 Update `package` script in `package.json` to invoke `scripts/package.ts`
     - Change to `"package": "pnpm run build && tsx scripts/package.ts"`
     - Ensure `tsx` is available (add as devDependency if needed)
     - _Requirements: 8.2_
