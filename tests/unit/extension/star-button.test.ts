@@ -322,7 +322,7 @@ describe('Star Button', () => {
       expect(btn.getAttribute('type')).toBe('button');
     });
 
-    it('button has star-btn class for 32px minimum clickable area', () => {
+    it('button has star-btn class for 32×32px WCAG target size', () => {
       createStarButton(hostElement, {
         eventId,
         initialStarred: false,
@@ -334,10 +334,11 @@ describe('Star Button', () => {
       const btn = getButton(hostElement);
       expect(btn.classList.contains('star-btn')).toBe(true);
 
-      // Verify the CSS defines 18px dimensions
+      // Verify the CSS defines 32px dimensions for WCAG target size
       const style = hostElement.shadowRoot!.querySelector('style');
-      expect(style!.textContent).toContain('width: 18px');
-      expect(style!.textContent).toContain('height: 18px');
+      const css = style!.textContent!;
+      expect(css).toMatch(/\.star-btn\s*\{[^}]*width:\s*32px/);
+      expect(css).toMatch(/\.star-btn\s*\{[^}]*height:\s*32px/);
     });
 
     it('SVG icon has 16px viewBox', () => {
@@ -364,8 +365,9 @@ describe('Star Button', () => {
 
       const style = hostElement.shadowRoot!.querySelector('style');
       const css = style!.textContent!;
-      // CSS should define svg width and height as 14px
-      expect(css).toContain('14px');
+      // CSS should define svg width and height as 16px
+      expect(css).toMatch(/\.star-btn\s+svg\s*\{[^}]*width:\s*16px/);
+      expect(css).toMatch(/\.star-btn\s+svg\s*\{[^}]*height:\s*16px/);
     });
 
     it('CSS defines focus-visible outline', () => {
