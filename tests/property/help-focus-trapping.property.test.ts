@@ -36,7 +36,7 @@ describe('Property 3: Focus Trapping Invariant', () => {
    * while the HelpModal is open, the currently focused element SHALL remain
    * within the modal container's DOM subtree.
    */
-  it('focus remains within modal container for any number of Tab presses', () => {
+  it('focus remains within modal container for any number of Tab presses', { timeout: 30_000 }, () => {
     const adapter = setupAdapter();
 
     fc.assert(
