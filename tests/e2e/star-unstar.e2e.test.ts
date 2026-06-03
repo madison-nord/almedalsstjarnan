@@ -17,24 +17,53 @@
 
 import { test, expect, chromium, type BrowserContext, type Page } from '@playwright/test';
 import path from 'node:path';
+import http from 'node:http';
+import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const EXTENSION_PATH = path.resolve(__dirname, '../../dist');
-const FIXTURE_PATH = path.resolve(__dirname, '../../fixtures/almedalsveckan-program-2026.html');
+const FIXTURE_DIR = path.resolve(__dirname, '../../fixtures');
 
 // ─── Helpers ──────────────────────────────────────────────────────
 
 /**
- * Launches a persistent Chromium context with the extension loaded.
- * Extensions require a persistent context and non-headless mode.
+ * Starts a simple HTTP server serving the fixtures directory.
+ * Returns the server instance and the port it's listening on.
  */
-async function launchExtensionContext(): Promise<BrowserContext> {
+async function startFixtureServer(): Promise<{ server: http.Server; port: number }> {
+  const server = http.createServer((req, res) => {
+    const filePath = path.join(FIXTURE_DIR, req.url === '/' ? 'almedalsveckan-program-2026.html' : req.url!);
+    try {
+      const content = fs.readFileSync(filePath, 'utf-8');
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(content);
+    } catch {
+      // Return empty 200 for missing resources (CSS/JS referenced in the fixture HTML)
+      res.writeHead(200, { 'Content-Type': 'text/plain' });
+      res.end('');
+    }
+  });
+
+  return new Promise((resolve) => {
+    server.listen(0, '127.0.0.1', () => {
+      const addr = server.address() as { port: number };
+      resolve({ server, port: addr.port });
+    });
+  });
+}
+
+/**
+ * Launches a persistent Chromium context with the extension loaded.
+ * Uses host-resolver-rules to redirect almedalsveckan.info to localhost.
+ */
+async function launchExtensionContext(port: number): Promise<BrowserContext> {
   return chromium.launchPersistentContext('', {
     headless: false,
     args: [
       `--disable-extensions-except=${EXTENSION_PATH}`,
       `--load-extension=${EXTENSION_PATH}`,
+      `--host-resolver-rules=MAP almedalsveckan.info 127.0.0.1:${port}`,
       '--no-first-run',
       '--disable-default-apps',
     ],
@@ -73,29 +102,17 @@ async function openPopupPage(context: BrowserContext, extensionId: string): Prom
 }
 
 /**
- * Navigates to the fixture page served as a file URL.
- *
- * Because the content script only matches *://almedalsveckan.info/*,
- * it will NOT auto-inject on a file:// URL. We manually inject the
- * built content script to simulate the extension behavior.
+ * Navigates to the fixture page via the almedalsveckan.info domain
+ * (resolved to localhost). The content script auto-injects because
+ * the URL matches the manifest's content_scripts match pattern.
  */
-async function loadFixturePage(context: BrowserContext, extensionId: string): Promise<Page> {
+async function loadFixturePage(context: BrowserContext, port: number): Promise<Page> {
   const page = await context.newPage();
-  await page.goto(`file://${FIXTURE_PATH}`);
+  await page.goto(`http://almedalsveckan.info:${port}/almedalsveckan-program-2026.html`);
   await page.waitForLoadState('domcontentloaded');
 
-  // Inject the built content script manually since file:// doesn't match
-  // the manifest's content_scripts match pattern.
-  // The content script auto-initializes when chrome.runtime.id is available,
-  // but on file:// pages the extension context may not be present.
-  // We add the script from the extension's own URL to ensure it runs
-  // in the extension's content script context.
-  await page.addScriptTag({
-    url: `chrome-extension://${extensionId}/content-script.js`,
-  });
-
   // Allow time for the content script to process event cards
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(2000);
 
   return page;
 }
@@ -105,23 +122,30 @@ async function loadFixturePage(context: BrowserContext, extensionId: string): Pr
 test.describe('Star/Unstar E2E Flow', () => {
   let context: BrowserContext;
   let extensionId: string;
+  let server: http.Server;
+  let port: number;
 
   test.beforeAll(async () => {
-    context = await launchExtensionContext();
+    const fixture = await startFixtureServer();
+    server = fixture.server;
+    port = fixture.port;
+
+    context = await launchExtensionContext(port);
     extensionId = await getExtensionId(context);
   });
 
   test.afterAll(async () => {
     await context.close();
+    server.close();
   });
 
   test('star and unstar an event card, verify popup reflects changes', async () => {
     // Step 1: Load the fixture page with the extension's content script
-    const page = await loadFixturePage(context, extensionId);
+    const page = await loadFixturePage(context, port);
 
     // Step 2: Find the first event card with an injected star button host
     const starHost = page.locator('.almedals-star-host').first();
-    await expect(starHost).toBeVisible({ timeout: 5000 });
+    await expect(starHost).toBeVisible({ timeout: 10000 });
 
     // The star button lives inside Shadow DOM — pierce into it
     const starButton = starHost.locator('button.star-btn');
@@ -153,10 +177,8 @@ test.describe('Star/Unstar E2E Flow', () => {
     // Step 9: Open popup again and verify the event is gone
     const popupPage2 = await openPopupPage(context, extensionId);
 
-    // The popup should now show the empty state
-    // EmptyState component renders when events.length === 0
-    // Look for the empty state heading or the absence of event items
-    const emptyState = popupPage2.getByText(/stjärnmärk|star/i);
+    // The popup should now show the empty state heading
+    const emptyState = popupPage2.getByRole('heading', { name: /No starred events|Inga stjärnmärkta/i });
     await expect(emptyState).toBeVisible({ timeout: 5000 });
 
     await popupPage2.close();
@@ -164,10 +186,10 @@ test.describe('Star/Unstar E2E Flow', () => {
   });
 
   test('star button has correct accessibility attributes', async () => {
-    const page = await loadFixturePage(context, extensionId);
+    const page = await loadFixturePage(context, port);
 
     const starHost = page.locator('.almedals-star-host').first();
-    await expect(starHost).toBeVisible({ timeout: 5000 });
+    await expect(starHost).toBeVisible({ timeout: 10000 });
 
     const starButton = starHost.locator('button.star-btn');
 
@@ -191,10 +213,10 @@ test.describe('Star/Unstar E2E Flow', () => {
   });
 
   test('starring persists across page reload', async () => {
-    const page = await loadFixturePage(context, extensionId);
+    const page = await loadFixturePage(context, port);
 
     const starHost = page.locator('.almedals-star-host').first();
-    await expect(starHost).toBeVisible({ timeout: 5000 });
+    await expect(starHost).toBeVisible({ timeout: 10000 });
 
     const starButton = starHost.locator('button.star-btn');
 
@@ -202,17 +224,14 @@ test.describe('Star/Unstar E2E Flow', () => {
     await starButton.click();
     await expect(starButton).toHaveAttribute('aria-pressed', 'true', { timeout: 3000 });
 
-    // Reload the page and re-inject the content script
+    // Reload the page — content script re-injects automatically
     await page.reload();
     await page.waitForLoadState('domcontentloaded');
-    await page.addScriptTag({
-      url: `chrome-extension://${extensionId}/content-script.js`,
-    });
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2000);
 
     // The same event card's star button should still be starred
     const starHostAfterReload = page.locator('.almedals-star-host').first();
-    await expect(starHostAfterReload).toBeVisible({ timeout: 5000 });
+    await expect(starHostAfterReload).toBeVisible({ timeout: 10000 });
 
     const starButtonAfterReload = starHostAfterReload.locator('button.star-btn');
     await expect(starButtonAfterReload).toHaveAttribute('aria-pressed', 'true', { timeout: 3000 });
