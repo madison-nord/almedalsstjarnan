@@ -36,7 +36,8 @@
   },
   "pnpm": {
     "overrides": {
-      "uuid": ">=14.0.0"
+      "uuid": ">=14.0.0",
+      "tmp": ">=0.2.6"
     },
     "ignoredBuiltDependencies": [
       "sharp"
