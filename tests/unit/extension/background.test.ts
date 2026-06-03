@@ -173,7 +173,7 @@ describe('handleMessage — UNSTAR_EVENT', () => {
 // ─── GET_STAR_STATE ───────────────────────────────────────────────
 
 describe('handleMessage — GET_STAR_STATE', () => {
-  it('returns true for a starred event', async () => {
+  it('returns starred: true with storedFields for a starred event', async () => {
     (mockBrowserApi.storageLocalGet as ReturnType<typeof vi.fn>).mockResolvedValue({
       starredEvents: { 'evt-001': sampleStarredEvent },
     });
@@ -183,10 +183,26 @@ describe('handleMessage — GET_STAR_STATE', () => {
       eventId: 'evt-001',
     });
 
-    expect(result).toEqual({ success: true, data: true });
+    expect(result).toEqual({
+      success: true,
+      data: {
+        starred: true,
+        storedFields: {
+          title: sampleStarredEvent.title,
+          organiser: sampleStarredEvent.organiser,
+          startDateTime: sampleStarredEvent.startDateTime,
+          endDateTime: sampleStarredEvent.endDateTime,
+          location: sampleStarredEvent.location,
+          description: sampleStarredEvent.description,
+          topic: sampleStarredEvent.topic,
+          sourceUrl: sampleStarredEvent.sourceUrl,
+          icsDataUri: sampleStarredEvent.icsDataUri,
+        },
+      },
+    });
   });
 
-  it('returns false for an unstarred event', async () => {
+  it('returns starred: false with storedFields: null for an unstarred event', async () => {
     (mockBrowserApi.storageLocalGet as ReturnType<typeof vi.fn>).mockResolvedValue({
       starredEvents: {},
     });
@@ -196,7 +212,7 @@ describe('handleMessage — GET_STAR_STATE', () => {
       eventId: 'evt-001',
     });
 
-    expect(result).toEqual({ success: true, data: false });
+    expect(result).toEqual({ success: true, data: { starred: false, storedFields: null } });
   });
 });
 
@@ -329,7 +345,7 @@ describe('handleMessage — defaults', () => {
       eventId: 'evt-001',
     });
 
-    expect(result).toEqual({ success: true, data: false });
+    expect(result).toEqual({ success: true, data: { starred: false, storedFields: null } });
   });
 });
 

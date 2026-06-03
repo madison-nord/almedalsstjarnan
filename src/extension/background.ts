@@ -17,9 +17,12 @@ import type {
   EventId,
   NormalizedEvent,
   SortOrder,
+  GetStarStateData,
+  UpdateStarredEventPayload,
 } from '#core/types';
 import { DEFAULT_SORT_ORDER } from '#core/types';
 import { createBrowserApiAdapter } from '#core/browser-api-adapter';
+import type { MutableFields } from '#core/event-field-comparator';
 
 // ─── Storage Mutex ────────────────────────────────────────────────
 
@@ -80,11 +83,28 @@ async function removeStarredEvent(
 async function isEventStarred(
   adapter: IBrowserApiAdapter,
   eventId: EventId,
-): Promise<MessageResponse<boolean>> {
+): Promise<MessageResponse<GetStarStateData>> {
   const result = await adapter.storageLocalGet(['starredEvents']);
   const starredEvents = result.starredEvents ?? {};
 
-  return { success: true, data: eventId in starredEvents };
+  const existing = starredEvents[eventId];
+  if (!existing) {
+    return { success: true, data: { starred: false, storedFields: null } };
+  }
+
+  const storedFields: MutableFields = {
+    title: existing.title,
+    organiser: existing.organiser,
+    startDateTime: existing.startDateTime,
+    endDateTime: existing.endDateTime,
+    location: existing.location,
+    description: existing.description,
+    topic: existing.topic,
+    sourceUrl: existing.sourceUrl,
+    icsDataUri: existing.icsDataUri,
+  };
+
+  return { success: true, data: { starred: true, storedFields } };
 }
 
 async function getAllStarredEvents(
@@ -148,6 +168,42 @@ async function setLanguagePreference(
   await adapter.storageLocalSet({ languagePreference: locale });
 
   return { success: true, data: undefined };
+}
+
+async function updateStarredEvent(
+  adapter: IBrowserApiAdapter,
+  payload: UpdateStarredEventPayload,
+): Promise<MessageResponse<void>> {
+  return withStorageMutex(async () => {
+    const result = await adapter.storageLocalGet(['starredEvents']);
+    const starredEvents = result.starredEvents ?? {};
+
+    const existing = starredEvents[payload.eventId];
+    if (!existing) {
+      return { success: true, data: undefined };
+    }
+
+    const updated: StarredEvent = {
+      id: existing.id,
+      starred: existing.starred,
+      starredAt: existing.starredAt,
+      title: payload.title,
+      organiser: payload.organiser,
+      startDateTime: payload.startDateTime,
+      endDateTime: payload.endDateTime,
+      location: payload.location,
+      description: payload.description,
+      topic: payload.topic,
+      sourceUrl: payload.sourceUrl,
+      icsDataUri: payload.icsDataUri,
+    };
+
+    await adapter.storageLocalSet({
+      starredEvents: { ...starredEvents, [payload.eventId]: updated },
+    });
+
+    return { success: true, data: undefined };
+  });
 }
 
 // ─── Message Dispatcher ──────────────────────────────────────────

@@ -74,7 +74,8 @@ describe('Property 15: Background star/unstar round-trip', () => {
           command: 'GET_STAR_STATE',
           eventId: event.id,
         });
-        expect(stateAfterStar).toEqual({ success: true, data: true });
+        expect(stateAfterStar.success).toBe(true);
+        expect((stateAfterStar as MessageResponseSuccess<{ starred: boolean }>).data.starred).toBe(true);
 
         // Unstar the event
         const unstarResult = await handleMessage(adapter, {
@@ -88,7 +89,8 @@ describe('Property 15: Background star/unstar round-trip', () => {
           command: 'GET_STAR_STATE',
           eventId: event.id,
         });
-        expect(stateAfterUnstar).toEqual({ success: true, data: false });
+        expect(stateAfterUnstar.success).toBe(true);
+        expect((stateAfterUnstar as MessageResponseSuccess<{ starred: boolean }>).data.starred).toBe(false);
       }),
       { numRuns: 100 },
     );
