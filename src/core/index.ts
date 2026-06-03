@@ -37,7 +37,8 @@ export { parseICS, unfoldLines, unescapeICSText } from './ics-parser';
 
 export { normalizeEvent, deriveEventId, parseDateTime } from './event-normalizer';
 
-export { DAY_TO_DATE, SWEDISH_DAYS, STOCKHOLM_SUMMER_OFFSET } from './date-config';
+export type { YearMismatchResult } from './date-config';
+export { DAY_TO_DATE, SWEDISH_DAYS, STOCKHOLM_SUMMER_OFFSET, YEAR, checkYearMismatch } from './date-config';
 
 export { sortEvents, isTimeBasedSort } from './sorter';
 

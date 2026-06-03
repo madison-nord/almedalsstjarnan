@@ -34,7 +34,7 @@ Harden the Almedalsstjärnan extension for public release through code correctne
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 3. Storage validator module (TDD)
-  - [~] 3.1 Create `src/core/storage-validator.ts` with `validateStarredEvents` and `isValidStarredEntry`
+  - [x] 3.1 Create `src/core/storage-validator.ts` with `validateStarredEvents` and `isValidStarredEntry`
     - Implement `isValidStarredEntry(key, entry)` — checks non-null object, id matches key, non-empty title, non-empty startDateTime, starred === true, non-empty starredAt
     - Implement `validateStarredEvents(raw)` — checks top-level is non-null non-array object, iterates entries, returns `StorageValidationResult` with valid entries and invalidKeys
     - Export the `StorageValidationResult` interface
@@ -70,7 +70,7 @@ Harden the Almedalsstjärnan extension for public release through code correctne
     - _Requirements: 3.2, 3.4_
 
 - [ ] 4. Year-awareness in date configuration (TDD)
-  - [~] 4.1 Add `YEAR` constant and `checkYearMismatch` to `src/core/date-config.ts`
+  - [x] 4.1 Add `YEAR` constant and `checkYearMismatch` to `src/core/date-config.ts`
     - Export `YEAR = 2026 as const`
     - Export `YearMismatchResult` interface with `mismatch`, `expected`, `actual` fields
     - Implement `checkYearMismatch()` using `new Date().getFullYear()`
