@@ -134,8 +134,18 @@
     "description": "Accessible label for collapse toggle button when event is expanded"
   },
   "eventCountIndicator": {
-    "message": "{count} av {total}",
-    "description": "Count indicator showing displayed vs total events in popup header"
+    "message": "$1 av $2",
+    "description": "Count indicator showing displayed vs total events in popup header",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "5"
+      },
+      "2": {
+        "content": "$2",
+        "example": "12"
+      }
+    }
   },
   "loadMore": {
     "message": "Visa fler",

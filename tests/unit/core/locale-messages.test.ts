@@ -45,16 +45,14 @@ describe('getLocalizedMessage', () => {
       expect(result).toBe('Överlappar med: Event A');
     });
 
-    it('returns raw template for eventCountIndicator (uses {count}/{total} format)', () => {
-      // eventCountIndicator uses {count}/{total} placeholders which are
-      // substituted at the component level, not by getLocalizedMessage
-      const result = getLocalizedMessage('eventCountIndicator', 'en');
-      expect(result).toBe('{count} of {total}');
+    it('substitutes $1/$2 placeholders in eventCountIndicator', () => {
+      const result = getLocalizedMessage('eventCountIndicator', 'en', ['5', '12']);
+      expect(result).toBe('5 of 12');
     });
 
-    it('returns raw Swedish template for eventCountIndicator', () => {
-      const result = getLocalizedMessage('eventCountIndicator', 'sv');
-      expect(result).toBe('{count} av {total}');
+    it('substitutes $1/$2 placeholders in Swedish eventCountIndicator', () => {
+      const result = getLocalizedMessage('eventCountIndicator', 'sv', ['5', '12']);
+      expect(result).toBe('5 av 12');
     });
 
     it('handles missing substitution values gracefully', () => {

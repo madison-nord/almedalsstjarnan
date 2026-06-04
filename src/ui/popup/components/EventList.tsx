@@ -12,6 +12,7 @@
 import { useState } from 'react';
 
 import type { IBrowserApiAdapter, StarredEvent } from '#core/types';
+import { getLocalizedMessage } from '#core/locale-messages';
 
 import { EventItem } from './EventItem';
 
@@ -47,10 +48,7 @@ export function EventList({
 
   const countText =
     total > 0
-      ? adapter
-          .getMessage('eventCountIndicator')
-          .replace('{count}', String(displayed))
-          .replace('{total}', String(total))
+      ? getLocalizedMessage('eventCountIndicator', locale, [String(displayed), String(total)])
       : null;
 
   return (
