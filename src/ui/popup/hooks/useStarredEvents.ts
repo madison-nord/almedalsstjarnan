@@ -203,18 +203,15 @@ export function useStarredEvents(
     });
   }, [adapter, events, languagePreference]);
 
-  const conflictingIds = useMemo<ReadonlySet<string>>(() => {
+  const { conflictingIds, conflictTitlesMap } = useMemo(() => {
     const pairs = detectConflicts([...events]);
+
     const ids = new Set<string>();
     for (const pair of pairs) {
       ids.add(pair.eventIdA);
       ids.add(pair.eventIdB);
     }
-    return ids;
-  }, [events]);
 
-  const conflictTitlesMap = useMemo<ReadonlyMap<string, readonly string[]>>(() => {
-    const pairs = detectConflicts([...events]);
     const map = new Map<string, string[]>();
     const eventById = new Map(events.map((e) => [e.id, e]));
 
@@ -231,7 +228,10 @@ export function useStarredEvents(
       if (listB) listB.push(titleA);
     }
 
-    return map;
+    return {
+      conflictingIds: ids as ReadonlySet<string>,
+      conflictTitlesMap: map as ReadonlyMap<string, readonly string[]>,
+    };
   }, [events]);
 
   return {
