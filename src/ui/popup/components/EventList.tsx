@@ -23,6 +23,7 @@ export interface EventListProps {
   readonly adapter: IBrowserApiAdapter;
   readonly conflictingIds?: ReadonlySet<string>;
   readonly conflictTitlesMap?: ReadonlyMap<string, readonly string[]>;
+  readonly locale: 'sv' | 'en';
 }
 
 export function EventList({
@@ -31,6 +32,7 @@ export function EventList({
   adapter,
   conflictingIds,
   conflictTitlesMap,
+  locale,
 }: EventListProps): React.JSX.Element {
   const [displayCount, setDisplayCount] = useState(PAGE_SIZE);
 
@@ -67,6 +69,7 @@ export function EventList({
             adapter={adapter}
             isConflicting={conflictingIds?.has(event.id)}
             conflictTitles={conflictTitlesMap?.get(event.id)}
+            locale={locale}
           />
         ))}
       </ul>

@@ -193,6 +193,7 @@ export function App({ adapter }: AppProps): React.JSX.Element {
             adapter={localizedAdapter}
             conflictingIds={conflictingIds}
             conflictTitlesMap={conflictTitlesMap}
+            locale={locale ?? 'sv'}
           />
         )}
       </div>

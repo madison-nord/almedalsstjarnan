@@ -44,7 +44,6 @@ function makeEvent(overrides: Partial<StarredEvent> = {}): StarredEvent {
 
 function renderRow(
   event: StarredEvent,
-  props: { isConflicting?: boolean; conflictTitles?: readonly string[] } = {},
 ): { container: HTMLElement } {
   const adapter = setupAdapter();
   return render(
@@ -54,8 +53,7 @@ function renderRow(
           event={event}
           onUnstar={vi.fn()}
           adapter={adapter}
-          isConflicting={props.isConflicting}
-          conflictTitles={props.conflictTitles}
+          locale="sv"
         />
       </tbody>
     </table>,
@@ -66,12 +64,9 @@ function renderRow(
 
 describe('EventRow border removal (Requirements 3.1, 3.2, 3.3)', () => {
   describe('conflicting events have no border-l on date/time td', () => {
-    it('does not render border-l-2 border-l-slate-300 when isConflicting is true', () => {
+    it('does not render border-l-2 border-l-slate-300 classes', () => {
       const event = makeEvent();
-      const { container } = renderRow(event, {
-        isConflicting: true,
-        conflictTitles: ['Conflicting Event'],
-      });
+      const { container } = renderRow(event);
 
       const tds = container.querySelectorAll('td');
       const dateTimeTd = tds[3]!;
@@ -82,17 +77,7 @@ describe('EventRow border removal (Requirements 3.1, 3.2, 3.3)', () => {
   });
 
   describe('non-conflicting events have no border-l on date/time td', () => {
-    it('does not render any border-l classes when isConflicting is false', () => {
-      const event = makeEvent();
-      const { container } = renderRow(event, { isConflicting: false });
-
-      const tds = container.querySelectorAll('td');
-      const dateTimeTd = tds[3]!;
-
-      expect(dateTimeTd.className).not.toMatch(/\bborder-l/);
-    });
-
-    it('does not render any border-l classes when isConflicting is undefined', () => {
+    it('does not render any border-l classes', () => {
       const event = makeEvent();
       const { container } = renderRow(event);
 

@@ -56,7 +56,7 @@ describe('EventList scroll containment', () => {
     const adapter = setupAdapter();
     const events = makeEvents(5);
     const { container } = render(
-      <EventList events={events} onUnstar={vi.fn()} adapter={adapter} />,
+      <EventList events={events} onUnstar={vi.fn()} adapter={adapter} locale="sv" />,
     );
 
     const ul = container.querySelector('ul');
@@ -71,7 +71,7 @@ describe('EventList scroll containment', () => {
     const adapter = setupAdapter();
     const events = makeEvents(5);
     const { container } = render(
-      <EventList events={events} onUnstar={vi.fn()} adapter={adapter} />,
+      <EventList events={events} onUnstar={vi.fn()} adapter={adapter} locale="sv" />,
     );
 
     const ul = container.querySelector('ul');

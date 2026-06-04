@@ -8,14 +8,21 @@
  * Requirements: 2.1, 2.2, 2.3, 15.1, 15.2, 15.3
  */
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 
 import type { IBrowserApiAdapter, StarredEvent } from '#core/types';
-import { mockBrowserApi } from '#test/helpers/mock-browser-api';
+import { formatEventDateTime } from '#core/date-formatter';
+import { mockBrowserApi, resetMocks } from '#test/helpers/mock-browser-api';
 
 import { EventRow } from '#ui/stars/components/EventRow';
+
+vi.mock('#core/date-formatter', () => ({
+  formatEventDateTime: vi.fn().mockReturnValue('Mocked Date'),
+}));
+
+const mockedFormatEventDateTime = vi.mocked(formatEventDateTime);
 
 // ─── Helpers ──────────────────────────────────────────────────────
 
@@ -53,7 +60,7 @@ function renderRow(event: StarredEvent): void {
   render(
     <table>
       <tbody>
-        <EventRow event={event} onUnstar={vi.fn()} adapter={adapter} />
+        <EventRow event={event} onUnstar={vi.fn()} adapter={adapter} locale="sv" />
       </tbody>
     </table>,
   );
@@ -164,8 +171,8 @@ describe('EventRow truncation', () => {
       const event = makeEvent();
       renderRow(event);
 
-      // The date-time cell contains the formatted date text inside a span
-      const dateText = screen.getByText(/Sön 28 juni/);
+      // The date-time cell contains the formatted date text (mocked)
+      const dateText = screen.getByText('Mocked Date');
       const dateCell = dateText.closest('td');
       expect(dateCell).toHaveClass('whitespace-nowrap');
     });
@@ -251,5 +258,84 @@ describe('EventRow unstar trash icon (Requirement 15)', () => {
     const svg = button.querySelector('svg');
     expect(svg).toHaveAttribute('width', '18');
     expect(svg).toHaveAttribute('height', '18');
+  });
+});
+
+describe('EventRow locale prop (Requirement 5.2)', () => {
+  beforeEach(() => {
+    resetMocks();
+    (mockBrowserApi.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
+      (key: string) => {
+        if (key === 'unstarAction') return 'Remove';
+        if (key === 'selectAll') return 'Select';
+        return '';
+      },
+    );
+  });
+
+  it('passes locale prop to formatEventDateTime instead of hardcoded "sv"', () => {
+    mockedFormatEventDateTime.mockClear();
+
+    const event: StarredEvent = {
+      id: 'e1',
+      title: 'Test Event',
+      organiser: 'Test Organiser',
+      startDateTime: '2026-06-28T10:00:00+02:00',
+      endDateTime: '2026-06-28T11:00:00+02:00',
+      location: 'Visby',
+      description: null,
+      topic: 'Demokrati',
+      sourceUrl: null,
+      icsDataUri: null,
+      starred: true as const,
+      starredAt: '2026-06-15T14:00:00.000Z',
+    };
+
+    render(
+      <table>
+        <tbody>
+          <EventRow event={event} onUnstar={vi.fn()} adapter={mockBrowserApi} locale="en" />
+        </tbody>
+      </table>,
+    );
+
+    expect(mockedFormatEventDateTime).toHaveBeenCalledWith(
+      '2026-06-28T10:00:00+02:00',
+      '2026-06-28T11:00:00+02:00',
+      'en',
+    );
+  });
+
+  it('passes "sv" locale to formatEventDateTime when locale prop is "sv"', () => {
+    mockedFormatEventDateTime.mockClear();
+
+    const event: StarredEvent = {
+      id: 'e2',
+      title: 'Swedish Event',
+      organiser: 'Org',
+      startDateTime: '2026-06-23T09:00:00+02:00',
+      endDateTime: '2026-06-23T10:00:00+02:00',
+      location: null,
+      description: null,
+      topic: null,
+      sourceUrl: null,
+      icsDataUri: null,
+      starred: true as const,
+      starredAt: '2026-06-15T14:00:00.000Z',
+    };
+
+    render(
+      <table>
+        <tbody>
+          <EventRow event={event} onUnstar={vi.fn()} adapter={mockBrowserApi} locale="sv" />
+        </tbody>
+      </table>,
+    );
+
+    expect(mockedFormatEventDateTime).toHaveBeenCalledWith(
+      '2026-06-23T09:00:00+02:00',
+      '2026-06-23T10:00:00+02:00',
+      'sv',
+    );
   });
 });

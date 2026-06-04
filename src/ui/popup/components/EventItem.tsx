@@ -52,6 +52,7 @@ export interface EventItemProps {
   readonly adapter: IBrowserApiAdapter;
   readonly isConflicting?: boolean;
   readonly conflictTitles?: readonly string[];
+  readonly locale: 'sv' | 'en';
 }
 
 export function EventItem({
@@ -60,6 +61,7 @@ export function EventItem({
   adapter,
   isConflicting,
   conflictTitles,
+  locale,
 }: EventItemProps): React.JSX.Element {
   const [expanded, setExpanded] = useState(false);
 
@@ -119,7 +121,7 @@ export function EventItem({
         </div>
         {event.organiser && <p className="text-xs text-gray-600 line-clamp-2">{event.organiser}</p>}
         <div className="text-xs text-gray-500 mt-0.5">
-          <span>{formatEventDateTime(event.startDateTime, event.endDateTime, 'sv')}</span>
+          <span>{formatEventDateTime(event.startDateTime, event.endDateTime, locale)}</span>
           {isConflicting === true && (
             <span
               className="ml-2 text-slate-400"
@@ -144,7 +146,7 @@ export function EventItem({
             {event.startDateTime && event.endDateTime && (
               <p>
                 <span className="font-medium text-gray-700">
-                  {formatEventDateTime(event.startDateTime, event.endDateTime, 'sv')}
+                  {formatEventDateTime(event.startDateTime, event.endDateTime, locale)}
                 </span>
               </p>
             )}

@@ -18,8 +18,7 @@ export interface EventRowProps {
   readonly event: StarredEvent;
   readonly onUnstar: (eventId: string) => void;
   readonly adapter: IBrowserApiAdapter;
-  readonly isConflicting?: boolean;
-  readonly conflictTitles?: readonly string[];
+  readonly locale: 'sv' | 'en';
   readonly isSelected?: boolean;
   readonly onToggleSelection?: (eventId: string) => void;
 }
@@ -28,6 +27,7 @@ export function EventRow({
   event,
   onUnstar,
   adapter,
+  locale,
   isSelected,
   onToggleSelection,
 }: EventRowProps): React.JSX.Element {
@@ -68,7 +68,7 @@ export function EventRow({
         {event.organiser ?? ''}
       </td>
       <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-600">
-        {formatEventDateTime(event.startDateTime, event.endDateTime, 'sv')}
+        {formatEventDateTime(event.startDateTime, event.endDateTime, locale)}
       </td>
       <td className="truncate px-3 py-2 text-sm text-gray-600" title={event.location ?? ''}>
         {event.location ?? ''}

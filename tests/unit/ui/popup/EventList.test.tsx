@@ -87,28 +87,28 @@ describe('EventList', () => {
   describe('count indicator', () => {
     it('displays count indicator showing displayed vs total for small lists', () => {
       const events = makeEvents(5);
-      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} />);
+      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} locale="sv" />);
 
       expect(screen.getByText('5 of 5')).toBeInTheDocument();
     });
 
     it('displays count indicator showing 20 of total when list exceeds 20', () => {
       const events = makeEvents(35);
-      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} />);
+      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} locale="sv" />);
 
       expect(screen.getByText('20 of 35')).toBeInTheDocument();
     });
 
     it('uses getMessage for count indicator i18n key', () => {
       const events = makeEvents(3);
-      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} />);
+      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} locale="sv" />);
 
       expect(adapter.getMessage).toHaveBeenCalledWith('eventCountIndicator');
     });
 
     it('count indicator has aria-live for accessibility', () => {
       const events = makeEvents(5);
-      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} />);
+      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} locale="sv" />);
 
       const indicator = screen.getByText('5 of 5');
       expect(indicator).toHaveAttribute('aria-live', 'polite');
@@ -116,7 +116,7 @@ describe('EventList', () => {
 
     it('substitutes {count} and {total} placeholders with actual numeric values', () => {
       const events = makeEvents(12);
-      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} />);
+      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} locale="sv" />);
 
       const indicator = screen.getByText('12 of 12');
       expect(indicator).toBeInTheDocument();
@@ -131,13 +131,13 @@ describe('EventList', () => {
         return messageMap[key] ?? '';
       });
       const events = makeEvents(7);
-      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} />);
+      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} locale="sv" />);
 
       expect(screen.getByText('7 av 7')).toBeInTheDocument();
     });
 
     it('hides count indicator when no events are starred (0 total)', () => {
-      render(<EventList events={[]} onUnstar={vi.fn()} adapter={adapter} />);
+      render(<EventList events={[]} onUnstar={vi.fn()} adapter={adapter} locale="sv" />);
 
       // The count indicator div should not be rendered
       const ariaLiveElements = document.querySelectorAll('[aria-live="polite"]');
@@ -146,7 +146,7 @@ describe('EventList', () => {
 
     it('shows count indicator when at least one event is starred', () => {
       const events = makeEvents(1);
-      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} />);
+      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} locale="sv" />);
 
       expect(screen.getByText('1 of 1')).toBeInTheDocument();
     });
@@ -155,21 +155,21 @@ describe('EventList', () => {
   describe('load-more button', () => {
     it('does not show load-more button when total <= 20', () => {
       const events = makeEvents(15);
-      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} />);
+      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} locale="sv" />);
 
       expect(screen.queryByText('Load more')).not.toBeInTheDocument();
     });
 
     it('does not show load-more button when total is exactly 20', () => {
       const events = makeEvents(20);
-      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} />);
+      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} locale="sv" />);
 
       expect(screen.queryByText('Load more')).not.toBeInTheDocument();
     });
 
     it('shows load-more button when total > 20', () => {
       const events = makeEvents(25);
-      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} />);
+      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} locale="sv" />);
 
       expect(screen.getByRole('button', { name: 'Load more' })).toBeInTheDocument();
     });
@@ -177,7 +177,7 @@ describe('EventList', () => {
     it('clicking load-more shows next 20 events', async () => {
       const user = userEvent.setup();
       const events = makeEvents(45);
-      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} />);
+      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} locale="sv" />);
 
       // Initially 20 items
       expect(screen.getAllByRole('listitem')).toHaveLength(20);
@@ -192,7 +192,7 @@ describe('EventList', () => {
     it('count indicator updates after load-more click', async () => {
       const user = userEvent.setup();
       const events = makeEvents(45);
-      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} />);
+      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} locale="sv" />);
 
       expect(screen.getByText('20 of 45')).toBeInTheDocument();
 
@@ -204,7 +204,7 @@ describe('EventList', () => {
     it('multiple load-more clicks eventually show all events', async () => {
       const user = userEvent.setup();
       const events = makeEvents(45);
-      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} />);
+      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} locale="sv" />);
 
       // First click: 20 → 40
       await user.click(screen.getByRole('button', { name: 'Load more' }));
@@ -218,7 +218,7 @@ describe('EventList', () => {
     it('load-more button disappears when all events are shown', async () => {
       const user = userEvent.setup();
       const events = makeEvents(25);
-      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} />);
+      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} locale="sv" />);
 
       expect(screen.getByRole('button', { name: 'Load more' })).toBeInTheDocument();
 
@@ -229,7 +229,7 @@ describe('EventList', () => {
 
     it('uses getMessage for load-more button text', () => {
       const events = makeEvents(25);
-      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} />);
+      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} locale="sv" />);
 
       expect(adapter.getMessage).toHaveBeenCalledWith('loadMore');
     });
@@ -238,7 +238,7 @@ describe('EventList', () => {
   describe('event display', () => {
     it('displays first 20 events initially when total > 20', () => {
       const events = makeEvents(30);
-      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} />);
+      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} locale="sv" />);
 
       const items = screen.getAllByRole('listitem');
       expect(items).toHaveLength(20);
@@ -247,7 +247,7 @@ describe('EventList', () => {
 
     it('displays all events when total <= 20', () => {
       const events = makeEvents(10);
-      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} />);
+      render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} locale="sv" />);
 
       const items = screen.getAllByRole('listitem');
       expect(items).toHaveLength(10);

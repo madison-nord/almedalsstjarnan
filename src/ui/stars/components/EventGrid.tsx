@@ -28,6 +28,7 @@ export interface EventGridProps {
   readonly onToggleSelection?: (eventId: string) => void;
   readonly onSelectAll?: () => void;
   readonly allSelected?: boolean;
+  readonly locale: 'sv' | 'en';
 }
 
 /** Number of columns in the event grid table. */
@@ -131,12 +132,11 @@ export function EventGrid({
   sortOrder,
   onUnstar,
   adapter,
-  conflictingIds,
-  conflictTitlesMap,
   selectedIds,
   onToggleSelection,
   onSelectAll,
   allSelected,
+  locale,
 }: EventGridProps): React.JSX.Element {
   const timeBased = isTimeBasedSort(sortOrder);
   const groups = timeBased ? groupEventsByDate(events) : [];
@@ -185,8 +185,7 @@ export function EventGrid({
                     event={event}
                     onUnstar={onUnstar}
                     adapter={adapter}
-                    isConflicting={conflictingIds?.has(event.id)}
-                    conflictTitles={conflictTitlesMap?.get(event.id)}
+                    locale={locale}
                     isSelected={selectedIds?.has(event.id)}
                     onToggleSelection={onToggleSelection}
                   />
@@ -199,8 +198,7 @@ export function EventGrid({
                 event={event}
                 onUnstar={onUnstar}
                 adapter={adapter}
-                isConflicting={conflictingIds?.has(event.id)}
-                conflictTitles={conflictTitlesMap?.get(event.id)}
+                locale={locale}
                 isSelected={selectedIds?.has(event.id)}
                 onToggleSelection={onToggleSelection}
               />

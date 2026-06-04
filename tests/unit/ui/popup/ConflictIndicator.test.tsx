@@ -44,14 +44,14 @@ const onUnstar = vi.fn();
 describe('Popup EventItem conflict indicator', () => {
   it('does not render conflict dot when isConflicting is false', () => {
     const event = makeEvent();
-    render(<EventItem event={event} onUnstar={onUnstar} adapter={adapter} isConflicting={false} />);
+    render(<EventItem event={event} onUnstar={onUnstar} adapter={adapter} isConflicting={false} locale="sv" />);
 
     expect(screen.queryByRole('img')).not.toBeInTheDocument();
   });
 
   it('does not render conflict dot when isConflicting is undefined', () => {
     const event = makeEvent();
-    render(<EventItem event={event} onUnstar={onUnstar} adapter={adapter} />);
+    render(<EventItem event={event} onUnstar={onUnstar} adapter={adapter} locale="sv" />);
 
     expect(screen.queryByRole('img')).not.toBeInTheDocument();
   });
@@ -65,6 +65,7 @@ describe('Popup EventItem conflict indicator', () => {
         adapter={adapter}
         isConflicting={true}
         conflictTitles={['Other Event']}
+        locale="sv"
       />,
     );
 
@@ -82,6 +83,7 @@ describe('Popup EventItem conflict indicator', () => {
         adapter={adapter}
         isConflicting={true}
         conflictTitles={['Other Event']}
+        locale="sv"
       />,
     );
 
@@ -98,6 +100,7 @@ describe('Popup EventItem conflict indicator', () => {
         adapter={adapter}
         isConflicting={true}
         conflictTitles={['Demokrati i förändring']}
+        locale="sv"
       />,
     );
 
@@ -114,6 +117,7 @@ describe('Popup EventItem conflict indicator', () => {
         adapter={adapter}
         isConflicting={true}
         conflictTitles={['Event A', 'Event B']}
+        locale="sv"
       />,
     );
 
@@ -130,6 +134,7 @@ describe('Popup EventItem conflict indicator', () => {
         adapter={adapter}
         isConflicting={true}
         conflictTitles={['Hållbar utveckling']}
+        locale="sv"
       />,
     );
 
@@ -146,6 +151,7 @@ describe('Popup EventItem conflict indicator', () => {
         adapter={adapter}
         isConflicting={true}
         conflictTitles={[]}
+        locale="sv"
       />,
     );
 

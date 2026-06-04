@@ -293,6 +293,7 @@ describe('Bulk selection and batch actions', () => {
               adapter={adapter}
               isSelected={false}
               onToggleSelection={vi.fn()}
+              locale="sv"
             />
           </tbody>
         </table>,
@@ -313,6 +314,7 @@ describe('Bulk selection and batch actions', () => {
               adapter={adapter}
               isSelected={false}
               onToggleSelection={vi.fn()}
+              locale="sv"
             />
           </tbody>
         </table>,
@@ -333,6 +335,7 @@ describe('Bulk selection and batch actions', () => {
               adapter={adapter}
               isSelected={true}
               onToggleSelection={vi.fn()}
+              locale="sv"
             />
           </tbody>
         </table>,
@@ -356,6 +359,7 @@ describe('Bulk selection and batch actions', () => {
               adapter={adapter}
               isSelected={false}
               onToggleSelection={onToggle}
+              locale="sv"
             />
           </tbody>
         </table>,
@@ -377,6 +381,7 @@ describe('Bulk selection and batch actions', () => {
               adapter={adapter}
               isSelected={false}
               onToggleSelection={vi.fn()}
+              locale="sv"
             />
           </tbody>
         </table>,

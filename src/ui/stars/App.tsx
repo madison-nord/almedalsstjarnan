@@ -154,6 +154,7 @@ export function App({ adapter }: AppProps): React.JSX.Element {
             onToggleSelection={toggleSelection}
             onSelectAll={selectedIds.size === filteredEvents.length ? clearSelection : selectAll}
             allSelected={filteredEvents.length > 0 && selectedIds.size === filteredEvents.length}
+            locale={locale ?? 'sv'}
           />
         )}
       </main>

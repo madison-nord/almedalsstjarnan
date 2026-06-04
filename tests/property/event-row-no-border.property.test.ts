@@ -35,11 +35,11 @@ describe('Property 3: EventRow date/time column has no conditional border stylin
    * column <td> in EventRow shall have identical border-related class names —
    * specifically, no `border-l` variant shall be present.
    */
-  it('date/time td never contains border-l class variants regardless of isConflicting', () => {
+  it('date/time td never contains border-l class variants', () => {
     const adapter = setupAdapter();
 
     fc.assert(
-      fc.property(starredEventArb, fc.boolean(), (event: StarredEvent, isConflicting: boolean) => {
+      fc.property(starredEventArb, (event: StarredEvent) => {
         const { container } = render(
           React.createElement(
             'table',
@@ -51,8 +51,7 @@ describe('Property 3: EventRow date/time column has no conditional border stylin
                 event,
                 onUnstar: vi.fn(),
                 adapter,
-                isConflicting,
-                conflictTitles: isConflicting ? ['Other Event'] : [],
+                locale: 'sv' as const,
               }),
             ),
           ),

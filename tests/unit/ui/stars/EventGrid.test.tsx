@@ -63,6 +63,7 @@ describe('EventGrid header styling (Requirement 16)', () => {
         sortOrder="chronological"
         onUnstar={vi.fn()}
         adapter={adapter}
+        locale="sv"
       />,
     );
 
@@ -79,6 +80,7 @@ describe('EventGrid header styling (Requirement 16)', () => {
         sortOrder="chronological"
         onUnstar={vi.fn()}
         adapter={adapter}
+        locale="sv"
       />,
     );
 
@@ -110,7 +112,7 @@ describe('EventGrid table-fixed layout', () => {
     const events = [makeEvent({ id: 'e1' })];
 
     render(
-      <EventGrid events={events} sortOrder="chronological" onUnstar={vi.fn()} adapter={adapter} />,
+      <EventGrid events={events} sortOrder="chronological" onUnstar={vi.fn()} adapter={adapter} locale="sv" />,
     );
 
     const table = screen.getByRole('table');
@@ -125,6 +127,7 @@ describe('EventGrid table-fixed layout', () => {
         sortOrder="chronological"
         onUnstar={vi.fn()}
         adapter={adapter}
+        locale="sv"
       />,
     );
 
@@ -141,6 +144,7 @@ describe('EventGrid table-fixed layout', () => {
         sortOrder="chronological"
         onUnstar={vi.fn()}
         adapter={adapter}
+        locale="sv"
       />,
     );
 
@@ -157,6 +161,7 @@ describe('EventGrid table-fixed layout', () => {
         sortOrder="chronological"
         onUnstar={vi.fn()}
         adapter={adapter}
+        locale="sv"
       />,
     );
 
@@ -173,6 +178,7 @@ describe('EventGrid table-fixed layout', () => {
         sortOrder="chronological"
         onUnstar={vi.fn()}
         adapter={adapter}
+        locale="sv"
       />,
     );
 
@@ -189,6 +195,7 @@ describe('EventGrid table-fixed layout', () => {
         sortOrder="chronological"
         onUnstar={vi.fn()}
         adapter={adapter}
+        locale="sv"
       />,
     );
 
@@ -205,6 +212,7 @@ describe('EventGrid table-fixed layout', () => {
         sortOrder="chronological"
         onUnstar={vi.fn()}
         adapter={adapter}
+        locale="sv"
       />,
     );
 
@@ -221,6 +229,7 @@ describe('EventGrid table-fixed layout', () => {
         sortOrder="chronological"
         onUnstar={vi.fn()}
         adapter={adapter}
+        locale="sv"
       />,
     );
 
