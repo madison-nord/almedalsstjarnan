@@ -42,19 +42,12 @@ function makeEvent(overrides: Partial<StarredEvent> = {}): StarredEvent {
   };
 }
 
-function renderRow(
-  event: StarredEvent,
-): { container: HTMLElement } {
+function renderRow(event: StarredEvent): { container: HTMLElement } {
   const adapter = setupAdapter();
   return render(
     <table>
       <tbody>
-        <EventRow
-          event={event}
-          onUnstar={vi.fn()}
-          adapter={adapter}
-          locale="sv"
-        />
+        <EventRow event={event} onUnstar={vi.fn()} adapter={adapter} locale="sv" />
       </tbody>
     </table>,
   );

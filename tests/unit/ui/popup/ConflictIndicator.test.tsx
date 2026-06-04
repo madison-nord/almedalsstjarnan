@@ -44,7 +44,15 @@ const onUnstar = vi.fn();
 describe('Popup EventItem conflict indicator', () => {
   it('does not render conflict dot when isConflicting is false', () => {
     const event = makeEvent();
-    render(<EventItem event={event} onUnstar={onUnstar} adapter={adapter} isConflicting={false} locale="sv" />);
+    render(
+      <EventItem
+        event={event}
+        onUnstar={onUnstar}
+        adapter={adapter}
+        isConflicting={false}
+        locale="sv"
+      />,
+    );
 
     expect(screen.queryByRole('img')).not.toBeInTheDocument();
   });

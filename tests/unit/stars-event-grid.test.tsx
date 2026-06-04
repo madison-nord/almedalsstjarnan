@@ -135,7 +135,13 @@ describe('EventGrid conditional rendering (Requirements 2.3, 2.4, 2.5)', () => {
       const events = createMultiDayEvents();
 
       render(
-        <EventGrid events={events} sortOrder="starred-desc" onUnstar={vi.fn()} adapter={adapter} locale="sv" />,
+        <EventGrid
+          events={events}
+          sortOrder="starred-desc"
+          onUnstar={vi.fn()}
+          adapter={adapter}
+          locale="sv"
+        />,
       );
 
       expect(screen.queryByText('Måndag 22 juni')).not.toBeInTheDocument();
@@ -154,7 +160,13 @@ describe('EventGrid conditional rendering (Requirements 2.3, 2.4, 2.5)', () => {
       const events = createMultiDayEvents();
 
       render(
-        <EventGrid events={events} sortOrder={sortOrder} onUnstar={vi.fn()} adapter={adapter} locale="sv" />,
+        <EventGrid
+          events={events}
+          sortOrder={sortOrder}
+          onUnstar={vi.fn()}
+          adapter={adapter}
+          locale="sv"
+        />,
       );
 
       expect(screen.getByText('Title')).toBeInTheDocument();

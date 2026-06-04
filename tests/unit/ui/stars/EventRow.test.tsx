@@ -264,13 +264,11 @@ describe('EventRow unstar trash icon (Requirement 15)', () => {
 describe('EventRow locale prop (Requirement 5.2)', () => {
   beforeEach(() => {
     resetMocks();
-    (mockBrowserApi.getMessage as ReturnType<typeof vi.fn>).mockImplementation(
-      (key: string) => {
-        if (key === 'unstarAction') return 'Remove';
-        if (key === 'selectAll') return 'Select';
-        return '';
-      },
-    );
+    (mockBrowserApi.getMessage as ReturnType<typeof vi.fn>).mockImplementation((key: string) => {
+      if (key === 'unstarAction') return 'Remove';
+      if (key === 'selectAll') return 'Select';
+      return '';
+    });
   });
 
   it('passes locale prop to formatEventDateTime instead of hardcoded "sv"', () => {

@@ -521,9 +521,7 @@ describe('EventItem locale prop (Requirement 5.1)', () => {
       starredAt: '2026-06-15T14:00:00.000Z',
     };
 
-    render(
-      <EventItem event={event} onUnstar={onUnstar} adapter={adapter} locale="en" />,
-    );
+    render(<EventItem event={event} onUnstar={onUnstar} adapter={adapter} locale="en" />);
 
     expect(mockedFormatEventDateTime).toHaveBeenCalledWith(
       '2026-06-22T10:00:00+02:00',
@@ -550,9 +548,7 @@ describe('EventItem locale prop (Requirement 5.1)', () => {
       starredAt: '2026-06-15T14:00:00.000Z',
     };
 
-    render(
-      <EventItem event={event} onUnstar={onUnstar} adapter={adapter} locale="sv" />,
-    );
+    render(<EventItem event={event} onUnstar={onUnstar} adapter={adapter} locale="sv" />);
 
     expect(mockedFormatEventDateTime).toHaveBeenCalledWith(
       '2026-06-23T09:00:00+02:00',

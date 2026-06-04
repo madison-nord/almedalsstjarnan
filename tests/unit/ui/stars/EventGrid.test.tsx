@@ -112,7 +112,13 @@ describe('EventGrid table-fixed layout', () => {
     const events = [makeEvent({ id: 'e1' })];
 
     render(
-      <EventGrid events={events} sortOrder="chronological" onUnstar={vi.fn()} adapter={adapter} locale="sv" />,
+      <EventGrid
+        events={events}
+        sortOrder="chronological"
+        onUnstar={vi.fn()}
+        adapter={adapter}
+        locale="sv"
+      />,
     );
 
     const table = screen.getByRole('table');

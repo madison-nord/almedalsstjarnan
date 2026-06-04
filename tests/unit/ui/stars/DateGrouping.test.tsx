@@ -181,7 +181,13 @@ describe('EventGrid date grouping rendering', () => {
     ];
 
     render(
-      <EventGrid events={events} sortOrder="chronological" onUnstar={vi.fn()} adapter={adapter} locale="sv" />,
+      <EventGrid
+        events={events}
+        sortOrder="chronological"
+        onUnstar={vi.fn()}
+        adapter={adapter}
+        locale="sv"
+      />,
     );
 
     expect(screen.getByText('Måndag 22 juni')).toBeInTheDocument();
@@ -197,7 +203,13 @@ describe('EventGrid date grouping rendering', () => {
     ];
 
     render(
-      <EventGrid events={events} sortOrder="chronological" onUnstar={vi.fn()} adapter={adapter} locale="sv" />,
+      <EventGrid
+        events={events}
+        sortOrder="chronological"
+        onUnstar={vi.fn()}
+        adapter={adapter}
+        locale="sv"
+      />,
     );
 
     expect(screen.getByText('Morning Event')).toBeInTheDocument();
@@ -209,7 +221,13 @@ describe('EventGrid date grouping rendering', () => {
     const adapter = setupAdapter();
 
     render(
-      <EventGrid events={[]} sortOrder="chronological" onUnstar={vi.fn()} adapter={adapter} locale="sv" />,
+      <EventGrid
+        events={[]}
+        sortOrder="chronological"
+        onUnstar={vi.fn()}
+        adapter={adapter}
+        locale="sv"
+      />,
     );
 
     // Only the table header row should exist, no section headers

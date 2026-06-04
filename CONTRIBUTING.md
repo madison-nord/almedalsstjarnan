@@ -64,6 +64,7 @@ This project uses structured commit messages. See `.kiro/steering/git-workflow.m
 **Scopes:** `core`, `content`, `background`, `popup`, `stars`, `manifest`, `i18n`, `ci`, `config`
 
 Rules:
+
 - Imperative mood: "add feature" not "added feature"
 - Lowercase subject, no trailing period
 - Maximum 70 characters for the subject line

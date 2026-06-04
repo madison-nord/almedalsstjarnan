@@ -102,10 +102,7 @@ describe('EventList', () => {
       const events = makeEvents(5);
       render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} locale="en" />);
 
-      expect(getLocalizedMessageSpy).toHaveBeenCalledWith('eventCountIndicator', 'en', [
-        '5',
-        '5',
-      ]);
+      expect(getLocalizedMessageSpy).toHaveBeenCalledWith('eventCountIndicator', 'en', ['5', '5']);
     });
 
     it('displays count indicator showing 20 of total when list exceeds 20', () => {
@@ -137,10 +134,7 @@ describe('EventList', () => {
       const events = makeEvents(7);
       render(<EventList events={events} onUnstar={vi.fn()} adapter={adapter} locale="sv" />);
 
-      expect(getLocalizedMessageSpy).toHaveBeenCalledWith('eventCountIndicator', 'sv', [
-        '7',
-        '7',
-      ]);
+      expect(getLocalizedMessageSpy).toHaveBeenCalledWith('eventCountIndicator', 'sv', ['7', '7']);
       expect(screen.getByText('7 av 7')).toBeInTheDocument();
     });
 
