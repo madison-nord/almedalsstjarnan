@@ -1,16 +1,15 @@
 /**
- * Unit test: unstarSelected followed by all toasts expiring.
+ * Unit tests: bulk unstar confirmation dialog behavior.
  *
- * Tests that when bulk unstar is used and all toasts expire,
- * ALL events are actually removed from storage (UNSTAR_EVENT sent for each).
+ * Tests the confirmation threshold (>5 selected events triggers window.confirm)
+ * and that cancellation prevents removal.
  *
- * // Feature: unstar-revert-bug, Bulk unstar confirm
+ * // Feature: code-review-fixes, Bulk unstar confirm
  *
- * Validates: Requirements 1.3, 2.3
+ * Validates: Requirements 8.1, 8.2, 8.3
  */
 
-import { describe, it, expect } from 'vitest';
-import type { vi } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 
 import { mockBrowserApi } from '#test/helpers/mock-browser-api';
@@ -34,35 +33,38 @@ function makeEvent(id: string, title: string): StarredEvent {
   };
 }
 
-describe('Stars Page: unstarSelected → immediate UNSTAR_EVENT', () => {
-  it('sends UNSTAR_EVENT immediately for all selected events', async () => {
-    const allEvents: StarredEvent[] = [
-      makeEvent('event-1', 'Seminarium A'),
-      makeEvent('event-2', 'Workshop B'),
-      makeEvent('event-3', 'Panel C'),
-      makeEvent('event-4', 'Debatt D'),
-      makeEvent('event-5', 'Föreläsning E'),
-    ];
+function setupSendMessage(allEvents: StarredEvent[]): void {
+  const sendMessageMock = mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>;
+  sendMessageMock.mockImplementation((message: { command: string; eventId?: string }) => {
+    if (message.command === 'GET_ALL_STARRED_EVENTS') {
+      return Promise.resolve({ success: true, data: [...allEvents] });
+    }
+    if (message.command === 'GET_SORT_ORDER') {
+      return Promise.resolve({ success: true, data: 'chronological' as SortOrder });
+    }
+    return Promise.resolve({ success: true, data: undefined });
+  });
 
-    const unstarredIds: string[] = [];
+  const onStorageChangedMock = mockBrowserApi.onStorageChanged as ReturnType<typeof vi.fn>;
+  onStorageChangedMock.mockImplementation(() => () => {});
+}
 
-    const sendMessageMock = mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>;
-    sendMessageMock.mockImplementation((message: { command: string; eventId?: string }) => {
-      if (message.command === 'GET_ALL_STARRED_EVENTS') {
-        return Promise.resolve({ success: true, data: [...allEvents] });
-      }
-      if (message.command === 'GET_SORT_ORDER') {
-        return Promise.resolve({ success: true, data: 'chronological' as SortOrder });
-      }
-      if (message.command === 'UNSTAR_EVENT') {
-        unstarredIds.push(message.eventId!);
-        return Promise.resolve({ success: true, data: undefined });
-      }
-      return Promise.resolve({ success: true, data: undefined });
+describe('Stars Page: bulk unstar confirmation dialog', () => {
+  it('shows confirmation when selectedIds.size > 5 and does NOT remove events if user cancels', async () => {
+    const allEvents: StarredEvent[] = Array.from({ length: 6 }, (_, i) =>
+      makeEvent(`event-${i + 1}`, `Event ${i + 1}`),
+    );
+
+    setupSendMessage(allEvents);
+
+    const getMessageMock = mockBrowserApi.getMessage as ReturnType<typeof vi.fn>;
+    getMessageMock.mockImplementation((key: string) => {
+      if (key === 'bulkUnstarConfirm') return 'Do you want to remove these starred events?';
+      return '';
     });
 
-    const onStorageChangedMock = mockBrowserApi.onStorageChanged as ReturnType<typeof vi.fn>;
-    onStorageChangedMock.mockImplementation(() => () => {});
+    // Mock window.confirm to return false (user cancels)
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
 
     const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
 
@@ -70,7 +72,104 @@ describe('Stars Page: unstarSelected → immediate UNSTAR_EVENT', () => {
       expect(result.current.loading).toBe(false);
     });
 
-    // Select all events
+    // Select all 6 events
+    act(() => {
+      result.current.selectAll();
+    });
+
+    expect(result.current.selectedIds.size).toBe(6);
+
+    // Attempt bulk unstar — confirm returns false
+    act(() => {
+      result.current.unstarSelected();
+    });
+
+    // Confirmation should have been shown
+    expect(confirmSpy).toHaveBeenCalledOnce();
+    expect(confirmSpy).toHaveBeenCalledWith('Do you want to remove these starred events?');
+
+    // Events should NOT be removed
+    expect(result.current.events.length).toBe(6);
+
+    // No UNSTAR_EVENT messages sent
+    const sendMessageMock = mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>;
+    const unstarCalls = sendMessageMock.mock.calls.filter(
+      (call) => (call[0] as { command: string }).command === 'UNSTAR_EVENT',
+    );
+    expect(unstarCalls.length).toBe(0);
+
+    confirmSpy.mockRestore();
+    unmount();
+  });
+
+  it('shows confirmation when selectedIds.size > 5 and removes events if user confirms', async () => {
+    const allEvents: StarredEvent[] = Array.from({ length: 6 }, (_, i) =>
+      makeEvent(`event-${i + 1}`, `Event ${i + 1}`),
+    );
+
+    setupSendMessage(allEvents);
+
+    const getMessageMock = mockBrowserApi.getMessage as ReturnType<typeof vi.fn>;
+    getMessageMock.mockImplementation((key: string) => {
+      if (key === 'bulkUnstarConfirm') return 'Do you want to remove these starred events?';
+      return '';
+    });
+
+    // Mock window.confirm to return true (user confirms)
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+
+    const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    // Select all 6 events
+    act(() => {
+      result.current.selectAll();
+    });
+
+    expect(result.current.selectedIds.size).toBe(6);
+
+    // Bulk unstar — confirm returns true
+    act(() => {
+      result.current.unstarSelected();
+    });
+
+    // Confirmation should have been shown
+    expect(confirmSpy).toHaveBeenCalledOnce();
+
+    // Events should be removed
+    expect(result.current.events.length).toBe(0);
+
+    // UNSTAR_EVENT sent for all 6 events
+    const sendMessageMock = mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>;
+    const unstarCalls = sendMessageMock.mock.calls.filter(
+      (call) => (call[0] as { command: string }).command === 'UNSTAR_EVENT',
+    );
+    expect(unstarCalls.length).toBe(6);
+
+    confirmSpy.mockRestore();
+    unmount();
+  });
+
+  it('does NOT show confirmation when selectedIds.size <= 5', async () => {
+    const allEvents: StarredEvent[] = Array.from({ length: 5 }, (_, i) =>
+      makeEvent(`event-${i + 1}`, `Event ${i + 1}`),
+    );
+
+    setupSendMessage(allEvents);
+
+    // Mock window.confirm — should NOT be called
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
+
+    const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    // Select all 5 events
     act(() => {
       result.current.selectAll();
     });
@@ -82,39 +181,40 @@ describe('Stars Page: unstarSelected → immediate UNSTAR_EVENT', () => {
       result.current.unstarSelected();
     });
 
-    // Events should be gone from visible list
+    // No confirmation shown
+    expect(confirmSpy).not.toHaveBeenCalled();
+
+    // Events should be removed (no confirmation needed)
     expect(result.current.events.length).toBe(0);
 
-    // UNSTAR_EVENT sent immediately for all 5 events (no pending deletions)
-    expect(unstarredIds.length).toBe(5);
-    expect(unstarredIds.sort()).toEqual(['event-1', 'event-2', 'event-3', 'event-4', 'event-5']);
+    // UNSTAR_EVENT sent for all 5 events
+    const sendMessageMock = mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>;
+    const unstarCalls = sendMessageMock.mock.calls.filter(
+      (call) => (call[0] as { command: string }).command === 'UNSTAR_EVENT',
+    );
+    expect(unstarCalls.length).toBe(5);
 
-    // No pending deletions (bulk action skips undo toast)
-    expect(result.current.pendingDeletions.length).toBe(0);
-
+    confirmSpy.mockRestore();
     unmount();
   });
 
-  it('events are removed from visible list immediately when unstarSelected is called', async () => {
-    const allEvents: StarredEvent[] = [
-      makeEvent('event-1', 'Seminarium A'),
-      makeEvent('event-2', 'Workshop B'),
-      makeEvent('event-3', 'Panel C'),
-    ];
+  it('does not remove events if window.confirm throws', async () => {
+    const allEvents: StarredEvent[] = Array.from({ length: 6 }, (_, i) =>
+      makeEvent(`event-${i + 1}`, `Event ${i + 1}`),
+    );
 
-    const sendMessageMock = mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>;
-    sendMessageMock.mockImplementation((message: { command: string }) => {
-      if (message.command === 'GET_ALL_STARRED_EVENTS') {
-        return Promise.resolve({ success: true, data: [...allEvents] });
-      }
-      if (message.command === 'GET_SORT_ORDER') {
-        return Promise.resolve({ success: true, data: 'chronological' as SortOrder });
-      }
-      return Promise.resolve({ success: true, data: undefined });
+    setupSendMessage(allEvents);
+
+    const getMessageMock = mockBrowserApi.getMessage as ReturnType<typeof vi.fn>;
+    getMessageMock.mockImplementation((key: string) => {
+      if (key === 'bulkUnstarConfirm') return 'Do you want to remove these starred events?';
+      return '';
     });
 
-    const onStorageChangedMock = mockBrowserApi.onStorageChanged as ReturnType<typeof vi.fn>;
-    onStorageChangedMock.mockImplementation(() => () => {});
+    // Mock window.confirm to throw
+    const confirmSpy = vi.spyOn(window, 'confirm').mockImplementation(() => {
+      throw new Error('confirm blocked');
+    });
 
     const { result, unmount } = renderHook(() => useStarredEvents(mockBrowserApi, null));
 
@@ -122,21 +222,20 @@ describe('Stars Page: unstarSelected → immediate UNSTAR_EVENT', () => {
       expect(result.current.loading).toBe(false);
     });
 
-    // Select all
+    // Select all 6 events
     act(() => {
       result.current.selectAll();
     });
 
-    // Bulk unstar
+    // Bulk unstar — confirm throws
     act(() => {
       result.current.unstarSelected();
     });
 
-    // ALL events removed from visible list immediately
-    expect(result.current.events.length).toBe(0);
-    // No pending deletions
-    expect(result.current.pendingDeletions.length).toBe(0);
+    // Events should NOT be removed (safe default)
+    expect(result.current.events.length).toBe(6);
 
+    confirmSpy.mockRestore();
     unmount();
   });
 });

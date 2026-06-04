@@ -258,6 +258,17 @@ export function useStarredEvents(
   }, []);
 
   const unstarSelected = useCallback((): void => {
+    // If more than 5 events selected, require confirmation before removal
+    if (selectedIds.size > 5) {
+      try {
+        const confirmed = window.confirm(adapter.getMessage('bulkUnstarConfirm'));
+        if (!confirmed) return;
+      } catch {
+        // If window.confirm throws, default to not removing events
+        return;
+      }
+    }
+
     // Bulk action: remove from local state AND send UNSTAR_EVENT immediately
     // (no undo toast for explicit bulk actions — too slow for UX)
     const idsToRemove = new Set(selectedIds);

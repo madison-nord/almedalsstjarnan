@@ -161,6 +161,10 @@
     "message": "Exportera markerade",
     "description": "Button label for batch export action on selected events"
   },
+  "bulkUnstarConfirm": {
+    "message": "Vill du ta bort dessa stjärnmärkta evenemang?",
+    "description": "Confirmation dialog message shown when bulk-unstarring more than 5 events"
+  },
   "onboardingTitle": {
     "message": "Välkommen till Almedalsstjärnan",
     "description": "Onboarding view heading shown on first run"
