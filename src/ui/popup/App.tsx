@@ -18,15 +18,15 @@
  * Requirements: 9.1–9.9, 7.1, 7.2, 7.3, 6.1, 6.2, 6.3, 6.4
  */
 
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 import type { IBrowserApiAdapter } from '#core/types';
-import { getLocalizedMessage } from '#core/locale-messages';
 
 import { SortSelector } from '#ui/shared/SortSelector';
 import { UndoToast } from '#ui/shared/UndoToast';
 import { LanguageToggle } from '#ui/shared/LanguageToggle';
 import { HelpModal } from '#ui/shared/HelpModal';
+import { useLocalizedAdapter } from '#ui/shared/hooks/useLocalizedAdapter';
 
 import { EventList } from './components/EventList';
 import { EmptyState } from './components/EmptyState';
@@ -123,19 +123,7 @@ export function App({ adapter }: AppProps): React.JSX.Element {
     setLocale(newLocale);
   }, []);
 
-  const localizedAdapter: IBrowserApiAdapter = useMemo(() => {
-    if (!locale) return adapter;
-    return {
-      storageLocalGet: adapter.storageLocalGet.bind(adapter),
-      storageLocalSet: adapter.storageLocalSet.bind(adapter),
-      sendMessage: adapter.sendMessage.bind(adapter),
-      download: adapter.download.bind(adapter),
-      createTab: adapter.createTab.bind(adapter),
-      onStorageChanged: adapter.onStorageChanged.bind(adapter),
-      getMessage: (key: string): string =>
-        getLocalizedMessage(key, locale) || adapter.getMessage(key),
-    };
-  }, [adapter, locale]);
+  const localizedAdapter = useLocalizedAdapter(adapter, locale);
 
   const handleOpenFullList = (): void => {
     void adapter.createTab({ url: 'src/ui/stars/stars.html' });

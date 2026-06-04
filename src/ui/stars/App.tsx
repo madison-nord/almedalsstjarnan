@@ -16,14 +16,14 @@
  * Requirements: 10.1–10.10, 7.1, 7.2, 7.3
  */
 
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import type { IBrowserApiAdapter } from '#core/types';
-import { getLocalizedMessage } from '#core/locale-messages';
 
 import { HelpModal } from '#ui/shared/HelpModal';
 import { SortSelector } from '#ui/shared/SortSelector';
 import { UndoToast } from '#ui/shared/UndoToast';
+import { useLocalizedAdapter } from '#ui/shared/hooks/useLocalizedAdapter';
 
 import { EventGrid } from './components/EventGrid';
 import { ExportButton } from './components/ExportButton';
@@ -86,19 +86,7 @@ export function App({ adapter }: AppProps): React.JSX.Element {
     };
   }, [adapter]);
 
-  const localizedAdapter: IBrowserApiAdapter = useMemo(() => {
-    if (!locale) return adapter;
-    return {
-      storageLocalGet: adapter.storageLocalGet.bind(adapter),
-      storageLocalSet: adapter.storageLocalSet.bind(adapter),
-      sendMessage: adapter.sendMessage.bind(adapter),
-      download: adapter.download.bind(adapter),
-      createTab: adapter.createTab.bind(adapter),
-      onStorageChanged: adapter.onStorageChanged.bind(adapter),
-      getMessage: (key: string): string =>
-        getLocalizedMessage(key, locale) || adapter.getMessage(key),
-    };
-  }, [adapter, locale]);
+  const localizedAdapter = useLocalizedAdapter(adapter, locale);
 
   if (loading) {
     return (
