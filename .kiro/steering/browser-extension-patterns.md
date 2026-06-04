@@ -23,7 +23,7 @@ fileMatchPattern: 'src/extension/**'
 
 ## Message Passing
 
-- Use only the 6 defined `MessageCommand` types: `STAR_EVENT`, `UNSTAR_EVENT`, `GET_STAR_STATE`, `GET_ALL_STARRED_EVENTS`, `GET_SORT_ORDER`, `SET_SORT_ORDER`.
+- Use only the 11 defined `MessageCommand` types: `STAR_EVENT`, `UNSTAR_EVENT`, `GET_STAR_STATE`, `GET_ALL_STARRED_EVENTS`, `GET_SORT_ORDER`, `SET_SORT_ORDER`, `GET_ONBOARDING_STATE`, `SET_ONBOARDING_STATE`, `GET_LANGUAGE_PREFERENCE`, `SET_LANGUAGE_PREFERENCE`, `UPDATE_STARRED_EVENT`.
 - Always send messages via `adapter.sendMessage()`.
 - Always handle `MessageResponseError` in the caller.
 - The background service worker is the single source of truth for all storage operations.
