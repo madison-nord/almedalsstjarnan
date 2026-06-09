@@ -213,7 +213,7 @@ describe('Bug 4: Inconsistent Swedish help translations', () => {
    */
   it('Swedish helpModalTitle uses question framing', async () => {
     // Load the actual Swedish messages
-    const svMessages = (await import('../../_locales/sv/messages.json')) as Record<
+    const svMessages = (await import('../../_locales/sv/messages.json')).default as unknown as Record<
       string,
       { readonly message: string }
     >;
@@ -226,7 +226,7 @@ describe('Bug 4: Inconsistent Swedish help translations', () => {
 
   it('Swedish helpGroupStarsPageDesc references "Öppna hela listan"', async () => {
     // Load the actual Swedish messages
-    const svMessages = (await import('../../_locales/sv/messages.json')) as Record<
+    const svMessages = (await import('../../_locales/sv/messages.json')).default as unknown as Record<
       string,
       { readonly message: string }
     >;
