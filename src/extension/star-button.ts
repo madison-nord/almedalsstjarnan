@@ -142,7 +142,9 @@ export function createStarButton(
   }
 
   // Wire click handler
-  function handleClick(): void {
+  function handleClick(event: MouseEvent): void {
+    event.stopPropagation();
+    event.preventDefault();
     if (starred) {
       void (async () => {
         try {
