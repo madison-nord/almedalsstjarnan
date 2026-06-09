@@ -143,13 +143,6 @@ export function EventItem({
         </div>
         {expanded && (
           <div className="mt-1.5 text-xs text-gray-600 space-y-0.5">
-            {event.startDateTime && event.endDateTime && (
-              <p>
-                <span className="font-medium text-gray-700">
-                  {formatEventDateTime(event.startDateTime, event.endDateTime, locale)}
-                </span>
-              </p>
-            )}
             {event.topic && (
               <p>
                 <span className="font-medium text-gray-700">{event.topic}</span>

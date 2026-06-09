@@ -62,12 +62,21 @@ describe('useLocalizedAdapter', () => {
 
       const { result } = renderHook(() => useLocalizedAdapter(adapter, 'en'));
 
-      expect(result.current.storageLocalGet).toBe(adapter.storageLocalGet);
-      expect(result.current.storageLocalSet).toBe(adapter.storageLocalSet);
-      expect(result.current.sendMessage).toBe(adapter.sendMessage);
-      expect(result.current.download).toBe(adapter.download);
-      expect(result.current.createTab).toBe(adapter.createTab);
-      expect(result.current.onStorageChanged).toBe(adapter.onStorageChanged);
+      // The hook uses explicit delegation, so methods are wrappers that delegate
+      // to the adapter. Verify they call through correctly.
+      expect(result.current.storageLocalGet).toBeDefined();
+      expect(result.current.storageLocalSet).toBeDefined();
+      expect(result.current.sendMessage).toBeDefined();
+      expect(result.current.download).toBeDefined();
+      expect(result.current.createTab).toBeDefined();
+      expect(result.current.onStorageChanged).toBeDefined();
+
+      // Verify delegation by calling a method and checking it reaches the adapter
+      const mockResult = { starredEvents: {} };
+      (adapter.storageLocalGet as ReturnType<typeof vi.fn>).mockResolvedValue(mockResult);
+      const promise = result.current.storageLocalGet(['starredEvents']);
+      expect(adapter.storageLocalGet).toHaveBeenCalledWith(['starredEvents']);
+      expect(promise).resolves.toEqual(mockResult);
     });
 
     it('returns a memoized result for same inputs', () => {

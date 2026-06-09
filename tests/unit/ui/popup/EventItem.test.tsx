@@ -227,7 +227,7 @@ describe('Popup EventItem star toggle and source link', () => {
       expect(screen.getByText('Demokrati')).toBeInTheDocument();
     });
 
-    it('expanded state shows full time range', async () => {
+    it('expanded state shows full time range exactly once (no duplicate)', async () => {
       const user = userEvent.setup();
       const event = makeEvent({
         startDateTime: '2026-06-22T10:00:00+02:00',
@@ -239,8 +239,9 @@ describe('Popup EventItem star toggle and source link', () => {
       await user.click(toggle);
 
       // Since formatEventDateTime is mocked, check for mocked value
+      // After the fix, the date/time should appear exactly once (in summary only)
       const timeElements = screen.getAllByText('Mocked Date');
-      expect(timeElements.length).toBeGreaterThanOrEqual(2);
+      expect(timeElements.length).toBe(1);
     });
 
     it('clicking toggle again collapses the expanded content', async () => {
