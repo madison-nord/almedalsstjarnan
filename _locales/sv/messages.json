@@ -248,7 +248,7 @@
     "description": "Label shown in tooltip for the conflict dot indicator on overlapping events"
   },
   "helpModalTitle": {
-    "message": "Snabbguide",
+    "message": "Vad kan Almedalsstjärnan göra?",
     "description": "Title heading displayed at the top of the help modal"
   },
   "helpModalDismiss": {
@@ -276,7 +276,7 @@
     "description": "Heading for the stars page feature group in help modal"
   },
   "helpGroupStarsPageDesc": {
-    "message": "En helsidesvy med alla dina stjärnmärkta evenemang i ett överskådligt rutnät. Öppna via länken i popupen.",
+    "message": "Klicka på 'Öppna hela listan' i popupen för en helsida med alla dina stjärnmärkta evenemang i ett sökbart, sorterbart rutnät.",
     "description": "Description for the stars page feature group in help modal"
   },
   "helpGroupSortingHeading": {
