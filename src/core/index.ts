@@ -35,7 +35,15 @@ export { BrowserApiAdapter, createBrowserApiAdapter } from './browser-api-adapte
 
 export { parseICS, unfoldLines, unescapeICSText } from './ics-parser';
 
-export { normalizeEvent, deriveEventId, parseDateTime } from './event-normalizer';
+export type { ContentSection } from './event-normalizer';
+export {
+  normalizeEvent,
+  deriveEventId,
+  parseDateTime,
+  extractContentSections,
+  CONTENT_SECTION_HEADINGS,
+  MAX_DESCRIPTION_LENGTH,
+} from './event-normalizer';
 
 export type { YearMismatchResult } from './date-config';
 export {

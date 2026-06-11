@@ -140,6 +140,79 @@ function extractDomDescription(element: Element): string | null {
   return text || null;
 }
 
+// ─── Content Section Extraction ───────────────────────────────────
+
+/** Known content section headings in the Event_Card detail area. */
+export const CONTENT_SECTION_HEADINGS = [
+  'Beskrivning av samhällsfrågan',
+  'Utökad information om evenemanget',
+  'Medverkande',
+  'Evenemangsinformation',
+  'Arrangörsuppgifter',
+] as const;
+
+/** Maximum characters for the assembled description field. */
+export const MAX_DESCRIPTION_LENGTH = 10000;
+
+export interface ContentSection {
+  readonly heading: string;
+  readonly paragraphs: readonly string[];
+}
+
+/**
+ * Extracts all content sections from an Event_Card's collapse container.
+ * Walks h3 elements within the collapse div, identifies known headings,
+ * and collects sibling paragraph text until the next h3 or end of container.
+ * @returns Formatted description string or null if no sections found.
+ */
+export function extractContentSections(element: Element): string | null {
+  const collapseDiv = element.querySelector('div.env-collapse');
+  if (!collapseDiv) return null;
+
+  const sections: ContentSection[] = [];
+  const headings = collapseDiv.querySelectorAll(':scope > h3');
+
+  for (const h3 of headings) {
+    const headingText = h3.textContent?.trim() ?? '';
+    if (
+      !CONTENT_SECTION_HEADINGS.includes(
+        headingText as (typeof CONTENT_SECTION_HEADINGS)[number],
+      )
+    ) {
+      continue;
+    }
+
+    const paragraphs: string[] = [];
+    let sibling = h3.nextElementSibling;
+    while (sibling && sibling.tagName !== 'H3') {
+      if (sibling.tagName === 'P') {
+        const text = sibling.textContent?.trim() ?? '';
+        if (text.length > 0) {
+          paragraphs.push(text);
+        }
+      }
+      sibling = sibling.nextElementSibling;
+    }
+
+    if (paragraphs.length > 0) {
+      sections.push({ heading: headingText, paragraphs });
+    }
+  }
+
+  if (sections.length === 0) return null;
+
+  const assembled = sections
+    .map((s) => `${s.heading}:\n${s.paragraphs.join('\n')}`)
+    .join('\n\n');
+
+  const trimmed = assembled.trim();
+  if (trimmed.length === 0) return null;
+
+  return trimmed.length > MAX_DESCRIPTION_LENGTH
+    ? trimmed.slice(0, MAX_DESCRIPTION_LENGTH)
+    : trimmed;
+}
+
 function extractDomIcsDataUri(element: Element): string | null {
   const anchor = element.querySelector('a[href^="data:text/calendar"]');
   return anchor?.getAttribute('href') ?? null;
