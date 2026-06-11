@@ -33,7 +33,11 @@ describe('normalizeEvent', () => {
       expect(result.event.startDateTime).toBe('2026-06-22T07:30:00+02:00');
       expect(result.event.endDateTime).toBe('2026-06-22T08:30:00+02:00');
       expect(result.event.location).toBe('Holmen 1');
-      expect(result.event.description).toBe(
+      // DOM content sections now take priority over ICS short description
+      expect(result.event.description).toContain('Beskrivning av samhällsfrågan:');
+      expect(result.event.description).toContain('Samhällsfrågebeskrivning');
+      expect(result.event.description).toContain('Utökad information om evenemanget:');
+      expect(result.event.description).toContain(
         'Efter en kort inledning bjuder vi in till ett samtal ombord på båten Vagabonde. Varmt välkommen!',
       );
       expect(result.event.topic).toBe('Hållbarhet, Ekonomi');
@@ -63,10 +67,9 @@ describe('normalizeEvent', () => {
       expect(result.event.endDateTime).toBe('2026-06-22T08:30:00+02:00');
       // ICS LOCATION
       expect(result.event.location).toBe('Holmen 1');
-      // ICS DESCRIPTION
-      expect(result.event.description).toBe(
-        'Efter en kort inledning bjuder vi in till ett samtal ombord på båten Vagabonde. Varmt välkommen!',
-      );
+      // DOM content sections now take priority over ICS short description
+      expect(result.event.description).toContain('Beskrivning av samhällsfrågan:');
+      expect(result.event.description).toContain('Utökad information om evenemanget:');
       // ICS URL → sourceUrl
       expect(result.event.sourceUrl).toBe(
         'https://almedalsveckan.info/rg/almedalsveckan/evenemang-almedalsveckan/2026/8363',
@@ -148,6 +151,7 @@ describe('normalizeEvent', () => {
       const card = createMockEventCard({
         description: '',
         icsDataUri: icsUri,
+        includeDetails: false,
       });
       const result = normalizeEvent(card);
 
@@ -249,14 +253,21 @@ describe('normalizeEvent', () => {
     });
 
     it('trims whitespace from description', () => {
-      // Use ICS URI without DESCRIPTION so DOM description is used
+      // Create card with no collapse div (no DOM sections),
+      // but manually add ICS link so ICS description fallback is used
       const icsUri =
-        'data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0AURL:https://almedalsveckan.info/rg/almedalsveckan/evenemang-almedalsveckan/2026/8363%0ADTSTART:20260622T073000%0ADTEND:20260622T083000%0ASUMMARY:Test%20Event%0ALOCATION:Holmen%201%0AEND:VEVENT%0AEND:VCALENDAR';
+        'data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0AURL:https://almedalsveckan.info/rg/almedalsveckan/evenemang-almedalsveckan/2026/8363%0ADTSTART:20260622T073000%0ADTEND:20260622T083000%0ASUMMARY:Test%20Event%0ADESCRIPTION:%20%20Some%20description%20%20%0ALOCATION:Holmen%201%0AEND:VEVENT%0AEND:VCALENDAR';
 
       const card = createMockEventCard({
         description: '  Some description  ',
         icsDataUri: icsUri,
+        includeDetails: false,
       });
+      // Manually add the ICS anchor since includeDetails: false removes it
+      const anchor = document.createElement('a');
+      anchor.href = icsUri;
+      card.appendChild(anchor);
+
       const result = normalizeEvent(card);
 
       expectSuccess(result);
@@ -334,7 +345,10 @@ describe('normalizeEvent', () => {
       expect(result.event.title).toBe('DOM Only Event');
       expect(result.event.organiser).toBe('Test Org');
       expect(result.event.location).toBe('Test Location');
-      expect(result.event.description).toBe('Test Description');
+      // extractContentSections extracts all sections from collapse div
+      expect(result.event.description).toContain('Beskrivning av samhällsfrågan:');
+      expect(result.event.description).toContain('Utökad information om evenemanget:');
+      expect(result.event.description).toContain('Test Description');
       expect(result.event.topic).toBe('Demokrati');
       expect(result.event.icsDataUri).toBeNull();
     });

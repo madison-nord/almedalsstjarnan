@@ -134,12 +134,6 @@ function extractDomTopic(element: Element): string | null {
   return joined || null;
 }
 
-function extractDomDescription(element: Element): string | null {
-  const desc = element.querySelector('.description');
-  const text = desc?.textContent?.trim() ?? null;
-  return text || null;
-}
-
 // ─── Content Section Extraction ───────────────────────────────────
 
 /** Known content section headings in the Event_Card detail area. */
@@ -387,7 +381,7 @@ export function normalizeEvent(element: Element): NormalizerResult {
     const domTimeText = extractDomTimeText(element);
     const domOrganiser = extractDomOrganiser(element);
     const domLocation = extractDomLocation(element);
-    const domDescription = extractDomDescription(element);
+    const domDescription = extractContentSections(element);
     const domTopic = extractDomTopic(element);
     const domDetailUrl = extractDomDetailUrl(element);
     const domEventId = extractDomEventId(element);
@@ -448,7 +442,7 @@ export function normalizeEvent(element: Element): NormalizerResult {
 
     // Resolve other fields: prefer ICS, fall back to DOM
     const location = trimOrNull(icsFields?.location ?? domLocation);
-    const description = trimOrNull(icsFields?.description ?? domDescription);
+    const description = trimOrNull(domDescription ?? icsFields?.description);
     const organiser = trimOrNull(domOrganiser);
     const topic = trimOrNull(domTopic);
     const sourceUrl = icsFields?.url?.trim() || null;

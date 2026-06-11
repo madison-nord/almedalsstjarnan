@@ -16,11 +16,23 @@ import type {
   GetStarStateData,
 } from '#core/types';
 import type { MutableFields } from '#core/event-field-comparator';
+import { normalizeEvent } from '#core/event-normalizer';
 import { processEventCard } from '#extension/content-script';
 import { mockBrowserApi, resetMocks } from '#test/helpers/mock-browser-api';
 import { createMockEventCard } from '#test/helpers/dom-helpers';
 
 // ─── Helpers ──────────────────────────────────────────────────────
+
+/**
+ * Compute the expected description from the default mock card.
+ * This ensures the stored fields always match what normalizeEvent produces.
+ */
+function getDefaultDescription(): string | null {
+  const card = createMockEventCard();
+  const result = normalizeEvent(card);
+  if (result.ok) return result.event.description;
+  return null;
+}
 
 /** Default stored fields matching what normalizeEvent produces from the default mock event card */
 const DEFAULT_STORED_FIELDS: MutableFields = {
@@ -29,8 +41,7 @@ const DEFAULT_STORED_FIELDS: MutableFields = {
   startDateTime: '2026-06-22T07:30:00+02:00',
   endDateTime: '2026-06-22T08:30:00+02:00',
   location: 'Holmen 1',
-  description:
-    'Efter en kort inledning bjuder vi in till ett samtal ombord på båten Vagabonde. Varmt välkommen!',
+  description: getDefaultDescription(),
   topic: 'Hållbarhet, Ekonomi',
   sourceUrl: 'https://almedalsveckan.info/rg/almedalsveckan/evenemang-almedalsveckan/2026/8363',
   icsDataUri:
