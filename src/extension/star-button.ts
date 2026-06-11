@@ -179,6 +179,7 @@ export function createStarButton(
 
   return {
     update(newStarred: boolean): void {
+      if (newStarred === starred) return; // Guard: skip if no change
       starred = newStarred;
       render();
     },
