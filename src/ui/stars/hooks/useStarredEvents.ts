@@ -33,6 +33,10 @@ import { filterEvents } from '#core/event-filter';
 import type { SupportedLocale } from '#core/locale-messages';
 import { resolveEffectiveLocale } from '#core/locale-messages';
 
+export interface UseStarredEventsOptions {
+  readonly onLanguageChange?: (locale: 'sv' | 'en' | null) => void;
+}
+
 export interface UseStarredEventsResult {
   readonly events: readonly StarredEvent[];
   readonly sortOrder: SortOrder;
@@ -59,6 +63,7 @@ export interface UseStarredEventsResult {
 export function useStarredEvents(
   adapter: IBrowserApiAdapter,
   languagePreference: SupportedLocale | null,
+  options?: UseStarredEventsOptions,
 ): UseStarredEventsResult {
   const [events, setEvents] = useState<readonly StarredEvent[]>([]);
   const [sortOrder, setSortOrder] = useState<SortOrder>(DEFAULT_SORT_ORDER);
@@ -131,15 +136,22 @@ export function useStarredEvents(
     };
   }, [adapter]);
 
+  const onLanguageChange = options?.onLanguageChange;
+
   useEffect(() => {
     const unsubscribe = adapter.onStorageChanged((changes) => {
       if ('starredEvents' in changes) {
         void fetchEvents(sortOrderRef.current);
       }
+      if ('languagePreference' in changes) {
+        const newValue =
+          (changes.languagePreference?.newValue as 'sv' | 'en' | null | undefined) ?? null;
+        onLanguageChange?.(newValue);
+      }
     });
 
     return unsubscribe;
-  }, [adapter, fetchEvents]);
+  }, [adapter, fetchEvents, onLanguageChange]);
 
   const changeSortOrder = useCallback((order: SortOrder): void => {
     setSortOrder(order);

@@ -109,7 +109,7 @@ function toICSTimestamp(date: Date): string {
  * Builds the DESCRIPTION field value from event description and source URL.
  * Returns null if both description and sourceUrl are absent.
  */
-function buildDescription(
+export function buildDescription(
   description: string | null,
   sourceUrl: string | null,
   locale: 'sv' | 'en',

@@ -56,7 +56,13 @@ export {
 
 export { sortEvents, isTimeBasedSort } from './sorter';
 
-export { generateICS, foldLine, escapeICSText, generateExportFilename } from './ics-generator';
+export {
+  generateICS,
+  foldLine,
+  escapeICSText,
+  buildDescription,
+  generateExportFilename,
+} from './ics-generator';
 
 export type { DateFormatterLocale } from './date-formatter';
 export { formatEventDateTime } from './date-formatter';
