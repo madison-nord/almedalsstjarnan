@@ -102,9 +102,23 @@ export function useStarredEvents(
               : response.data;
           const sorted = sortEvents(filtered, order);
           setEvents(sorted);
+
+          // Clean up stale selections — remove IDs no longer present in the event list
+          const newEventIds = new Set(sorted.map((e) => e.id));
+          setSelectedIds((prev) => {
+            const cleaned = new Set([...prev].filter((id) => newEventIds.has(id)));
+            return cleaned.size === prev.size ? prev : cleaned;
+          });
         } else {
           const sorted = sortEvents(response.data, order);
           setEvents(sorted);
+
+          // Clean up stale selections — remove IDs no longer present in the event list
+          const newEventIds = new Set(sorted.map((e) => e.id));
+          setSelectedIds((prev) => {
+            const cleaned = new Set([...prev].filter((id) => newEventIds.has(id)));
+            return cleaned.size === prev.size ? prev : cleaned;
+          });
         }
       }
     },

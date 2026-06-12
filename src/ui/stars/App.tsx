@@ -62,7 +62,7 @@ export function App({ adapter }: AppProps): React.JSX.Element {
     clearSelection,
     unstarSelected,
     exportSelected,
-  } = useStarredEvents(adapter, locale);
+  } = useStarredEvents(adapter, locale, { onLanguageChange: setLocale });
 
   useEffect(() => {
     let cancelled = false;
