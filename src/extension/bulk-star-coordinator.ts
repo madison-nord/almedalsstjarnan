@@ -184,12 +184,17 @@ export async function executeBulkStar(options: BulkStarOptions): Promise<BulkSta
     });
 
     // ─── Phase 3: Star State Check & Starring ─────────────────────
+    // Track whether the signal was already aborted before entering the starring phase.
+    // Per Req 4.5, cancellation during pagination should NOT prevent starring of
+    // already-loaded events — only cancellation during the starring phase itself
+    // should stop further STAR_EVENT messages (Req 4.6).
+    const abortedBeforeStarring = signal.aborted;
     const useBatching = normalizedEvents.length > BULK_STAR_CONSTANTS.BATCH_THRESHOLD;
     let eventsProcessed = 0;
     let eventsAttempted = 0;
 
     for (let i = 0; i < normalizedEvents.length; i++) {
-      if (signal.aborted) {
+      if (signal.aborted && !abortedBeforeStarring) {
         aborted = true;
         abortReason = 'user-cancel';
         break;
