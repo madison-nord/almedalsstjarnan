@@ -326,5 +326,73 @@
   "helpGroupLanguageDesc": {
     "message": "Växla mellan svenska och engelska via språkmenyn. Ändringen gäller för hela tilläggets gränssnitt.",
     "description": "Description for the language toggle feature group in help modal"
+  },
+  "bulkStarAll": {
+    "message": "Stjärnmärk alla",
+    "description": "Label for the bulk star all button on the programme page"
+  },
+  "bulkStarLoading": {
+    "message": "Laddar evenemang...",
+    "description": "Progress indicator text while loading/paginating events"
+  },
+  "bulkStarEventsFound": {
+    "message": "$1 evenemang hittade",
+    "description": "Progress indicator text showing count of events found after pagination",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "150"
+      }
+    }
+  },
+  "bulkStarProgress": {
+    "message": "$1 / $2",
+    "description": "Progress indicator showing starred count vs total during bulk operation",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "25"
+      },
+      "2": {
+        "content": "$2",
+        "example": "150"
+      }
+    }
+  },
+  "bulkStarCancel": {
+    "message": "Avbryt",
+    "description": "Cancel button label in the bulk star progress indicator"
+  },
+  "bulkStarComplete": {
+    "message": "$1 nya, $2 redan stjärnmärkta",
+    "description": "Summary shown when bulk star operation completes successfully",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "120"
+      },
+      "2": {
+        "content": "$2",
+        "example": "30"
+      }
+    }
+  },
+  "bulkStarCancelled": {
+    "message": "Avbrutet: $1 stjärnmärkta av $2",
+    "description": "Summary shown when bulk star operation is cancelled by user",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "50"
+      },
+      "2": {
+        "content": "$2",
+        "example": "150"
+      }
+    }
+  },
+  "bulkStarError": {
+    "message": "Något gick fel. Försök igen.",
+    "description": "Error message shown when bulk star operation fails due to high error rate"
   }
 }
