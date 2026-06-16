@@ -22,8 +22,12 @@ import type {
 import { normalizeEvent } from '#core/event-normalizer';
 import { compareEventFields } from '#core/event-field-comparator';
 import type { MutableFields } from '#core/event-field-comparator';
+import { resolveEffectiveLocale } from '#core/locale-messages';
 import { createStarButton } from '#extension/star-button';
 import { createBrowserApiAdapter } from '#core/browser-api-adapter';
+import { createBulkStarButton } from '#extension/bulk-star-button';
+import { createProgressIndicator } from '#extension/progress-indicator';
+import { executeBulkStar } from '#extension/bulk-star-coordinator';
 
 // ─── Internal State ───────────────────────────────────────────────
 
@@ -208,6 +212,10 @@ export function initContentScript(adapter: IBrowserApiAdapter): void {
     void processEventCard(card, adapter);
   }
 
+  // Mutable reference for bulk star button — assigned after creation below.
+  // Allows the MutationObserver to update visibility when new cards are added.
+  let bulkStarButtonRef: { readonly setVisible: (visible: boolean) => void } | null = null;
+
   // Create exactly ONE MutationObserver on document.body
   const observer = new MutationObserver((mutations: MutationRecord[]) => {
     for (const mutation of mutations) {
@@ -226,6 +234,12 @@ export function initContentScript(adapter: IBrowserApiAdapter): void {
           void processEventCard(card, adapter);
         }
       }
+    }
+
+    // Update bulk star button visibility after processing added nodes
+    if (bulkStarButtonRef) {
+      const currentCards = findEventCards(document);
+      bulkStarButtonRef.setVisible(currentCards.length > 0);
     }
   });
 
@@ -253,6 +267,58 @@ export function initContentScript(adapter: IBrowserApiAdapter): void {
       }
     },
   );
+
+  // ─── Bulk Star Button Integration ────────────────────────────────
+
+  const locale = resolveEffectiveLocale(null);
+
+  // Create and inject Bulk Star Button host element
+  const bulkStarHost = document.createElement('div');
+  bulkStarHost.id = 'almedals-bulk-star-host';
+  document.body.appendChild(bulkStarHost);
+
+  function handleBulkStarActivate(): void {
+    const controller = new AbortController();
+
+    // Create progress indicator host
+    const progressHost = document.createElement('div');
+    progressHost.id = 'almedals-progress-host';
+    document.body.appendChild(progressHost);
+
+    const progressIndicator = createProgressIndicator(progressHost, {
+      locale,
+      onCancel: () => controller.abort(),
+    });
+
+    // Disable button during operation
+    bulkStarButton.setDisabled(true);
+
+    void (async () => {
+      try {
+        await executeBulkStar({
+          adapter,
+          onProgress: (progress) => progressIndicator.update(progress),
+          signal: controller.signal,
+          locale,
+        });
+      } catch {
+        // Never expected (coordinator never throws), but safety net
+      } finally {
+        bulkStarButton.setDisabled(false);
+      }
+    })();
+  }
+
+  const bulkStarButton = createBulkStarButton(bulkStarHost, {
+    locale,
+    onActivate: handleBulkStarActivate,
+  });
+
+  // Wire up the mutable reference for the MutationObserver
+  bulkStarButtonRef = bulkStarButton;
+
+  // Set initial visibility based on existing Event_Cards
+  bulkStarButton.setVisible(existingCards.length > 0);
 }
 
 // ─── Internal Helpers ─────────────────────────────────────────────
