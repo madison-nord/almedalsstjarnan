@@ -218,17 +218,9 @@ export async function executeBulkStar(options: BulkStarOptions): Promise<BulkSta
 
     // Normalize all cards
     const normalizedEvents: NormalizedEvent[] = [];
-    const seenIds = new Set<string>();
     for (const element of cardElements) {
       const result = normalizeEvent(element);
       if (result.ok) {
-        // Deduplicate by event ID — some cards may produce the same ID
-        // (e.g., same title + time with no unique identifier)
-        if (seenIds.has(result.event.id)) {
-          eventsSkipped++;
-          continue;
-        }
-        seenIds.add(result.event.id);
         normalizedEvents.push(result.event);
       } else {
         eventsSkipped++;
