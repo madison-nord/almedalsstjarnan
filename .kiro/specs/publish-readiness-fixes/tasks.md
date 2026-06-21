@@ -41,7 +41,7 @@ This plan addresses five independent technical gaps blocking Chrome Web Store pu
 - [~] 2. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 3. Add GitHub Pages workflow for privacy policy
+- [x] 3. Add GitHub Pages workflow for privacy policy
   - [x] 3.1 Create `.github/workflows/pages.yml` workflow file
     - Trigger on pushes to `main` that modify `PRIVACY.md` or the workflow file
     - Use `actions/configure-pages` + `actions/upload-pages-artifact` + `actions/deploy-pages`
@@ -56,23 +56,23 @@ This plan addresses five independent technical gaps blocking Chrome Web Store pu
     - Ensure rendered output is formatted HTML (not raw Markdown)
     - _Requirements: 2.1, 2.2, 2.5_
 
-  - [~] 3.3 Update `store/README.md` with the privacy policy URL
+  - [x] 3.3 Update `store/README.md` with the privacy policy URL
     - Add `https://madison-nord.github.io/almedalsstjarnan/PRIVACY` to the hosting documentation section
     - _Requirements: 2.6_
 
-- [ ] 4. Bundle analysis and optimization
+- [x] 4. Bundle analysis and optimization
   - [x] 4.1 Add `manualChunks` configuration to `vite.config.ts`
     - Add `build.rollupOptions.output.manualChunks` to separate React/ReactDOM into `vendor-react` chunk
     - This removes React from the shared chunk, reducing it significantly
     - _Requirements: 3.2, 3.4, 3.5_
 
-  - [~] 4.2 Create `BUNDLE-ANALYSIS.md` documenting the shared chunk composition
+  - [x] 4.2 Create `BUNDLE-ANALYSIS.md` documenting the shared chunk composition
     - List each module contributing to the shared chunk with approximate KB size
     - Include justification if chunk remains above 150 KB after optimization
     - Document the manualChunks optimization applied
     - _Requirements: 3.1, 3.3_
 
-  - [~] 4.3 Verify total `dist/` size remains below 500 KB
+  - [x] 4.3 Verify total `dist/` size remains below 500 KB
     - Run build and check total uncompressed dist size
     - Ensure CI bundle size check still passes
     - _Requirements: 3.6_
@@ -81,7 +81,7 @@ This plan addresses five independent technical gaps blocking Chrome Web Store pu
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 6. Fix stars page CSS bundling
-  - [~] 6.1 Write E2E test for stars CSS in `tests/e2e/stars-css.e2e.test.ts`
+  - [x] 6.1 Write E2E test for stars CSS in `tests/e2e/stars-css.e2e.test.ts`
     - Assert the stars page root container has computed `display: flex`
     - Assert the stars page root container has computed `min-height: 100vh`
     - Confirms CSS is loaded and applied correctly
