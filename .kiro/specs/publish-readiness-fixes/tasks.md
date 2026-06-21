@@ -80,14 +80,14 @@ This plan addresses five independent technical gaps blocking Chrome Web Store pu
 - [~] 5. Checkpoint - Ensure build and all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 6. Fix stars page CSS bundling
+- [x] 6. Fix stars page CSS bundling
   - [x] 6.1 Write E2E test for stars CSS in `tests/e2e/stars-css.e2e.test.ts`
     - Assert the stars page root container has computed `display: flex`
     - Assert the stars page root container has computed `min-height: 100vh`
     - Confirms CSS is loaded and applied correctly
     - _Requirements: 4.4, 4.5_
 
-  - [~] 6.2 Fix Vite/PostCSS configuration so stars.html references correct CSS
+  - [x] 6.2 Fix Vite/PostCSS configuration so stars.html references correct CSS
     - Investigate the built `dist/src/ui/stars/stars.html` `<link>` element
     - Ensure it references a CSS file containing Tailwind utilities for the stars page
     - Fix via plugin configuration, post-build script, or separate CSS entry as needed
@@ -95,7 +95,7 @@ This plan addresses five independent technical gaps blocking Chrome Web Store pu
     - _Requirements: 4.1, 4.2, 4.3, 4.4_
 
 - [ ] 7. Resolve Dependabot security alerts
-  - [~] 7.1 Update vulnerable devDependencies and add pnpm.overrides
+  - [x] 7.1 Update vulnerable devDependencies and add pnpm.overrides
     - Run `pnpm audit` to identify critical/high vulnerabilities
     - Bump direct devDependencies to patched versions where available
     - Add `pnpm.overrides` entries for transitive dependency vulnerabilities

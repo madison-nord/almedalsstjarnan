@@ -2,7 +2,7 @@ import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import webExtension from 'vite-plugin-web-extension';
 import { resolve } from 'node:path';
-import { cpSync } from 'node:fs';
+import { cpSync, copyFileSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { mergeManifest } from './src/extension/manifest/merge-manifest';
 import baseManifest from './src/extension/manifest/base.json';
 import chromeOverride from './src/extension/manifest/chrome.json';
@@ -48,6 +48,41 @@ function vendorChunks(): Plugin {
   };
 }
 
+/**
+ * Fixes the stars page CSS reference after build.
+ *
+ * Vite deduplicates identical CSS entry points (popup.css and stars.css both
+ * contain only Tailwind directives) into a single chunk named after the first
+ * entry (popup.css). This plugin copies that CSS to dist/stars.css and updates
+ * the stars HTML to reference it, ensuring stars.html loads its own stylesheet.
+ */
+function fixStarsCss(): Plugin {
+  return {
+    name: 'fix-stars-css',
+    closeBundle() {
+      const outDir = resolve(__dirname, 'dist');
+      const starsHtml = resolve(outDir, 'src/ui/stars/stars.html');
+      const popupCss = resolve(outDir, 'popup.css');
+      const starsCss = resolve(outDir, 'stars.css');
+
+      // Only run when the stars HTML exists (multi-entry build step)
+      if (!existsSync(starsHtml)) return;
+
+      // Copy popup.css → stars.css (they contain identical Tailwind output)
+      if (existsSync(popupCss) && !existsSync(starsCss)) {
+        copyFileSync(popupCss, starsCss);
+      }
+
+      // Rewrite the <link> in stars.html to reference /stars.css
+      let html = readFileSync(starsHtml, 'utf-8');
+      if (html.includes('/popup.css')) {
+        html = html.replace('/popup.css', '/stars.css');
+        writeFileSync(starsHtml, html, 'utf-8');
+      }
+    },
+  };
+}
+
 export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
@@ -57,6 +92,7 @@ export default defineConfig(({ mode }) => ({
     }),
     copyExtensionAssets(),
     vendorChunks(),
+    fixStarsCss(),
   ],
   publicDir: 'public',
   resolve: {
