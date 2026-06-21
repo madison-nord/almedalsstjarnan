@@ -23,6 +23,7 @@ import { normalizeEvent } from '#core/event-normalizer';
 import { compareEventFields } from '#core/event-field-comparator';
 import type { MutableFields } from '#core/event-field-comparator';
 import { resolveEffectiveLocale } from '#core/locale-messages';
+import type { SupportedLocale } from '#core/locale-messages';
 import { createStarButton } from '#extension/star-button';
 import { createBrowserApiAdapter } from '#core/browser-api-adapter';
 import { createBulkStarButton } from '#extension/bulk-star-button';
@@ -214,7 +215,10 @@ export function initContentScript(adapter: IBrowserApiAdapter): void {
 
   // Mutable reference for bulk star button — assigned after creation below.
   // Allows the MutationObserver to update visibility when new cards are added.
-  let bulkStarButtonRef: { readonly setVisible: (visible: boolean) => void } | null = null;
+  let bulkStarButtonRef: {
+    readonly setVisible: (visible: boolean) => void;
+    readonly setLocale: (locale: SupportedLocale) => void;
+  } | null = null;
 
   // Create exactly ONE MutationObserver on document.body
   const observer = new MutationObserver((mutations: MutationRecord[]) => {
@@ -253,17 +257,26 @@ export function initContentScript(adapter: IBrowserApiAdapter): void {
   // Register cross-tab consistency listener
   adapter.onStorageChanged(
     (changes: Record<string, { readonly oldValue?: unknown; readonly newValue?: unknown }>) => {
+      // Update star buttons when starred events change
       const starredEventsChange = changes['starredEvents'];
-      if (!starredEventsChange) return;
+      if (starredEventsChange) {
+        const newStarredEvents = (starredEventsChange.newValue ?? {}) as Record<string, StarredEvent>;
 
-      const newStarredEvents = (starredEventsChange.newValue ?? {}) as Record<string, StarredEvent>;
-
-      // Update all tracked star buttons based on new storage state
-      for (const [eventId, buttons] of starButtonMap) {
-        const isStarred = eventId in newStarredEvents;
-        for (const button of buttons) {
-          button.update(isStarred);
+        // Update all tracked star buttons based on new storage state
+        for (const [eventId, buttons] of starButtonMap) {
+          const isStarred = eventId in newStarredEvents;
+          for (const button of buttons) {
+            button.update(isStarred);
+          }
         }
+      }
+
+      // Update bulk star button locale when language preference changes
+      const langChange = changes['languagePreference'];
+      if (langChange && bulkStarButtonRef) {
+        const newLang = (langChange.newValue ?? null) as 'sv' | 'en' | null;
+        const newLocale = resolveEffectiveLocale(newLang);
+        bulkStarButtonRef.setLocale(newLocale);
       }
     },
   );

@@ -54,38 +54,44 @@ async function expandPagination(
 
     const button = document.querySelector('a[class*="load-more-button"]') as HTMLAnchorElement | null;
     if (!button) {
+      console.log('[Almedalsstjärnan] Pagination: no load-more button found, stopping');
       break;
     }
     // Check if button is hidden via display:none or visibility:hidden
     const style = window.getComputedStyle(button);
     if (style.display === 'none' || style.visibility === 'hidden') {
+      console.log('[Almedalsstjärnan] Pagination: load-more button is hidden, stopping');
       break;
     }
 
     const countBefore = countEventCards();
+    console.log(`[Almedalsstjärnan] Pagination: clicking load-more (click ${clicks + 1}), cards before: ${countBefore}`);
 
-    // The load-more button is an <a> with an href attribute. If we dispatch
-    // a click directly, the browser may follow the link before React's
-    // event handler fires. Remove href temporarily so the click triggers
-    // the React handler without navigation, then restore it.
-    const href = button.getAttribute('href');
-    if (href) {
-      button.removeAttribute('href');
-    }
+    // Simulate a real user click on the load-more button.
+    // We need: 1) React's handler to fire (to load more events)
+    //          2) No page navigation (the <a> has an href)
+    //
+    // Approach: Add a one-shot click listener that calls preventDefault()
+    // to block navigation while the event still bubbles to React's delegation.
+    button.addEventListener(
+      'click',
+      (e: Event) => e.preventDefault(),
+      { once: true },
+    );
     button.click();
-    if (href) {
-      button.setAttribute('href', href);
-    }
     clicks++;
 
     // Wait for new Event_Cards to appear or timeout
     const appeared = await waitForNewCards(countBefore, PAGINATION_CLICK_TIMEOUT_MS);
     if (!appeared) {
+      console.log(`[Almedalsstjärnan] Pagination: timeout waiting for new cards after click ${clicks}, stopping`);
       // Timeout — stop pagination, proceed with loaded events
       break;
     }
 
-    onBatchLoaded(countEventCards());
+    const countAfter = countEventCards();
+    console.log(`[Almedalsstjärnan] Pagination: new cards loaded, count now: ${countAfter}`);
+    onBatchLoaded(countAfter);
 
     // Wait between clicks
     await delay(PAGINATION_CLICK_DELAY_MS);

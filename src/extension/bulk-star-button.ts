@@ -22,6 +22,7 @@ export interface BulkStarButtonOptions {
 export interface BulkStarButtonHandle {
   readonly setDisabled: (disabled: boolean) => void;
   readonly setVisible: (visible: boolean) => void;
+  readonly setLocale: (locale: SupportedLocale) => void;
   readonly destroy: () => void;
 }
 
@@ -137,6 +138,11 @@ export function createBulkStarButton(
       } else {
         hostElement.setAttribute('data-hidden', 'true');
       }
+    },
+    setLocale(newLocale: SupportedLocale): void {
+      const newLabel = getLocalizedMessage('bulkStarAll', newLocale);
+      button.setAttribute('aria-label', newLabel);
+      button.innerHTML = `<svg class="star-icon" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 1.5l1.85 3.75 4.15.6-3 2.93.71 4.12L8 10.77 4.29 12.9l.71-4.12-3-2.93 4.15-.6L8 1.5z" fill="currentColor"/></svg><span>${newLabel}</span>`;
     },
     destroy(): void {
       button.removeEventListener('click', handleClick);
