@@ -300,27 +300,21 @@ export async function executeBulkStar(options: BulkStarOptions): Promise<BulkSta
       eventsAttempted++;
       let starred = false;
 
-      try {
-        const starResponse = await adapter.sendMessage<unknown>({
-          command: 'STAR_EVENT',
-          event,
-        });
-        starred = starResponse.success;
-      } catch {
-        starred = false;
-      }
-
-      // Retry once on failure
-      if (!starred) {
-        await delay(BULK_STAR_CONSTANTS.RETRY_DELAY_MS);
+      for (let attempt = 0; attempt <= BULK_STAR_CONSTANTS.MAX_RETRIES; attempt++) {
         try {
-          const retryResponse = await adapter.sendMessage<unknown>({
+          const starResponse = await adapter.sendMessage<unknown>({
             command: 'STAR_EVENT',
             event,
           });
-          starred = retryResponse.success;
+          if (starResponse.success) {
+            starred = true;
+            break;
+          }
         } catch {
-          starred = false;
+          // Message channel error — will retry
+        }
+        if (attempt < BULK_STAR_CONSTANTS.MAX_RETRIES) {
+          await delay(BULK_STAR_CONSTANTS.RETRY_DELAY_MS);
         }
       }
 
@@ -413,6 +407,8 @@ export async function executeBulkStar(options: BulkStarOptions): Promise<BulkSta
       eventsSkipped,
     });
   }
+
+  console.log(`[Almedalsstjärnan] Bulk star complete: found=${eventsFound}, starred=${eventsNewlyStarred}, already=${eventsAlreadyStarred}, failed=${eventsFailed}, skipped=${eventsSkipped}, aborted=${aborted}`);
 
   return {
     eventsFound,
