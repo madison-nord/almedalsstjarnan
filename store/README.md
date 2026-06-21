@@ -43,7 +43,7 @@ The Chrome Web Store requires a publicly accessible URL for the privacy policy. 
 2. Set the source branch (e.g., `main`) and root folder (`/`).
 3. The privacy policy will be available at:
    ```
-   https://<username>.github.io/<repo>/PRIVACY
+   https://madison-nord.github.io/almedalsstjarnan/PRIVACY
    ```
 4. Enter this URL in the Chrome Web Store developer dashboard under "Privacy policy URL".
 
@@ -52,7 +52,7 @@ The Chrome Web Store requires a publicly accessible URL for the privacy policy. 
 Use the raw file URL directly:
 
 ```
-https://raw.githubusercontent.com/<owner>/<repo>/main/PRIVACY.md
+https://raw.githubusercontent.com/madison-nord/almedalsstjarnan/main/PRIVACY.md
 ```
 
 This renders as plain Markdown but satisfies the Chrome Web Store requirement for a publicly accessible privacy policy URL.
@@ -60,3 +60,13 @@ This renders as plain Markdown but satisfies the Chrome Web Store requirement fo
 ### Recommendation
 
 GitHub Pages is preferred because it renders the Markdown as a formatted HTML page, providing a better experience for reviewers and users.
+
+## Generating Screenshots
+
+Run the screenshot script to automatically capture store-ready screenshots:
+
+```bash
+pnpm tsx scripts/capture-store-screenshots.ts
+```
+
+This builds the extension, loads it in Chromium via Playwright, navigates to the fixture page (or live site), and captures screenshots at the required 1280×800 dimensions. Output is saved to the `store/` directory.
