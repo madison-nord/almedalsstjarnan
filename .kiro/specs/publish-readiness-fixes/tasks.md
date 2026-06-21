@@ -23,7 +23,7 @@ This plan addresses five independent technical gaps blocking Chrome Web Store pu
     - Assert entry set matches generated file set exactly
     - **Validates: Requirements 1.4**
 
-  - [~] 1.3 Implement `collectFiles()` and `createZipBuffer()` in `scripts/package.ts`
+  - [x] 1.3 Implement `collectFiles()` and `createZipBuffer()` in `scripts/package.ts`
     - Replace platform-dependent `execFileSync` branches with pure Node.js implementation
     - Use `node:fs` for recursive file collection, `node:path` for path manipulation
     - Use `node:zlib` `deflateRawSync` for DEFLATE compression
