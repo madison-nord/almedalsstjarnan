@@ -40,6 +40,17 @@ npx playwright install chromium
 pnpm run test:e2e
 ```
 
+## Testing Strategy
+
+This project uses a layered testing approach:
+
+- **Unit tests (Vitest)** — cover all exported functions in `src/core/` with mocked browser APIs
+- **Property-based tests (fast-check)** — verify core logic invariants across randomized inputs:
+  - ICS round-trip preservation (generate → parse → compare)
+  - Sorter idempotence, length preservation, and ordering correctness
+  - Normalizer whitespace trimming and required field rejection
+- **E2E tests (Playwright)** — validate critical user flows (star/unstar, ICS export) in a real Chromium instance with the built extension loaded
+
 ## Other Commands
 
 ```bash
@@ -53,7 +64,7 @@ pnpm run package       # Build + zip for distribution
 
 ## Commit Format
 
-This project uses structured commit messages. See `.kiro/steering/git-workflow.md` for full details.
+This project uses structured commit messages:
 
 ```
 <type>(<scope>): <subject>
@@ -93,4 +104,10 @@ All three must pass before pushing.
 - **Constants:** `UPPER_SNAKE_CASE`
 - **Imports:** use `#core/*`, `#extension/*`, `#ui/*`, `#features/*`, `#test/*` path aliases (no cross-boundary relative imports)
 
-See `.kiro/steering/coding-conventions.md` for the complete reference.
+## Chrome Web Store
+
+The extension is published on the Chrome Web Store:
+
+<https://chromewebstore.google.com/detail/almedalsstjarnan/[ID_PENDING]>
+
+> The actual listing URL will be added once the `chrome-store-publishing` spec completes and the extension is approved.
