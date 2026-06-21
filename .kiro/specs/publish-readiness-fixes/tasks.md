@@ -38,7 +38,7 @@ This plan addresses five independent technical gaps blocking Chrome Web Store pu
     - Ensure `pnpm package` + `tsx scripts/verify-package.ts` passes
     - _Requirements: 1.1, 1.2, 1.5_
 
-- [~] 2. Checkpoint - Ensure all tests pass
+- [x] 2. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 3. Add GitHub Pages workflow for privacy policy
