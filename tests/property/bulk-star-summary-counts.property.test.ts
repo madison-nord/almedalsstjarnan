@@ -12,7 +12,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import fc from 'fast-check';
 
-import type { NormalizedEvent, MessagePayload, MessageResponse, GetStarStateData } from '#core/types';
+import type { MessagePayload, MessageResponse, GetStarStateData } from '#core/types';
 
 import { mockBrowserApi } from '#test/helpers/mock-browser-api';
 import { normalizedEventArb } from '#test/helpers/event-generators';
