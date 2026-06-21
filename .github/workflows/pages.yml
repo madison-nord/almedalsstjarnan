@@ -1,0 +1,80 @@
+name: Deploy Privacy Policy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'PRIVACY.md'
+      - '.github/workflows/pages.yml'
+
+permissions:
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare Jekyll site
+        run: |
+          mkdir -p _pages/PRIVACY
+          cat > _pages/_config.yml << 'EOF'
+          baseurl: /almedalsstjarnan
+          title: Almedalsstjärnan
+          plugins: []
+          exclude: []
+          EOF
+          # Copy privacy policy as index.md with Jekyll front matter
+          {
+            echo '---'
+            echo 'layout: default'
+            echo 'title: Privacy Policy — Almedalsstjärnan'
+            echo 'permalink: /PRIVACY/'
+            echo '---'
+            echo ''
+            cat PRIVACY.md
+          } > _pages/PRIVACY/index.md
+          # Create a minimal default layout
+          mkdir -p _pages/_layouts
+          cat > _pages/_layouts/default.html << 'LAYOUT'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <title>{{ page.title }}</title>
+            <style>
+              body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 700px; margin: 2rem auto; padding: 0 1rem; line-height: 1.6; color: #333; }
+              h1, h2, h3 { color: #111; }
+              hr { border: none; border-top: 1px solid #ddd; margin: 2rem 0; }
+              strong { color: #111; }
+            </style>
+          </head>
+          <body>
+            {{ content }}
+          </body>
+          </html>
+          LAYOUT
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/jekyll-build-pages@v1
+        with:
+          source: _pages
+          destination: ./_site
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./_site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

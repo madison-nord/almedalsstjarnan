@@ -6,7 +6,7 @@ This plan addresses five independent technical gaps blocking Chrome Web Store pu
 
 ## Tasks
 
-- [ ] 1. Implement cross-platform zip writer
+- [x] 1. Implement cross-platform zip writer
   - [x] 1.1 Write unit tests for `collectFiles` and `createZipBuffer` in `tests/unit/scripts/package.test.ts`
     - Test `collectFiles` returns correct relative paths (forward slashes, no `dist/` prefix)
     - Test `collectFiles` handles nested directories
@@ -32,7 +32,7 @@ This plan addresses five independent technical gaps blocking Chrome Web Store pu
     - Exit with code 1 and descriptive message if `dist/` does not exist
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7_
 
-  - [~] 1.4 Wire `scripts/package.ts` main script to use new functions and verify with `verify-package.ts`
+  - [x] 1.4 Wire `scripts/package.ts` main script to use new functions and verify with `verify-package.ts`
     - Update the script entry point to call `createZipBuffer(collectFiles(distPath))`
     - Write the buffer to `almedalsstjarnan.zip`
     - Ensure `pnpm package` + `tsx scripts/verify-package.ts` passes
@@ -42,7 +42,7 @@ This plan addresses five independent technical gaps blocking Chrome Web Store pu
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 3. Add GitHub Pages workflow for privacy policy
-  - [~] 3.1 Create `.github/workflows/pages.yml` workflow file
+  - [x] 3.1 Create `.github/workflows/pages.yml` workflow file
     - Trigger on pushes to `main` that modify `PRIVACY.md` or the workflow file
     - Use `actions/configure-pages` + `actions/upload-pages-artifact` + `actions/deploy-pages`
     - Deploy only the privacy policy content (not entire repo)
@@ -50,7 +50,7 @@ This plan addresses five independent technical gaps blocking Chrome Web Store pu
     - Use Jekyll with a permalink config so the URL has no `.html` extension
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
 
-  - [~] 3.2 Create the pages source structure for privacy policy deployment
+  - [x] 3.2 Create the pages source structure for privacy policy deployment
     - Create directory structure for Jekyll deployment (e.g., `PRIVACY/index.md` or equivalent)
     - Add `_config.yml` for Jekyll baseurl and permalink settings
     - Ensure rendered output is formatted HTML (not raw Markdown)
@@ -61,7 +61,7 @@ This plan addresses five independent technical gaps blocking Chrome Web Store pu
     - _Requirements: 2.6_
 
 - [ ] 4. Bundle analysis and optimization
-  - [~] 4.1 Add `manualChunks` configuration to `vite.config.ts`
+  - [x] 4.1 Add `manualChunks` configuration to `vite.config.ts`
     - Add `build.rollupOptions.output.manualChunks` to separate React/ReactDOM into `vendor-react` chunk
     - This removes React from the shared chunk, reducing it significantly
     - _Requirements: 3.2, 3.4, 3.5_
