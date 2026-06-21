@@ -37,6 +37,14 @@ See [`permission-justifications.md`](./permission-justifications.md) for per-per
 
 The Chrome Web Store requires a publicly accessible URL for the privacy policy. The source file is [`PRIVACY.md`](../PRIVACY.md) in the repository root.
 
+**Active Privacy Policy URL:**
+
+```
+https://madison-nord.github.io/almedalsstjarnan/PRIVACY
+```
+
+This is the live URL deployed via GitHub Pages. Use this URL in the Chrome Web Store developer dashboard under "Privacy policy URL".
+
 ### Option 1: GitHub Pages
 
 1. Enable GitHub Pages in the repository settings (Settings → Pages).
