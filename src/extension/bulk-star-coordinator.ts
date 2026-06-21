@@ -52,7 +52,7 @@ async function expandPagination(
       break;
     }
 
-    const button = document.querySelector('a[class*="load-more-button"]') as HTMLAnchorElement | null;
+    const button = document.querySelector('[class*="load-more-button"]:is(a, button)') as HTMLElement | null;
     if (!button) {
       console.log('[Almedalsstjärnan] Pagination: no load-more button found, stopping');
       break;
@@ -67,17 +67,16 @@ async function expandPagination(
     const countBefore = countEventCards();
     console.log(`[Almedalsstjärnan] Pagination: clicking load-more (click ${clicks + 1}), cards before: ${countBefore}`);
 
-    // Simulate a real user click on the load-more button.
-    // We need: 1) React's handler to fire (to load more events)
-    //          2) No page navigation (the <a> has an href)
-    //
-    // Approach: Add a one-shot click listener that calls preventDefault()
-    // to block navigation while the event still bubbles to React's delegation.
-    button.addEventListener(
-      'click',
-      (e: Event) => e.preventDefault(),
-      { once: true },
-    );
+    // For <a> elements with href, prevent navigation while still allowing
+    // the React click handler to fire via event delegation.
+    // For <button> elements, no navigation prevention is needed.
+    if (button.tagName === 'A') {
+      button.addEventListener(
+        'click',
+        (e: Event) => e.preventDefault(),
+        { once: true },
+      );
+    }
     button.click();
     clicks++;
 
