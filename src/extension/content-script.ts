@@ -270,55 +270,93 @@ export function initContentScript(adapter: IBrowserApiAdapter): void {
 
   // ─── Bulk Star Button Integration ────────────────────────────────
 
-  const locale = resolveEffectiveLocale(null);
+  // Fetch the stored language preference before creating the bulk star button.
+  // This ensures the button uses the user's chosen language, not just browser locale.
+  void (async () => {
+    let languagePreference: 'sv' | 'en' | null = null;
+    try {
+      const langResponse = await adapter.sendMessage<'sv' | 'en' | null>({
+        command: 'GET_LANGUAGE_PREFERENCE',
+      });
+      if (langResponse.success) {
+        languagePreference = langResponse.data as 'sv' | 'en' | null;
+      }
+    } catch {
+      // Fall back to browser locale detection if message fails
+    }
 
-  // Create and inject Bulk Star Button host element
-  const bulkStarHost = document.createElement('div');
-  bulkStarHost.id = 'almedals-bulk-star-host';
-  document.body.appendChild(bulkStarHost);
+    const locale = resolveEffectiveLocale(languagePreference);
 
-  function handleBulkStarActivate(): void {
-    const controller = new AbortController();
+    // Create and inject Bulk Star Button host element
+    const bulkStarHost = document.createElement('div');
+    bulkStarHost.id = 'almedals-bulk-star-host';
 
-    // Create progress indicator host
-    const progressHost = document.createElement('div');
-    progressHost.id = 'almedals-progress-host';
-    document.body.appendChild(progressHost);
+    // Position the button near the search/filter area instead of fixed bottom-right.
+    // Find the list-header area that shows filter/hit count and inject the button there.
+    const listHeader = document.querySelector('.list-header');
+    if (listHeader) {
+      // Insert after the list-header as a sibling within the outer container
+      listHeader.insertAdjacentElement('afterend', bulkStarHost);
+    } else {
+      // Fallback: look for the outer app container
+      const outerContainer = document.querySelector('.outer.app-aoc70s');
+      if (outerContainer) {
+        // Insert before the event list
+        const eventList = outerContainer.querySelector('.list.app-aoc70s');
+        if (eventList) {
+          outerContainer.insertBefore(bulkStarHost, eventList);
+        } else {
+          outerContainer.appendChild(bulkStarHost);
+        }
+      } else {
+        // Last resort: append to body
+        document.body.appendChild(bulkStarHost);
+      }
+    }
 
-    const progressIndicator = createProgressIndicator(progressHost, {
+    function handleBulkStarActivate(): void {
+      const controller = new AbortController();
+
+      // Create progress indicator host
+      const progressHost = document.createElement('div');
+      progressHost.id = 'almedals-progress-host';
+      document.body.appendChild(progressHost);
+
+      const progressIndicator = createProgressIndicator(progressHost, {
+        locale,
+        onCancel: () => controller.abort(),
+      });
+
+      // Disable button during operation
+      bulkStarButton.setDisabled(true);
+
+      void (async () => {
+        try {
+          await executeBulkStar({
+            adapter,
+            onProgress: (progress) => progressIndicator.update(progress),
+            signal: controller.signal,
+            locale,
+          });
+        } catch {
+          // Never expected (coordinator never throws), but safety net
+        } finally {
+          bulkStarButton.setDisabled(false);
+        }
+      })();
+    }
+
+    const bulkStarButton = createBulkStarButton(bulkStarHost, {
       locale,
-      onCancel: () => controller.abort(),
+      onActivate: handleBulkStarActivate,
     });
 
-    // Disable button during operation
-    bulkStarButton.setDisabled(true);
+    // Wire up the mutable reference for the MutationObserver
+    bulkStarButtonRef = bulkStarButton;
 
-    void (async () => {
-      try {
-        await executeBulkStar({
-          adapter,
-          onProgress: (progress) => progressIndicator.update(progress),
-          signal: controller.signal,
-          locale,
-        });
-      } catch {
-        // Never expected (coordinator never throws), but safety net
-      } finally {
-        bulkStarButton.setDisabled(false);
-      }
-    })();
-  }
-
-  const bulkStarButton = createBulkStarButton(bulkStarHost, {
-    locale,
-    onActivate: handleBulkStarActivate,
-  });
-
-  // Wire up the mutable reference for the MutationObserver
-  bulkStarButtonRef = bulkStarButton;
-
-  // Set initial visibility based on existing Event_Cards
-  bulkStarButton.setVisible(existingCards.length > 0);
+    // Set initial visibility based on existing Event_Cards
+    bulkStarButton.setVisible(existingCards.length > 0);
+  })();
 }
 
 // ─── Internal Helpers ─────────────────────────────────────────────

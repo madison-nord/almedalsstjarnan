@@ -120,10 +120,14 @@ describe('Bulk Star Integration (content-script wiring)', () => {
 
     // Setup default mock responses
     (mockBrowserApi.getMessage as ReturnType<typeof vi.fn>).mockReturnValue('Star');
-    (mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>).mockResolvedValue({
-      success: true,
-      data: { starred: false, storedFields: null },
-    });
+    (mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>).mockImplementation(
+      async (msg: { command: string }) => {
+        if (msg.command === 'GET_LANGUAGE_PREFERENCE') {
+          return { success: true, data: null };
+        }
+        return { success: true, data: { starred: false, storedFields: null } };
+      },
+    );
   });
 
   afterEach(() => {
@@ -134,7 +138,7 @@ describe('Bulk Star Integration (content-script wiring)', () => {
   // ─── Test 1: Full flow ────────────────────────────────────────
 
   describe('full flow: inject button → click → star events → verify progress', () => {
-    it('injects the bulk star button host element on init', () => {
+    it('injects the bulk star button host element on init', async () => {
       addEventCardsToDOM(2);
 
       mockedNormalizeEvent.mockReturnValue({
@@ -143,6 +147,9 @@ describe('Bulk Star Integration (content-script wiring)', () => {
       });
 
       initContentScript(mockBrowserApi);
+
+      // Allow async bulk star button creation (GET_LANGUAGE_PREFERENCE) to resolve
+      await vi.advanceTimersByTimeAsync(50);
 
       const host = getBulkStarHost();
       expect(host).not.toBeNull();
@@ -158,15 +165,19 @@ describe('Bulk Star Integration (content-script wiring)', () => {
         return { ok: true, event: makeNormalizedEvent(String(normalizeIdx)) };
       });
 
-      (mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: { starred: false, storedFields: null },
-      });
+      (mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>).mockImplementation(
+        async (msg: { command: string }) => {
+          if (msg.command === 'GET_LANGUAGE_PREFERENCE') {
+            return { success: true, data: null };
+          }
+          return { success: true, data: { starred: false, storedFields: null } };
+        },
+      );
 
       initContentScript(mockBrowserApi);
 
-      // Allow async processEventCard calls to resolve
-      await vi.advanceTimersByTimeAsync(10);
+      // Allow async processEventCard calls and bulk star button creation to resolve
+      await vi.advanceTimersByTimeAsync(50);
 
       const button = getBulkStarButton();
       expect(button).not.toBeNull();
@@ -195,6 +206,9 @@ describe('Bulk Star Integration (content-script wiring)', () => {
 
       (mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>).mockImplementation(
         async (msg: { command: string }) => {
+          if (msg.command === 'GET_LANGUAGE_PREFERENCE') {
+            return { success: true, data: null };
+          }
           if (msg.command === 'GET_STAR_STATE') {
             return { success: true, data: { starred: false, storedFields: null } };
           }
@@ -207,7 +221,7 @@ describe('Bulk Star Integration (content-script wiring)', () => {
       );
 
       initContentScript(mockBrowserApi);
-      await vi.advanceTimersByTimeAsync(10);
+      await vi.advanceTimersByTimeAsync(50);
 
       const button = getBulkStarButton();
       button!.click();
@@ -234,6 +248,9 @@ describe('Bulk Star Integration (content-script wiring)', () => {
       // Make sendMessage slow so we can observe disabled state
       (mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>).mockImplementation(
         async (msg: { command: string }) => {
+          if (msg.command === 'GET_LANGUAGE_PREFERENCE') {
+            return { success: true, data: null };
+          }
           if (msg.command === 'GET_STAR_STATE') {
             return { success: true, data: { starred: false, storedFields: null } };
           }
@@ -245,7 +262,7 @@ describe('Bulk Star Integration (content-script wiring)', () => {
       );
 
       initContentScript(mockBrowserApi);
-      await vi.advanceTimersByTimeAsync(10);
+      await vi.advanceTimersByTimeAsync(50);
 
       const button = getBulkStarButton();
       expect(button).not.toBeNull();
@@ -271,6 +288,9 @@ describe('Bulk Star Integration (content-script wiring)', () => {
 
       (mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>).mockImplementation(
         async (msg: { command: string }) => {
+          if (msg.command === 'GET_LANGUAGE_PREFERENCE') {
+            return { success: true, data: null };
+          }
           if (msg.command === 'GET_STAR_STATE') {
             return { success: true, data: { starred: false, storedFields: null } };
           }
@@ -282,7 +302,7 @@ describe('Bulk Star Integration (content-script wiring)', () => {
       );
 
       initContentScript(mockBrowserApi);
-      await vi.advanceTimersByTimeAsync(10);
+      await vi.advanceTimersByTimeAsync(50);
 
       const button = getBulkStarButton();
       button!.click();
@@ -307,10 +327,14 @@ describe('Bulk Star Integration (content-script wiring)', () => {
         return { ok: true, event: makeNormalizedEvent(String(normalizeIdx)) };
       });
 
-      (mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: { starred: false, storedFields: null },
-      });
+      (mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>).mockImplementation(
+        async (msg: { command: string }) => {
+          if (msg.command === 'GET_LANGUAGE_PREFERENCE') {
+            return { success: true, data: null };
+          }
+          return { success: true, data: { starred: false, storedFields: null } };
+        },
+      );
 
       // Capture the onStorageChanged callback
       let storageChangedCallback: ((
@@ -396,6 +420,9 @@ describe('Bulk Star Integration (content-script wiring)', () => {
       // sendMessage mocked to also trigger storage change on STAR_EVENT
       (mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>).mockImplementation(
         async (msg: { command: string; event?: { id: string } }) => {
+          if (msg.command === 'GET_LANGUAGE_PREFERENCE') {
+            return { success: true, data: null };
+          }
           if (msg.command === 'GET_STAR_STATE') {
             return { success: true, data: { starred: false, storedFields: null } };
           }

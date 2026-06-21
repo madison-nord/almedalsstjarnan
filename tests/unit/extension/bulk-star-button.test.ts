@@ -108,7 +108,7 @@ describe('Bulk Star Button', () => {
       const style = hostElement.shadowRoot!.querySelector('style')!;
       const css = style.textContent!;
       expect(css).toContain('min-width: 44px');
-      expect(css).toContain('min-height: 44px');
+      expect(css).toContain('min-height: 48px');
     });
 
     it('button has focus-visible indicator defined in CSS', () => {

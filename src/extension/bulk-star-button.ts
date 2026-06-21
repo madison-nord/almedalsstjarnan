@@ -1,9 +1,10 @@
 /**
  * Bulk Star Button — Shadow DOM isolated action button.
  *
- * Creates and manages a fixed-position rectangular text button inside a
- * Shadow DOM for complete style isolation from the host page. Uses plain
- * scoped CSS (no Tailwind). Visually distinct from the circular Star_Buttons.
+ * Creates and manages an inline text button inside a Shadow DOM for complete
+ * style isolation from the host page. Positioned near the search/filter area
+ * in the page flow. Uses plain scoped CSS (no Tailwind). Visually distinct
+ * from the circular Star_Buttons.
  *
  * Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6
  */
@@ -29,10 +30,7 @@ export interface BulkStarButtonHandle {
 const BULK_STAR_BUTTON_CSS = `
 :host {
   display: block;
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 2147483647;
+  margin: 12px 0;
 }
 :host([data-hidden="true"]) {
   display: none;

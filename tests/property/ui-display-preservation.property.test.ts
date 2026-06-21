@@ -137,7 +137,7 @@ const ORIGINAL_SV_MESSAGES: Record<string, string> = {
 };
 
 /** Keys that are expected to change as part of the bug fixes. */
-const KEYS_TO_BE_FIXED = new Set(['helpModalTitle', 'helpGroupStarsPageDesc']);
+const KEYS_TO_BE_FIXED = new Set(['helpModalTitle', 'helpGroupStarsPageDesc', 'helpGroupBulkActionsDesc']);
 
 // ─── Property: Collapsed EventItem Preservation ───────────────────
 

@@ -68,16 +68,16 @@ describe('Property 7: Abort threshold — operation aborts when failure rate exc
 
           // Generate unique events
           const events = await fc.sample(
-            normalizedEventArb.map((e, idx) => ({
+            normalizedEventArb.map((e) => ({
               ...e,
-              id: `event-${idx}-${Math.random().toString(36).slice(2)}`,
+              id: `event-${Math.random().toString(36).slice(2)}`,
             })),
             numEvents,
           );
 
           // Ensure unique IDs
           const usedIds = new Set<string>();
-          const uniqueEvents = events.filter((e) => {
+          const uniqueEvents = events.filter((e: { readonly id: string }) => {
             if (usedIds.has(e.id)) return false;
             usedIds.add(e.id);
             return true;
@@ -98,7 +98,7 @@ describe('Property 7: Abort threshold — operation aborts when failure rate exc
           )) as EventNormalizerModule;
           const mockNormalize = vi.mocked(normalizeEvent);
           let callIndex = 0;
-          mockNormalize.mockImplementation(() => {
+          mockNormalize.mockImplementation((): ReturnType<typeof normalizeEvent> => {
             const event = uniqueEvents[callIndex];
             callIndex++;
             if (event) {
@@ -121,7 +121,7 @@ describe('Property 7: Abort threshold — operation aborts when failure rate exc
               if (message.command === 'STAR_EVENT') {
                 // Find which event this is
                 const eventId = message.event.id;
-                const eventIndex = uniqueEvents.findIndex((e) => e.id === eventId);
+                const eventIndex = uniqueEvents.findIndex((e: { readonly id: string }) => e.id === eventId);
                 const shouldFail = eventIndex >= 0 && pattern[eventIndex] === true;
 
                 if (shouldFail) {

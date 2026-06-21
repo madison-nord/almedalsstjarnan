@@ -52,7 +52,7 @@ async function expandPagination(
       break;
     }
 
-    const button = document.querySelector('a[class*="load-more-button"]') as HTMLElement | null;
+    const button = document.querySelector('a[class*="load-more-button"]') as HTMLAnchorElement | null;
     if (!button) {
       break;
     }
@@ -63,7 +63,19 @@ async function expandPagination(
     }
 
     const countBefore = countEventCards();
-    button.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+
+    // The load-more button is an <a> with an href attribute. If we dispatch
+    // a click directly, the browser may follow the link before React's
+    // event handler fires. Remove href temporarily so the click triggers
+    // the React handler without navigation, then restore it.
+    const href = button.getAttribute('href');
+    if (href) {
+      button.removeAttribute('href');
+    }
+    button.click();
+    if (href) {
+      button.setAttribute('href', href);
+    }
     clicks++;
 
     // Wait for new Event_Cards to appear or timeout

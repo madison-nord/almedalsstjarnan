@@ -308,7 +308,7 @@
     "description": "Heading for the bulk actions feature group in help modal"
   },
   "helpGroupBulkActionsDesc": {
-    "message": "Markera flera evenemang på stjärnsidan för att ta bort eller exportera dem samtidigt.",
+    "message": "Använd knappen \"Stjärnmärk alla\" på programsidan för att stjärnmärka alla synliga evenemang i ett sökresultat. På stjärnsidan kan du markera flera evenemang för att ta bort eller exportera dem samtidigt.",
     "description": "Description for the bulk actions feature group in help modal"
   },
   "helpGroupIcsExportHeading": {

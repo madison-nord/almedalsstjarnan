@@ -308,7 +308,7 @@
     "description": "Heading for the bulk actions feature group in the help modal"
   },
   "helpGroupBulkActionsDesc": {
-    "message": "Select multiple events to unstar or export them all at once from the stars page.",
+    "message": "Use the \"Star all\" button on the programme page to star all visible events in a search result. On the stars page, select multiple events to unstar or export them all at once.",
     "description": "Description for the bulk actions feature group in the help modal"
   },
   "helpGroupIcsExportHeading": {
