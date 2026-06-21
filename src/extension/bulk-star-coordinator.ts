@@ -53,12 +53,17 @@ async function expandPagination(
     }
 
     const button = document.querySelector('a[class*="load-more-button"]') as HTMLElement | null;
-    if (!button || button.offsetParent === null) {
+    if (!button) {
+      break;
+    }
+    // Check if button is hidden via display:none or visibility:hidden
+    const style = window.getComputedStyle(button);
+    if (style.display === 'none' || style.visibility === 'hidden') {
       break;
     }
 
     const countBefore = countEventCards();
-    button.click();
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
     clicks++;
 
     // Wait for new Event_Cards to appear or timeout

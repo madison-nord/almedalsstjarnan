@@ -10,7 +10,6 @@
 
 import { getLocalizedMessage } from '#core/locale-messages';
 import type { SupportedLocale } from '#core/locale-messages';
-import { BULK_STAR_CONSTANTS } from '#extension/bulk-star-constants';
 
 // ─── Interfaces ───────────────────────────────────────────────────
 
@@ -31,8 +30,8 @@ const BULK_STAR_BUTTON_CSS = `
 :host {
   display: block;
   position: fixed;
-  top: ${BULK_STAR_CONSTANTS.BUTTON_VIEWPORT_OFFSET_PX}px;
-  right: ${BULK_STAR_CONSTANTS.BUTTON_VIEWPORT_OFFSET_PX}px;
+  bottom: 24px;
+  right: 24px;
   z-index: 2147483647;
 }
 :host([data-hidden="true"]) {
@@ -42,26 +41,31 @@ const BULK_STAR_BUTTON_CSS = `
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   min-width: 44px;
-  min-height: 44px;
-  padding: 10px 20px;
+  min-height: 48px;
+  padding: 12px 24px;
   border: none;
-  border-radius: 6px;
-  background-color: #1e3a5f;
-  color: #ffffff;
+  border-radius: 24px;
+  background-color: #f59e0b;
+  color: #1e293b;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   line-height: 1.2;
   cursor: pointer;
   white-space: nowrap;
-  transition: background-color 0.15s ease, opacity 0.15s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 .bulk-star-btn:hover {
-  background-color: #2a4f7a;
+  background-color: #d97706;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3), 0 3px 6px rgba(0, 0, 0, 0.15);
 }
 .bulk-star-btn:active {
-  background-color: #162d4a;
+  background-color: #b45309;
+  transform: translateY(0);
 }
 .bulk-star-btn:focus-visible {
   outline: 2px solid #2563eb;
@@ -70,6 +74,13 @@ const BULK_STAR_BUTTON_CSS = `
 .bulk-star-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+.bulk-star-btn .star-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 `;
 
@@ -103,7 +114,7 @@ export function createBulkStarButton(
   button.className = 'bulk-star-btn';
   button.setAttribute('type', 'button');
   button.setAttribute('aria-label', label);
-  button.textContent = label;
+  button.innerHTML = `<svg class="star-icon" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 1.5l1.85 3.75 4.15.6-3 2.93.71 4.12L8 10.77 4.29 12.9l.71-4.12-3-2.93 4.15-.6L8 1.5z" fill="currentColor"/></svg><span>${label}</span>`;
   shadowRoot.appendChild(button);
 
   // Wire click handler
