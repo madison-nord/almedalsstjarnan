@@ -218,14 +218,34 @@ export async function executeBulkStar(options: BulkStarOptions): Promise<BulkSta
 
     // Normalize all cards
     const normalizedEvents: NormalizedEvent[] = [];
+    const idOccurrences = new Map<string, string[]>();
     for (const element of cardElements) {
       const result = normalizeEvent(element);
       if (result.ok) {
         normalizedEvents.push(result.event);
+        // Track ID collisions for diagnostics
+        const existing = idOccurrences.get(result.event.id);
+        if (existing) {
+          existing.push(result.event.title);
+        } else {
+          idOccurrences.set(result.event.id, [result.event.title]);
+        }
       } else {
         eventsSkipped++;
         console.warn('[Almedalsstjärnan] Skipping card during bulk-star:', result.reason);
       }
+    }
+
+    // Log ID collisions (different events producing the same ID)
+    for (const [id, titles] of idOccurrences) {
+      if (titles.length > 1) {
+        console.warn(`[Almedalsstjärnan] ID collision: "${id}" used by ${titles.length} events: ${titles.map(t => `"${t}"`).join(', ')}`);
+      }
+    }
+    const uniqueIds = idOccurrences.size;
+    const totalNormalized = normalizedEvents.length;
+    if (uniqueIds < totalNormalized) {
+      console.warn(`[Almedalsstjärnan] ${totalNormalized - uniqueIds} events will be lost to ID collisions (${totalNormalized} events → ${uniqueIds} unique IDs)`);
     }
 
     const eventsTotal = normalizedEvents.length + eventsSkipped;
