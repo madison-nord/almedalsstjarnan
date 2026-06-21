@@ -229,7 +229,20 @@ function extractDomDetailUrl(element: Element): string | null {
 }
 
 function extractDomEventId(element: Element): string | null {
-  // Look for the paragraph containing "Evenemangs-ID:"
+  // Primary: use the collapse section's unique hash ID — always unique per card.
+  // Format: id="collapse-4_3fcad20519d04843eac183c" → extract "3fcad20519d04843eac183c"
+  const collapseDiv = element.querySelector('[id^="collapse-"]');
+  if (collapseDiv) {
+    const collapseId = collapseDiv.getAttribute('id') ?? '';
+    // Extract the hex hash after the prefix (e.g., "collapse-4_" → take the hash part)
+    const hashMatch = /collapse-\d+_([a-f0-9]+)/.exec(collapseId);
+    if (hashMatch?.[1]) {
+      return hashMatch[1];
+    }
+  }
+
+  // Fallback: look for the paragraph containing "Evenemangs-ID:"
+  // Note: this is NOT always unique across cards (some organizers reuse IDs)
   const paragraphs = element.querySelectorAll('p');
   for (const p of paragraphs) {
     const text = p.textContent ?? '';
