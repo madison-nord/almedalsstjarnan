@@ -11,7 +11,7 @@
  */
 
 import { normalizeEvent } from '#core/event-normalizer';
-import type { NormalizedEvent, GetStarStateData } from '#core/types';
+import type { NormalizedEvent } from '#core/types';
 
 import { BULK_STAR_CONSTANTS } from '#extension/bulk-star-constants';
 import type { BulkStarOptions, BulkStarResult } from '#extension/bulk-star-types';
@@ -120,8 +120,44 @@ function waitForNewCards(previousCount: number, timeoutMs: number): Promise<bool
 
 // ─── Event Collection ─────────────────────────────────────────────
 
+/**
+ * Collects Event_Cards from the active event list container.
+ * Scopes collection to the container holding the load-more button (or its parent list),
+ * avoiding stale cards from previous searches that may remain in the DOM.
+ */
 function collectEventCardElements(): Element[] {
-  const allLis = document.querySelectorAll('li');
+  // Find the event list container. The site uses a container that holds both
+  // the event cards and the load-more button. Scope to that container to avoid
+  // picking up stale cards from pre-search default display.
+  //
+  // Strategy: Find the load-more button's parent list, or the main list container.
+  // Fall back to whole document if no scoped container is found.
+  let root: Element | Document = document;
+
+  // Try to find the list container by looking for common structural patterns:
+  // 1. The container with class containing "list" that holds the event items
+  const loadMoreBtn = document.querySelector('[class*="load-more-button"]:is(a, button)');
+  if (loadMoreBtn) {
+    // Walk up to find the list container (the parent that also contains the event cards)
+    let parent = loadMoreBtn.parentElement;
+    while (parent && parent !== document.body) {
+      if (parent.querySelectorAll('li .event-information').length > 5) {
+        root = parent;
+        break;
+      }
+      parent = parent.parentElement;
+    }
+  }
+
+  // If no scoped root found via load-more button, try to find the main app container
+  if (root === document) {
+    const appContainer = document.querySelector('[class*="outer"][class*="app-"]');
+    if (appContainer) {
+      root = appContainer;
+    }
+  }
+
+  const allLis = root.querySelectorAll('li');
   const cards: Element[] = [];
   for (const li of allLis) {
     if (li.querySelector('.event-information')) {
@@ -215,6 +251,22 @@ export async function executeBulkStar(options: BulkStarOptions): Promise<BulkSta
     let eventsProcessed = 0;
     let eventsAttempted = 0;
 
+    // Fetch all currently starred event IDs upfront to avoid N round-trips.
+    // This is O(1) instead of O(N) message passes for the star-state check.
+    const starredIds = new Set<string>();
+    try {
+      const allStarredResponse = await adapter.sendMessage<Array<{ readonly id: string }>>({
+        command: 'GET_ALL_STARRED_EVENTS',
+      });
+      if (allStarredResponse.success && Array.isArray(allStarredResponse.data)) {
+        for (const starred of allStarredResponse.data) {
+          starredIds.add(starred.id);
+        }
+      }
+    } catch {
+      console.warn('[Almedalsstjärnan] GET_ALL_STARRED_EVENTS failed, will check individually');
+    }
+
     for (let i = 0; i < normalizedEvents.length; i++) {
       if (signal.aborted && !abortedBeforeStarring) {
         aborted = true;
@@ -225,21 +277,8 @@ export async function executeBulkStar(options: BulkStarOptions): Promise<BulkSta
       const event = normalizedEvents[i];
       if (!event) continue;
 
-      // Check starred state
-      let isAlreadyStarred = false;
-      try {
-        const stateResponse = await adapter.sendMessage<GetStarStateData>({
-          command: 'GET_STAR_STATE',
-          eventId: event.id,
-        });
-        if (stateResponse.success) {
-          const data = stateResponse.data as GetStarStateData;
-          isAlreadyStarred = data.starred;
-        }
-      } catch {
-        // If GET_STAR_STATE fails, treat as unstarred (Req 7: error handling)
-        console.warn('[Almedalsstjärnan] GET_STAR_STATE failed for event:', event.id);
-      }
+      // Check starred state using the pre-fetched set (fast, no round-trip)
+      const isAlreadyStarred = starredIds.has(event.id);
 
       if (isAlreadyStarred) {
         eventsAlreadyStarred++;
@@ -254,8 +293,6 @@ export async function executeBulkStar(options: BulkStarOptions): Promise<BulkSta
           eventsFailed,
           eventsSkipped,
         });
-        // Rate limit between messages
-        await delay(BULK_STAR_CONSTANTS.STAR_MESSAGE_DELAY_MS);
         continue;
       }
 
