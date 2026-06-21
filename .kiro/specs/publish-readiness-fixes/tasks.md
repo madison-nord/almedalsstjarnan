@@ -94,7 +94,7 @@ This plan addresses five independent technical gaps blocking Chrome Web Store pu
     - Verify `dist/stars.css` contains at least 1 KB of Tailwind utility classes
     - _Requirements: 4.1, 4.2, 4.3, 4.4_
 
-- [ ] 7. Resolve Dependabot security alerts
+- [x] 7. Resolve Dependabot security alerts
   - [x] 7.1 Update vulnerable devDependencies and add pnpm.overrides
     - Run `pnpm audit` to identify critical/high vulnerabilities
     - Bump direct devDependencies to patched versions where available
@@ -102,7 +102,7 @@ This plan addresses five independent technical gaps blocking Chrome Web Store pu
     - Document any unresolvable moderate/low alerts in `SECURITY.md` if needed
     - _Requirements: 5.1, 5.2, 5.3, 5.8_
 
-  - [~] 7.2 Verify full CI suite passes after dependency updates
+  - [x] 7.2 Verify full CI suite passes after dependency updates
     - Run `pnpm run build`, `pnpm run lint`, `pnpm run typecheck`, `pnpm run test`
     - Confirm same number of passing tests as before
     - _Requirements: 5.4, 5.5, 5.6, 5.7_
