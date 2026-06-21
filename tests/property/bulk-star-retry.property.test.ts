@@ -5,14 +5,14 @@
  * Validates: Requirements 7.2
  *
  * For any event where the initial STAR_EVENT message returns `success: false` or throws,
- * the coordinator SHALL retry exactly once after 1000ms. If the retry also fails, the event
+ * the coordinator SHALL retry up to 2 times after delays. If all retries also fail, the event
  * SHALL be counted as failed and skipped.
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import fc from 'fast-check';
 
-import type { NormalizedEvent, MessagePayload, MessageResponse, GetStarStateData } from '#core/types';
+import type { NormalizedEvent, MessagePayload, MessageResponse } from '#core/types';
 
 import { mockBrowserApi } from '#test/helpers/mock-browser-api';
 import { normalizedEventArb } from '#test/helpers/event-generators';
@@ -171,11 +171,11 @@ describe('Property 6: Retry logic — failed events get exactly one retry', () =
           // Mock sendMessage
           const mockSendMessage = vi.mocked(mockBrowserApi.sendMessage);
           mockSendMessage.mockImplementation(async <T>(message: MessagePayload): Promise<MessageResponse<T>> => {
-            if (message.command === 'GET_STAR_STATE') {
+            if (message.command === 'GET_ALL_STARRED_EVENTS') {
               // All events are unstarred so they all proceed to STAR_EVENT
               return {
                 success: true,
-                data: { starred: false, storedFields: null } as GetStarStateData,
+                data: [],
               } as MessageResponse<T>;
             }
             if (message.command === 'STAR_EVENT') {
@@ -199,7 +199,7 @@ describe('Property 6: Retry logic — failed events get exactly one retry', () =
               }
 
               if (pattern === 'fail_both') {
-                // Fail on both calls
+                // Fail on all calls (initial + all retries)
                 return { success: false, error: 'simulated failure' } as MessageResponse<T>;
               }
 
@@ -240,12 +240,12 @@ describe('Property 6: Retry logic — failed events get exactly one retry', () =
             }
           }
 
-          // Verify: events with 'fail_both' get exactly 2 STAR_EVENT calls and count as failed
+          // Verify: events with 'fail_both' get exactly MAX_RETRIES + 1 = 3 STAR_EVENT calls and count as failed
           for (const item of items) {
             const callCount = starCallCounts.get(item.event.id) ?? 0;
 
             if (item.pattern === 'fail_both') {
-              expect(callCount).toBe(2);
+              expect(callCount).toBe(3);
             }
           }
 

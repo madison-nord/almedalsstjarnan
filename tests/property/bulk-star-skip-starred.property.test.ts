@@ -13,7 +13,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import fc from 'fast-check';
 
-import type { NormalizedEvent, MessagePayload, MessageResponse, GetStarStateData } from '#core/types';
+import type { NormalizedEvent, MessagePayload, MessageResponse } from '#core/types';
 
 import { mockBrowserApi } from '#test/helpers/mock-browser-api';
 import { normalizedEventArb } from '#test/helpers/event-generators';
@@ -108,14 +108,17 @@ describe('Property 3: Only unstarred events receive STAR_EVENT messages', () => 
           // Track STAR_EVENT calls
           const starEventCalls: NormalizedEvent[] = [];
 
-          // Mock sendMessage for GET_STAR_STATE and STAR_EVENT
+          // Mock sendMessage for GET_ALL_STARRED_EVENTS and STAR_EVENT
           const mockSendMessage = vi.mocked(mockBrowserApi.sendMessage);
           mockSendMessage.mockImplementation(async <T>(message: MessagePayload): Promise<MessageResponse<T>> => {
-            if (message.command === 'GET_STAR_STATE') {
-              const starred = starredMap.get(message.eventId) ?? false;
+            if (message.command === 'GET_ALL_STARRED_EVENTS') {
+              // Return all events that are already starred
+              const starredEvents = items
+                .filter((i) => i.alreadyStarred)
+                .map((i) => ({ id: i.event.id }));
               return {
                 success: true,
-                data: { starred, storedFields: null } as GetStarStateData,
+                data: starredEvents,
               } as MessageResponse<T>;
             }
             if (message.command === 'STAR_EVENT') {

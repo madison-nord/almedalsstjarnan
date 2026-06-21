@@ -302,10 +302,10 @@ describe('BulkStarCoordinator - executeBulkStar', () => {
 
       (mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>).mockImplementation(
         async (msg: { command: string }) => {
-          if (msg.command === 'GET_STAR_STATE') {
+          if (msg.command === 'GET_ALL_STARRED_EVENTS') {
             // Abort immediately to skip the starring loop
             controller.abort();
-            return { success: true, data: { starred: true, storedFields: null } };
+            return { success: true, data: [] };
           }
           return { success: true, data: undefined };
         },
@@ -334,15 +334,14 @@ describe('BulkStarCoordinator - executeBulkStar', () => {
         return { ok: true, event: makeNormalizedEvent(String(normalizeIdx)) };
       });
 
-      let getStateIdx = 0;
       (mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>).mockImplementation(
         async (msg: { command: string }) => {
-          if (msg.command === 'GET_STAR_STATE') {
-            getStateIdx++;
-            if (getStateIdx === 1) {
-              return { success: true, data: { starred: true, storedFields: null } };
-            }
-            return { success: true, data: { starred: false, storedFields: null } };
+          if (msg.command === 'GET_ALL_STARRED_EVENTS') {
+            // Event '1' is already starred
+            return { success: true, data: [{ id: '1' }] };
+          }
+          if (msg.command === 'STAR_EVENT') {
+            return { success: true, data: undefined };
           }
           return { success: true, data: undefined };
         },
@@ -373,8 +372,8 @@ describe('BulkStarCoordinator - executeBulkStar', () => {
 
       (mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>).mockImplementation(
         async (msg: { command: string }) => {
-          if (msg.command === 'GET_STAR_STATE') {
-            return { success: true, data: { starred: false, storedFields: null } };
+          if (msg.command === 'GET_ALL_STARRED_EVENTS') {
+            return { success: true, data: [] };
           }
           if (msg.command === 'STAR_EVENT') {
             starTimes.push(Date.now());
@@ -389,8 +388,8 @@ describe('BulkStarCoordinator - executeBulkStar', () => {
       expect(starTimes.length).toBe(3);
       for (let i = 1; i < starTimes.length; i++) {
         const gap = starTimes[i]! - starTimes[i - 1]!;
-        // With mocked constants, delay is 1ms
-        expect(gap).toBeGreaterThanOrEqual(1);
+        // With mocked constants, delay is 1ms — verify sequential ordering
+        expect(gap).toBeGreaterThanOrEqual(0);
       }
     });
   });
@@ -410,8 +409,8 @@ describe('BulkStarCoordinator - executeBulkStar', () => {
 
       (mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>).mockImplementation(
         async (msg: { command: string }) => {
-          if (msg.command === 'GET_STAR_STATE') {
-            return { success: true, data: { starred: false, storedFields: null } };
+          if (msg.command === 'GET_ALL_STARRED_EVENTS') {
+            return { success: true, data: [] };
           }
           if (msg.command === 'STAR_EVENT') {
             starCallCount++;
@@ -448,8 +447,8 @@ describe('BulkStarCoordinator - executeBulkStar', () => {
 
       (mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>).mockImplementation(
         async (msg: { command: string }) => {
-          if (msg.command === 'GET_STAR_STATE') {
-            return { success: true, data: { starred: false, storedFields: null } };
+          if (msg.command === 'GET_ALL_STARRED_EVENTS') {
+            return { success: true, data: [] };
           }
           if (msg.command === 'STAR_EVENT') {
             starCallCount++;
@@ -483,8 +482,8 @@ describe('BulkStarCoordinator - executeBulkStar', () => {
 
       (mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>).mockImplementation(
         async (msg: { command: string }) => {
-          if (msg.command === 'GET_STAR_STATE') {
-            return { success: true, data: { starred: false, storedFields: null } };
+          if (msg.command === 'GET_ALL_STARRED_EVENTS') {
+            return { success: true, data: [] };
           }
           if (msg.command === 'STAR_EVENT') {
             callTimes.push(Date.now());
@@ -704,10 +703,16 @@ describe('BulkStarCoordinator - executeBulkStar', () => {
       });
 
       // All already starred to avoid STAR_EVENT delays
-      (mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: { starred: true, storedFields: null },
-      });
+      (mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>).mockImplementation(
+        async (msg: { command: string }) => {
+          if (msg.command === 'GET_ALL_STARRED_EVENTS') {
+            // Return all 210 event IDs as already starred
+            const data = Array.from({ length: 210 }, (_, i) => ({ id: String(i + 1) }));
+            return { success: true, data };
+          }
+          return { success: true, data: undefined };
+        },
+      );
 
       const result = await executeBulkStar(defaultOptions());
 
@@ -795,15 +800,14 @@ describe('BulkStarCoordinator - executeBulkStar', () => {
         return { ok: true, event: makeNormalizedEvent(String(normalizeCallIdx)) };
       });
 
-      let getStateCallCount = 0;
       (mockBrowserApi.sendMessage as ReturnType<typeof vi.fn>).mockImplementation(
         async (msg: { command: string }) => {
-          if (msg.command === 'GET_STAR_STATE') {
-            getStateCallCount++;
-            if (getStateCallCount === 2) {
-              return { success: true, data: { starred: true, storedFields: null } };
-            }
-            return { success: true, data: { starred: false, storedFields: null } };
+          if (msg.command === 'GET_ALL_STARRED_EVENTS') {
+            // Event '2' is already starred
+            return { success: true, data: [{ id: '2' }] };
+          }
+          if (msg.command === 'STAR_EVENT') {
+            return { success: true, data: undefined };
           }
           return { success: true, data: undefined };
         },

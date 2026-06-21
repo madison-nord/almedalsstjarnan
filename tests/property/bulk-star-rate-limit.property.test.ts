@@ -1,17 +1,17 @@
 /**
  * Property-based test for Bulk Star rate limiting.
  *
- * Feature: bulk-star-filtered, Property 9: Sequential rate limiting — minimum 50ms between STAR_EVENT messages
+ * Feature: bulk-star-filtered, Property 9: Sequential rate limiting — minimum 10ms between STAR_EVENT messages
  * Validates: Requirements 8.1
  *
  * For any batch of events being starred, the time between consecutive STAR_EVENT message sends
- * SHALL be ≥ 50ms. No two messages SHALL be in-flight simultaneously.
+ * SHALL be ≥ 10ms. No two messages SHALL be in-flight simultaneously.
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import fc from 'fast-check';
 
-import type { MessagePayload, MessageResponse, GetStarStateData } from '#core/types';
+import type { MessagePayload, MessageResponse } from '#core/types';
 
 import { mockBrowserApi } from '#test/helpers/mock-browser-api';
 import { normalizedEventArb } from '#test/helpers/event-generators';
@@ -25,7 +25,7 @@ vi.mock('#core/event-normalizer', () => ({
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 type EventNormalizerModule = typeof import('#core/event-normalizer');
 
-describe('Property 9: Sequential rate limiting — minimum 50ms between STAR_EVENT messages', () => {
+describe('Property 9: Sequential rate limiting — minimum 10ms between STAR_EVENT messages', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     document.body.innerHTML = '';
@@ -52,7 +52,7 @@ describe('Property 9: Sequential rate limiting — minimum 50ms between STAR_EVE
     document.body.appendChild(container);
   }
 
-  it('STAR_EVENT messages are sent sequentially with ≥50ms gaps between them', async () => {
+  it('STAR_EVENT messages are sent sequentially with ≥10ms gaps between them', async () => {
     // **Validates: Requirements 8.1**
     await fc.assert(
       fc.asyncProperty(
@@ -94,14 +94,14 @@ describe('Property 9: Sequential rate limiting — minimum 50ms between STAR_EVE
           let inFlight = false;
           let concurrencyViolation = false;
 
-          // Mock sendMessage for GET_STAR_STATE and STAR_EVENT
+          // Mock sendMessage for GET_ALL_STARRED_EVENTS and STAR_EVENT
           const mockSendMessage = vi.mocked(mockBrowserApi.sendMessage);
           mockSendMessage.mockImplementation(async <T>(message: MessagePayload): Promise<MessageResponse<T>> => {
-            if (message.command === 'GET_STAR_STATE') {
+            if (message.command === 'GET_ALL_STARRED_EVENTS') {
               // All events are unstarred so they all get STAR_EVENT
               return {
                 success: true,
-                data: { starred: false, storedFields: null } as GetStarStateData,
+                data: [],
               } as MessageResponse<T>;
             }
             if (message.command === 'STAR_EVENT') {
@@ -138,10 +138,10 @@ describe('Property 9: Sequential rate limiting — minimum 50ms between STAR_EVE
           // Verify: all events generated STAR_EVENT calls
           expect(starEventTimestamps.length).toBe(events.length);
 
-          // Verify: consecutive STAR_EVENT timestamps have ≥50ms gaps
+          // Verify: consecutive STAR_EVENT timestamps have ≥10ms gaps
           for (let i = 1; i < starEventTimestamps.length; i++) {
             const gap = starEventTimestamps[i]! - starEventTimestamps[i - 1]!;
-            expect(gap).toBeGreaterThanOrEqual(50);
+            expect(gap).toBeGreaterThanOrEqual(10);
           }
         },
       ),
