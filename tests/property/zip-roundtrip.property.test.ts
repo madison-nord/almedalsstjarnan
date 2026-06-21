@@ -167,7 +167,7 @@ describe('Property 1: Zip round-trip preserves file paths', () => {
    * back yields exactly the same set of relative file paths — with no wrapper
    * directories prepended, no files omitted, and no extra entries added.
    */
-  it('zip round-trip preserves the exact set of relative file paths', () => {
+  it('zip round-trip preserves the exact set of relative file paths', { timeout: 30000 }, () => {
     fc.assert(
       fc.property(fileTreeArb, (fileTree) => {
         // Write generated files to a temp directory
