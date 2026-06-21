@@ -89,15 +89,15 @@ This plan covers the professional polish of the Almedalsstjärnan GitHub reposit
     - Add Chrome Web Store listing section with the published URL (coordinate with chrome-store-publishing spec task 6/7 for the final URL)
     - _Requirements: 10.1, 10.2, 10.3_
 
-- [ ] 9. Archive completed specs
-  - [-] 9.1 Create _archive directory and move completed specs
+- [x] 9. Archive completed specs
+  - [x] 9.1 Create _archive directory and move completed specs
     - Create `.kiro/specs/_archive/` directory
     - Move all completed spec directories to `_archive/` using `git mv`: almedals-planner-extension, bulk-star-filtered, code-review-fixes, content-scraping-and-sync, event-data-refresh, grid-and-ics-bugfixes, popup-ux-improvements, pre-commit-checks, production-readiness, stars-page-sorting, ui-display-bugs, ui-display-bugs-v2, ui-polish-fixes, unstar-revert-bug, user-help-onboarding, ux-enhancements
     - Preserve all directory structure and file contents unchanged
     - Verify only `github-portfolio-polish/`, `chrome-store-publishing/`, and `_archive/` remain in active `.kiro/specs/`
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
 
-- [~] 10. Final checkpoint - Verify all changes
+- [x] 10. Final checkpoint - Verify all changes
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes
