@@ -447,9 +447,18 @@ export function normalizeEvent(element: Element): NormalizerResult {
     const topic = trimOrNull(domTopic);
     const sourceUrl = icsFields?.url?.trim() || null;
 
-    // Derive event ID
-    const id =
-      domEventId ?? deriveEventId(icsFields?.url ?? null, domDetailUrl, title, startDateTime);
+    // Derive event ID.
+    // The site's Evenemangs-ID is shared across recurring event occurrences
+    // (e.g., same event running Mon–Fri gets one ID). To uniquely identify each
+    // occurrence, append the date portion of startDateTime when using domEventId.
+    let id: string;
+    if (domEventId) {
+      // Extract just the date part (YYYY-MM-DD) to disambiguate recurring events
+      const datePart = startDateTime.slice(0, 10); // "2026-06-22"
+      id = `${domEventId}_${datePart}`;
+    } else {
+      id = deriveEventId(icsFields?.url ?? null, domDetailUrl, title, startDateTime);
+    }
 
     return {
       ok: true,
