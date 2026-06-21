@@ -27,7 +27,7 @@ describe('normalizeEvent', () => {
       const result = normalizeEvent(card);
 
       expectSuccess(result);
-      expect(result.event.id).toBe('8363');
+      expect(result.event.id).toBe('8363_2026-06-22');
       expect(result.event.title).toBe('Tillräcklighet krävs för att klara klimatkrisen');
       expect(result.event.organiser).toBe('Den gröna tankesmedjan Cogito');
       expect(result.event.startDateTime).toBe('2026-06-22T07:30:00+02:00');

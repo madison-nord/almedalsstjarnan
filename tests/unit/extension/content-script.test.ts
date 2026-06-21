@@ -39,6 +39,9 @@ function setupAdapter(): IBrowserApiAdapter {
       if (message.command === 'GET_STAR_STATE') {
         return Promise.resolve({ success: true, data: { starred: false, storedFields: null } });
       }
+      if (message.command === 'GET_LANGUAGE_PREFERENCE') {
+        return Promise.resolve({ success: true, data: null } as unknown as MessageResponse<GetStarStateData>);
+      }
       return Promise.resolve({ success: true, data: undefined as unknown as GetStarStateData });
     },
   );
@@ -399,6 +402,9 @@ describe('Content Script', () => {
               data: undefined as unknown as GetStarStateData,
             });
           }
+          if (message.command === 'GET_LANGUAGE_PREFERENCE') {
+            return Promise.resolve({ success: true, data: null } as unknown as MessageResponse<GetStarStateData>);
+          }
           return Promise.resolve({ success: true, data: undefined as unknown as GetStarStateData });
         },
       );
@@ -472,8 +478,8 @@ describe('Content Script', () => {
       storageChangedCallback!({
         starredEvents: {
           newValue: {
-            '10001': {
-              id: '10001',
+            '10001_2026-06-22': {
+              id: '10001_2026-06-22',
               title: 'Test Event',
               starred: true,
               starredAt: '2026-06-15T14:30:00.000Z',
@@ -519,6 +525,9 @@ describe('Content Script', () => {
                 },
               },
             });
+          }
+          if (message.command === 'GET_LANGUAGE_PREFERENCE') {
+            return Promise.resolve({ success: true, data: null } as unknown as MessageResponse<GetStarStateData>);
           }
           return Promise.resolve({ success: true, data: undefined as unknown as GetStarStateData });
         },

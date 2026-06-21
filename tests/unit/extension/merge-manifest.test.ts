@@ -156,7 +156,7 @@ describe('mergeManifest', () => {
     expect(result).toHaveProperty('minimum_chrome_version', '110');
     // Base keys are preserved
     expect(result).toHaveProperty('manifest_version', 3);
-    expect(result).toHaveProperty('version', '0.1.0');
+    expect(result).toHaveProperty('version', '1.0.0');
     expect(result).toHaveProperty('permissions');
   });
 });

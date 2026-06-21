@@ -26,11 +26,14 @@ function setupAdapter(): IBrowserApiAdapter {
     return '';
   });
   (adapter.sendMessage as ReturnType<typeof vi.fn>).mockImplementation(
-    (message: MessagePayload): Promise<MessageResponse<boolean>> => {
+    (message: MessagePayload): Promise<MessageResponse<unknown>> => {
       if (message.command === 'GET_STAR_STATE') {
         return Promise.resolve({ success: true, data: false });
       }
-      return Promise.resolve({ success: true, data: undefined as unknown as boolean });
+      if (message.command === 'GET_LANGUAGE_PREFERENCE') {
+        return Promise.resolve({ success: true, data: null });
+      }
+      return Promise.resolve({ success: true, data: null });
     },
   );
   return adapter;
