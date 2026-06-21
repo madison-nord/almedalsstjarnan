@@ -23,6 +23,31 @@ function copyExtensionAssets(): Plugin {
   };
 }
 
+/**
+ * Adds manualChunks configuration only for builds that support code splitting.
+ * The vite-plugin-web-extension builds background/content scripts individually
+ * with codeSplitting disabled, which conflicts with manualChunks. This plugin
+ * safely applies the chunking config only for multi-entry HTML builds.
+ */
+function vendorChunks(): Plugin {
+  return {
+    name: 'vendor-chunks',
+    outputOptions(options) {
+      // Skip when code splitting is explicitly disabled (individual script builds)
+      if ((options as Record<string, unknown>).codeSplitting === false) {
+        return;
+      }
+      const output = options;
+      output.manualChunks = (id: string) => {
+        if (id.includes('node_modules/react')) {
+          return 'vendor-react';
+        }
+      };
+      return output;
+    },
+  };
+}
+
 export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
@@ -31,6 +56,7 @@ export default defineConfig(({ mode }) => ({
       additionalInputs: ['src/ui/stars/stars.html'],
     }),
     copyExtensionAssets(),
+    vendorChunks(),
   ],
   publicDir: 'public',
   resolve: {
