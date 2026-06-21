@@ -229,33 +229,7 @@ function extractDomDetailUrl(element: Element): string | null {
 }
 
 function extractDomEventId(element: Element): string | null {
-  // Primary: use the .event-information div's unique id attribute.
-  // Each event card has a unique id like "item4_3fcad20519d04843eac183c" on its
-  // .event-information div. This is the site's own per-listing identifier.
-  const eventInfoDiv = element.querySelector('.event-information[id]');
-  if (eventInfoDiv) {
-    const divId = eventInfoDiv.getAttribute('id');
-    if (divId) {
-      return divId;
-    }
-  }
-
-  // Fallback: look for the paragraph containing "Evenemangs-ID:" in collapse section
-  const collapseDiv = element.querySelector('.env-collapse');
-  if (collapseDiv) {
-    const paragraphs = collapseDiv.querySelectorAll('p');
-    for (const p of paragraphs) {
-      const text = p.textContent ?? '';
-      if (text.includes('Evenemangs-ID:')) {
-        const match = /Evenemangs-ID:\s*(\S+)/.exec(text);
-        if (match?.[1]) {
-          return match[1].trim();
-        }
-      }
-    }
-  }
-
-  // Last fallback: search all paragraphs in the card
+  // Look for the paragraph containing "Evenemangs-ID:"
   const paragraphs = element.querySelectorAll('p');
   for (const p of paragraphs) {
     const text = p.textContent ?? '';

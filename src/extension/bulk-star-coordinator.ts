@@ -218,7 +218,7 @@ export async function executeBulkStar(options: BulkStarOptions): Promise<BulkSta
 
     // Normalize all cards
     const normalizedEvents: NormalizedEvent[] = [];
-    const idOccurrences = new Map<string, string[]>();
+    const idOccurrences = new Map<string, Array<{ title: string; startDateTime: string }>>();
     for (const element of cardElements) {
       const result = normalizeEvent(element);
       if (result.ok) {
@@ -226,9 +226,9 @@ export async function executeBulkStar(options: BulkStarOptions): Promise<BulkSta
         // Track ID collisions for diagnostics
         const existing = idOccurrences.get(result.event.id);
         if (existing) {
-          existing.push(result.event.title);
+          existing.push({ title: result.event.title, startDateTime: result.event.startDateTime });
         } else {
-          idOccurrences.set(result.event.id, [result.event.title]);
+          idOccurrences.set(result.event.id, [{ title: result.event.title, startDateTime: result.event.startDateTime }]);
         }
       } else {
         eventsSkipped++;
@@ -236,16 +236,19 @@ export async function executeBulkStar(options: BulkStarOptions): Promise<BulkSta
       }
     }
 
-    // Log ID collisions (different events producing the same ID)
-    for (const [id, titles] of idOccurrences) {
-      if (titles.length > 1) {
-        console.warn(`[Almedalsstjärnan] ID collision: "${id}" used by ${titles.length} events: ${titles.map(t => `"${t}"`).join(', ')}`);
+    // Log detailed ID collision info
+    for (const [id, events] of idOccurrences) {
+      if (events.length > 1) {
+        console.warn(`[Almedalsstjärnan] ID COLLISION "${id}" (${events.length} events):`);
+        for (const evt of events) {
+          console.warn(`  - "${evt.title}" @ ${evt.startDateTime}`);
+        }
       }
     }
     const uniqueIds = idOccurrences.size;
     const totalNormalized = normalizedEvents.length;
     if (uniqueIds < totalNormalized) {
-      console.warn(`[Almedalsstjärnan] ${totalNormalized - uniqueIds} events will be lost to ID collisions (${totalNormalized} events → ${uniqueIds} unique IDs)`);
+      console.warn(`[Almedalsstjärnan] TOTAL: ${totalNormalized - uniqueIds} events lost to ${totalNormalized - uniqueIds} ID collisions (${totalNormalized} normalized → ${uniqueIds} unique IDs)`);
     }
 
     const eventsTotal = normalizedEvents.length + eventsSkipped;
