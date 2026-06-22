@@ -65,7 +65,7 @@ jobs:
       - name: Package and verify
         run: |
           pnpm package
-          tsx scripts/verify-package.ts
+          pnpm exec tsx scripts/verify-package.ts
 
       - name: Install Playwright browsers
         run: npx playwright install chromium
