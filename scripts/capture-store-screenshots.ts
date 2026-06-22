@@ -191,7 +191,7 @@ async function captureForLocale(locale: string): Promise<void> {
     console.log(`  ✓ screenshot-3-stars-page-${suffix}.png`);
 
     // ─── Screenshot 4: Popup ────────────────────────────────────
-    console.log(`\n📸 4/4: Extension popup [${suffix}]`);
+    console.log(`\n📸 4/4: Extension popup overlaid on programme page [${suffix}]`);
 
     const swPage = await context.newPage();
     await swPage.goto(`chrome-extension://${extensionId}/src/ui/popup/popup.html`);
@@ -206,15 +206,48 @@ async function captureForLocale(locale: string): Promise<void> {
     });
     await swPage.close();
 
+    // Capture a background screenshot of the programme page (reuse existing page)
+    const bgBuffer = await page.screenshot();
+
+    // Capture the popup at its native size
     const popupPage = await context.newPage();
     await popupPage.setViewportSize({ width: 360, height: 600 });
     await popupPage.goto(`chrome-extension://${extensionId}/src/ui/popup/popup.html`);
     await popupPage.waitForLoadState('domcontentloaded');
     await popupPage.waitForTimeout(3000);
+    const popupBuffer = await popupPage.screenshot();
+    await popupPage.close();
 
-    await popupPage.screenshot({
-      path: path.resolve(OUTPUT_DIR, `screenshot-4-popup-${suffix}.png`),
-    });
+    // Composite: popup in top-right corner (simulating real popup position)
+    const sharp = (await import('sharp')).default;
+
+    // Add a subtle shadow/border around the popup
+    const popupWithShadow = await sharp(popupBuffer)
+      .extend({
+        top: 2,
+        bottom: 4,
+        left: 2,
+        right: 4,
+        background: { r: 0, g: 0, b: 0, alpha: 0.3 },
+      })
+      .png()
+      .toBuffer();
+
+    // Position popup in top-right area (where Chrome shows it)
+    const popupLeft = WIDTH - 360 - 20 - 6; // 20px from right edge + shadow
+    const popupTop = 8;
+
+    await sharp(bgBuffer)
+      .composite([
+        {
+          input: popupWithShadow,
+          top: popupTop,
+          left: popupLeft,
+        },
+      ])
+      .png()
+      .toFile(path.resolve(OUTPUT_DIR, `screenshot-4-popup-${suffix}.png`));
+
     console.log(`  ✓ screenshot-4-popup-${suffix}.png`);
 
     console.log(`\n✅ All screenshots saved for locale: ${suffix}`);

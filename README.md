@@ -7,11 +7,11 @@ A Chrome-first, WebExtensions-compatible browser extension for the official [Alm
 
 ## Screenshots
 
-![Star button on almedalsveckan.info programme page](store/screenshot-2-programme-starred.png)
+![Star button on almedalsveckan.info programme page](store/screenshot-2-programme-starred-sv.png)
 
-![Popup UI showing starred events summary](store/screenshot-4-popup.png)
+![Popup UI showing starred events summary](store/screenshot-4-popup-sv.png)
 
-![Stars page with search, sort, and grid view](store/screenshot-3-stars-page.png)
+![Stars page with search, sort, and grid view](store/screenshot-3-stars-page-sv.png)
 
 ## Features
 
