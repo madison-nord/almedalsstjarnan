@@ -18,4 +18,4 @@ This extension does **not** use analytics, telemetry, or tracking of any kind.
 
 ---
 
-Last updated: 2025-07-15
+Last updated: 2026-06-22

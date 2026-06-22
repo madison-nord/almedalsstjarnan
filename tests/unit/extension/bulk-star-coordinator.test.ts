@@ -500,8 +500,8 @@ describe('BulkStarCoordinator - executeBulkStar', () => {
 
       expect(callTimes.length).toBe(2);
       const gap = callTimes[1]! - callTimes[0]!;
-      // With mocked constants, retry delay is 10ms
-      expect(gap).toBeGreaterThanOrEqual(10);
+      // With mocked constants, retry delay is 10ms (allow 1ms timer imprecision)
+      expect(gap).toBeGreaterThanOrEqual(9);
     });
   });
 
