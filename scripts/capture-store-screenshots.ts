@@ -34,9 +34,10 @@ const PROGRAMME_URL =
 
 // ─── Helpers ──────────────────────────────────────────────────────
 
-async function launchExtensionContext(): Promise<BrowserContext> {
+async function launchExtensionContext(locale: string): Promise<BrowserContext> {
   return chromium.launchPersistentContext('', {
     headless: false,
+    locale,
     viewport: { width: WIDTH, height: HEIGHT },
     args: [
       `--disable-extensions-except=${EXTENSION_PATH}`,
@@ -46,6 +47,7 @@ async function launchExtensionContext(): Promise<BrowserContext> {
       '--disable-infobars',
       '--enable-automation=false',
       `--window-size=${WIDTH},${HEIGHT}`,
+      `--lang=${locale}`,
     ],
   });
 }
@@ -116,29 +118,26 @@ async function scrollToEvents(page: Page): Promise<void> {
 
 // ─── Main ─────────────────────────────────────────────────────────
 
-async function main(): Promise<void> {
-  if (!fs.existsSync(EXTENSION_PATH)) {
-    console.error('Error: dist/ not found. Run `pnpm build` first.');
-    process.exit(1);
-  }
+async function captureForLocale(locale: string): Promise<void> {
+  const suffix = locale === 'sv' ? 'sv' : 'en';
+  console.log(`\n${'═'.repeat(60)}`);
+  console.log(`  Capturing screenshots for locale: ${locale}`);
+  console.log(`${'═'.repeat(60)}`);
 
   console.log('Launching Chromium with extension...');
-  const context = await launchExtensionContext();
+  const context = await launchExtensionContext(locale);
 
   try {
     const extensionId = await getExtensionId(context);
     console.log(`Extension ID: ${extensionId}`);
 
     // ─── Load programme page ────────────────────────────────────
-    // Use the first existing page or create a new one
     const page = context.pages()[0] ?? await context.newPage();
     console.log('\nNavigating to programme page...');
     await page.goto(PROGRAMME_URL, { waitUntil: 'networkidle', timeout: 60000 });
 
-    // Dismiss cookie consent banner first
     await dismissCookieBanner(page);
 
-    // Wait for event cards to appear
     console.log('Waiting for event cards...');
     try {
       await page.waitForSelector('li .event-information', { timeout: 20000 });
@@ -147,11 +146,9 @@ async function main(): Promise<void> {
       process.exit(1);
     }
 
-    // Wait for content script to inject star buttons
     console.log('Waiting for star buttons...');
     await page.waitForTimeout(5000);
 
-    // Verify star buttons exist
     const hostCount = await page.evaluate(() =>
       document.querySelectorAll('[data-almedals-planner-initialized="1"]').length,
     );
@@ -163,47 +160,44 @@ async function main(): Promise<void> {
     }
 
     // ─── Screenshot 1: Programme page with unstarred buttons ────
-    console.log('\n📸 1/4: Programme page with star buttons (unstarred)');
+    console.log(`\n📸 1/4: Programme page with star buttons (unstarred) [${suffix}]`);
     await scrollToEvents(page);
     await page.screenshot({
-      path: path.resolve(OUTPUT_DIR, 'screenshot-1-programme-unstarred.png'),
+      path: path.resolve(OUTPUT_DIR, `screenshot-1-programme-unstarred-${suffix}.png`),
     });
-    console.log('  ✓ screenshot-1-programme-unstarred.png');
+    console.log(`  ✓ screenshot-1-programme-unstarred-${suffix}.png`);
 
     // ─── Screenshot 2: Star some events, show filled stars ──────
-    console.log('\n📸 2/4: Programme page with starred events');
+    console.log(`\n📸 2/4: Programme page with starred events [${suffix}]`);
     const starredCount = await starEvents(page, 4);
     console.log(`  Starred ${starredCount} events`);
     await page.waitForTimeout(1000);
     await scrollToEvents(page);
     await page.screenshot({
-      path: path.resolve(OUTPUT_DIR, 'screenshot-2-programme-starred.png'),
+      path: path.resolve(OUTPUT_DIR, `screenshot-2-programme-starred-${suffix}.png`),
     });
-    console.log('  ✓ screenshot-2-programme-starred.png');
+    console.log(`  ✓ screenshot-2-programme-starred-${suffix}.png`);
 
     // ─── Screenshot 3: Stars overview page ──────────────────────
-    console.log('\n📸 3/4: Stars overview page');
+    console.log(`\n📸 3/4: Stars overview page [${suffix}]`);
     const starsPage = await context.newPage();
     await starsPage.setViewportSize({ width: WIDTH, height: HEIGHT });
     await starsPage.goto(`chrome-extension://${extensionId}/src/ui/stars/stars.html`);
     await starsPage.waitForLoadState('domcontentloaded');
     await starsPage.waitForTimeout(3000);
     await starsPage.screenshot({
-      path: path.resolve(OUTPUT_DIR, 'screenshot-3-stars-page.png'),
+      path: path.resolve(OUTPUT_DIR, `screenshot-3-stars-page-${suffix}.png`),
     });
-    console.log('  ✓ screenshot-3-stars-page.png');
+    console.log(`  ✓ screenshot-3-stars-page-${suffix}.png`);
 
     // ─── Screenshot 4: Popup ────────────────────────────────────
-    console.log('\n📸 4/4: Extension popup');
+    console.log(`\n📸 4/4: Extension popup [${suffix}]`);
 
-    // First, set onboarding as dismissed via the service worker
-    // so the help modal doesn't show and grey out the popup content
     const swPage = await context.newPage();
     await swPage.goto(`chrome-extension://${extensionId}/src/ui/popup/popup.html`);
     await swPage.waitForLoadState('domcontentloaded');
     await swPage.waitForTimeout(1500);
 
-    // Send SET_ONBOARDING_STATE message to dismiss onboarding
     await swPage.evaluate(() => {
       return chrome.runtime.sendMessage({
         command: 'SET_ONBOARDING_STATE',
@@ -212,8 +206,6 @@ async function main(): Promise<void> {
     });
     await swPage.close();
 
-    // Now open the popup fresh — onboarding is dismissed, content will show
-    // Use actual popup dimensions (360×600) to avoid whitespace
     const popupPage = await context.newPage();
     await popupPage.setViewportSize({ width: 360, height: 600 });
     await popupPage.goto(`chrome-extension://${extensionId}/src/ui/popup/popup.html`);
@@ -221,19 +213,39 @@ async function main(): Promise<void> {
     await popupPage.waitForTimeout(3000);
 
     await popupPage.screenshot({
-      path: path.resolve(OUTPUT_DIR, 'screenshot-4-popup.png'),
+      path: path.resolve(OUTPUT_DIR, `screenshot-4-popup-${suffix}.png`),
     });
-    console.log('  ✓ screenshot-4-popup.png');
+    console.log(`  ✓ screenshot-4-popup-${suffix}.png`);
 
-    console.log('\n✅ All screenshots saved to store/');
-    console.log('Files:');
-    console.log('  • screenshot-1-programme-unstarred.png  (star buttons visible, none starred)');
-    console.log('  • screenshot-2-programme-starred.png    (some events starred with filled stars)');
-    console.log('  • screenshot-3-stars-page.png           (starred events overview)');
-    console.log('  • screenshot-4-popup.png                (popup with event list)');
+    console.log(`\n✅ All screenshots saved for locale: ${suffix}`);
   } finally {
     await context.close();
   }
+}
+
+async function main(): Promise<void> {
+  if (!fs.existsSync(EXTENSION_PATH)) {
+    console.error('Error: dist/ not found. Run `pnpm build` first.');
+    process.exit(1);
+  }
+
+  // Capture for both Swedish and English
+  await captureForLocale('sv');
+  await captureForLocale('en');
+
+  console.log('\n' + '═'.repeat(60));
+  console.log('  All screenshots captured!');
+  console.log('═'.repeat(60));
+  console.log('\nSwedish screenshots:');
+  console.log('  • screenshot-1-programme-unstarred-sv.png');
+  console.log('  • screenshot-2-programme-starred-sv.png');
+  console.log('  • screenshot-3-stars-page-sv.png');
+  console.log('  • screenshot-4-popup-sv.png');
+  console.log('\nEnglish screenshots:');
+  console.log('  • screenshot-1-programme-unstarred-en.png');
+  console.log('  • screenshot-2-programme-starred-en.png');
+  console.log('  • screenshot-3-stars-page-en.png');
+  console.log('  • screenshot-4-popup-en.png');
 
   // ─── Generate promotional tile (440×280) ──────────────────────
   console.log('\n📸 Generating promotional tile (440×280)...');
