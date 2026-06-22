@@ -26,6 +26,30 @@ A Chrome-first, WebExtensions-compatible browser extension for the official [Alm
 - 🎨 Shadow DOM isolation ensuring host page styles never break extension UI
 - 📊 Progress indicator during bulk operations
 
+## Install
+
+> ⏳ The extension is pending Chrome Web Store review. In the meantime, you can install it directly:
+
+### Quick install (download zip)
+
+1. Go to the [latest release](https://github.com/madison-nord/almedalsstjarnan/releases/latest) and download `almedalsstjarnan.zip`
+2. Unzip the file to a folder on your computer
+3. Open Chrome and go to `chrome://extensions`
+4. Enable **Developer mode** (toggle in the top-right corner)
+5. Click **Load unpacked** and select the unzipped folder
+6. Visit [almedalsveckan.info](https://almedalsveckan.info) — star buttons will appear next to events
+
+### Build from source
+
+```bash
+git clone https://github.com/madison-nord/almedalsstjarnan.git
+cd almedalsstjarnan
+pnpm install
+pnpm package
+```
+
+Then load the `dist/` folder as an unpacked extension (steps 3–6 above).
+
 ## Prerequisites
 
 - **Node.js** 20 or higher
